@@ -184,10 +184,17 @@ public class SubscriptionState {
     public void assignFromSubscribed(Collection<TopicPartition> assignments) {
         if (!this.partitionsAutoAssigned())
             throw new IllegalArgumentException("Attempt to dynamically assign partitions while manual assignment in use");
+<<<<<<< HEAD
 
         Map<TopicPartition, TopicPartitionState> assignedPartitionStates = partitionToStateMap(assignments);
         fireOnAssignment(assignedPartitionStates.keySet());
 
+=======
+
+        Map<TopicPartition, TopicPartitionState> assignedPartitionStates = partitionToStateMap(assignments);
+        fireOnAssignment(assignedPartitionStates.keySet());
+
+>>>>>>> origin/0.10.2
         if (this.subscribedPattern != null) {
             for (TopicPartition tp : assignments) {
                 if (!this.subscribedPattern.matcher(tp.topic()).matches())

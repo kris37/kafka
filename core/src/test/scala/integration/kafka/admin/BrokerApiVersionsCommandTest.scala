@@ -25,17 +25,29 @@ import kafka.server.KafkaConfig
 import kafka.utils.TestUtils
 import org.apache.kafka.clients.NodeApiVersions
 import org.apache.kafka.common.protocol.ApiKeys
+<<<<<<< HEAD
 import org.junit.Assert.{assertEquals, assertFalse, assertNotNull, assertTrue}
+=======
+import org.apache.kafka.common.requests.ApiVersionsResponse
+import org.junit.Assert.{assertEquals, assertFalse, assertTrue}
+>>>>>>> origin/0.10.2
 import org.junit.Test
 
 class BrokerApiVersionsCommandTest extends KafkaServerTestHarness {
 
   def generateConfigs(): Seq[KafkaConfig] = TestUtils.createBrokerConfigs(1, zkConnect).map(KafkaConfig.fromProps)
 
+<<<<<<< HEAD
   @Test(timeout=120000)
   def checkBrokerApiVersionCommandOutput() {
     val byteArrayOutputStream = new ByteArrayOutputStream
     val printStream = new PrintStream(byteArrayOutputStream, false, StandardCharsets.UTF_8.name())
+=======
+  @Test
+  def checkBrokerApiVersionCommandOutput() {
+    val byteArrayOutputStream = new ByteArrayOutputStream
+    val printStream = new PrintStream(byteArrayOutputStream)
+>>>>>>> origin/0.10.2
     BrokerApiVersionsCommand.execute(Array("--bootstrap-server", brokerList), printStream)
     val content = new String(byteArrayOutputStream.toByteArray, StandardCharsets.UTF_8)
     val lineIter = content.split("\n").iterator
@@ -44,7 +56,10 @@ class BrokerApiVersionsCommandTest extends KafkaServerTestHarness {
     val nodeApiVersions = NodeApiVersions.create
     for (apiKey <- ApiKeys.values) {
       val apiVersion = nodeApiVersions.apiVersion(apiKey)
+<<<<<<< HEAD
       assertNotNull(apiVersion)
+=======
+>>>>>>> origin/0.10.2
       val versionRangeStr =
         if (apiVersion.minVersion == apiVersion.maxVersion) apiVersion.minVersion.toString
         else s"${apiVersion.minVersion} to ${apiVersion.maxVersion}"

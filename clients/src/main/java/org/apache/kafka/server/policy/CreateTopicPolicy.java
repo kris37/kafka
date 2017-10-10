@@ -116,12 +116,20 @@ public interface CreateTopicPolicy extends Configurable, AutoCloseable {
 
     /**
      * Validate the request parameters and throw a <code>PolicyViolationException</code> with a suitable error
+<<<<<<< HEAD
      * message if the create topics request parameters for the provided topic do not satisfy this policy.
+=======
+     * message if the create request parameters for the provided topic do not satisfy this policy.
+>>>>>>> origin/0.10.2
      *
      * Clients will receive the POLICY_VIOLATION error code along with the exception's message. Note that validation
      * failure only affects the relevant topic, other topics in the request will still be processed.
      *
+<<<<<<< HEAD
      * @param requestMetadata the create topics request parameters for the provided topic.
+=======
+     * @param requestMetadata the create request parameters for the provided topic.
+>>>>>>> origin/0.10.2
      * @throws PolicyViolationException if the request parameters do not satisfy this policy.
      */
     void validate(RequestMetadata requestMetadata) throws PolicyViolationException;

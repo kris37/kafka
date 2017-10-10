@@ -332,6 +332,7 @@ public class StandbyTaskTest {
         builder.stream("topic").groupByKey().count("my-store");
         final ProcessorTopology topology = builder.setApplicationId(applicationId).build(0);
         StreamsConfig config = createConfig(baseDir);
+<<<<<<< HEAD
 
         new StandbyTask(taskId, applicationId, partitions, topology, consumer, changelogReader, config,
             new MockStreamsMetrics(new Metrics()), stateDirectory);
@@ -380,6 +381,54 @@ public class StandbyTaskTest {
 
     }
 
+=======
+        new StandbyTask(taskId, applicationId, partitions, topology, consumer, restoreStateConsumer, config,
+                        new MockStreamsMetrics(new Metrics()), stateDirectory);
+
+    }
+
+    @Test
+    public void shouldCheckpointStoreOffsetsOnCommit() throws Exception {
+        consumer.assign(Utils.mkList(ktable));
+        final Map<TopicPartition, OffsetAndMetadata> committedOffsets = new HashMap<>();
+        committedOffsets.put(new TopicPartition(ktable.topic(), ktable.partition()), new OffsetAndMetadata(100L));
+        consumer.commitSync(committedOffsets);
+
+        restoreStateConsumer.updatePartitions("ktable1", Utils.mkList(
+                new PartitionInfo("ktable1", 0, Node.noNode(), new Node[0], new Node[0])));
+
+        final TaskId taskId = new TaskId(0, 0);
+        final StreamsConfig config = createConfig(baseDir);
+        final StandbyTask task = new StandbyTask(taskId,
+                                                 applicationId,
+                                                 ktablePartitions,
+                                                 ktableTopology,
+                                                 consumer,
+                                                 restoreStateConsumer,
+                                                 config,
+                                                 null,
+                                                 stateDirectory
+        );
+
+
+        restoreStateConsumer.assign(new ArrayList<>(task.changeLogPartitions()));
+
+        final byte[] serializedValue = Serdes.Integer().serializer().serialize("", 1);
+        task.update(ktable, Collections.singletonList(new ConsumerRecord<>(ktable.topic(),
+                                                                           ktable.partition(),
+                                                                           50L,
+                                                                           serializedValue,
+                                                                           serializedValue)));
+
+        task.commit();
+
+        final Map<TopicPartition, Long> checkpoint = new OffsetCheckpoint(new File(stateDirectory.directoryForTask(taskId),
+                                                                                   ProcessorStateManager.CHECKPOINT_FILE_NAME)).read();
+        assertThat(checkpoint, equalTo(Collections.singletonMap(ktable, 51L)));
+
+    }
+
+>>>>>>> origin/0.10.2
     private List<ConsumerRecord<byte[], byte[]>> records(ConsumerRecord<byte[], byte[]>... recs) {
         return Arrays.asList(recs);
     }

@@ -16,8 +16,13 @@
  */
 package org.apache.kafka.streams.state.internals;
 
+<<<<<<< HEAD
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
+=======
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.test.InMemoryKeyValueStore;
+>>>>>>> origin/0.10.2
 import org.junit.Before;
 import org.junit.Test;
 

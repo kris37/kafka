@@ -995,10 +995,18 @@ public class ConfigDef {
             b.append("</th>\n");
         }
         b.append("</tr>\n");
+<<<<<<< HEAD
         for (ConfigKey key : configs) {
             if (key.internalConfig) {
                 continue;
             }
+=======
+        for (ConfigKey def : configs) {
+            if (def.internalConfig) {
+                continue;
+            }
+
+>>>>>>> origin/0.10.2
             b.append("<tr>\n");
             // print column values
             for (String headerName : headers()) {
@@ -1018,11 +1026,19 @@ public class ConfigDef {
      */
     public String toRst() {
         StringBuilder b = new StringBuilder();
+<<<<<<< HEAD
         for (ConfigKey key : sortedConfigs()) {
             if (key.internalConfig) {
                 continue;
             }
             getConfigKeyRst(key, b);
+=======
+        for (ConfigKey def : sortedConfigs()) {
+            if (def.internalConfig) {
+                continue;
+            }
+            getConfigKeyRst(def, b);
+>>>>>>> origin/0.10.2
             b.append("\n");
         }
         return b.toString();
@@ -1036,6 +1052,7 @@ public class ConfigDef {
         StringBuilder b = new StringBuilder();
 
         String lastKeyGroupName = "";
+<<<<<<< HEAD
         for (ConfigKey key : sortedConfigs()) {
             if (key.internalConfig) {
                 continue;
@@ -1045,6 +1062,16 @@ public class ConfigDef {
                     b.append(key.group).append("\n");
 
                     char[] underLine = new char[key.group.length()];
+=======
+        for (ConfigKey def : sortedConfigs()) {
+            if (def.internalConfig) {
+                continue;
+            }
+            if (def.group != null) {
+                if (!lastKeyGroupName.equalsIgnoreCase(def.group)) {
+                    b.append(def.group).append("\n");
+                    char[] underLine = new char[def.group.length()];
+>>>>>>> origin/0.10.2
                     Arrays.fill(underLine, '^');
                     b.append(new String(underLine)).append("\n\n");
                 }

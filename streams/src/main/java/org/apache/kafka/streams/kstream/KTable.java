@@ -24,10 +24,14 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.internals.WindowedSerializer;
 import org.apache.kafka.streams.kstream.internals.WindowedStreamPartitioner;
+<<<<<<< HEAD
 import org.apache.kafka.streams.processor.StateStoreSupplier;
 import org.apache.kafka.streams.processor.StreamPartitioner;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreType;
+=======
+import org.apache.kafka.streams.processor.StreamPartitioner;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 
 /**
@@ -50,12 +54,19 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
  *     final KafkaStreams streams = ...;
  *     streams.start()
  *     ...
+<<<<<<< HEAD
  *     final String queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable
  *     ReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.keyValueStore());
  *     view.get(key);
  *}</pre>
  *<p>
  * Records from the source topic that have null keys are dropped.
+=======
+ *     final String queryableStoreName = table.getStoreName(); // returns null if KTable is not queryable
+ *     ReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.keyValueStore());
+ *     view.get(key);
+ *}</pre>
+>>>>>>> origin/0.10.2
  *
  * @param <K> Type of primary keys
  * @param <V> Type of value changes
@@ -90,18 +101,29 @@ public interface KTable<K, V> {
     KTable<K, V> filter(final Predicate<? super K, ? super V> predicate);
 
     /**
+<<<<<<< HEAD
      * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
      * predicate.
      * All records that do not satisfy the predicate are dropped.
+=======
+     * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
+     * given predicate.
+     * All records that <em>do</em> satisfy the predicate are dropped.
+>>>>>>> origin/0.10.2
      * For each {@code KTable} update the filter is evaluated on the update record to produce an update record for the
      * result {@code KTable}.
      * This is a stateless record-by-record operation.
      * <p>
+<<<<<<< HEAD
      * Note that {@code filter} for a <i>changelog stream</i> works different to {@link KStream#filter(Predicate)
+=======
+     * Note that {@code filterNot} for a <i>changelog stream</i> works different to {@link KStream#filterNot(Predicate)
+>>>>>>> origin/0.10.2
      * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
      * have delete semantics.
      * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
      * directly if required (i.e., if there is anything to be deleted).
+<<<<<<< HEAD
      * Furthermore, for each record that gets dropped (i.e., dot not satisfied the given predicate) a tombstone record
      * is forwarded.
      * <p>
@@ -257,6 +279,18 @@ public interface KTable<K, V> {
 
 
     /**
+=======
+     * Furthermore, for each record that gets dropped (i.e., does satisfy the given predicate) a tombstone record is
+     * forwarded.
+     *
+     * @param predicate a filter {@link Predicate} that is applied to each record
+     * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
+     * @see #filter(Predicate)
+     */
+    KTable<K, V> filterNot(final Predicate<? super K, ? super V> predicate);
+
+    /**
+>>>>>>> origin/0.10.2
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
      * (with possible new type)in the new {@code KTable}.
      * For each {@code KTable} update the provided {@link ValueMapper} is applied to the value of the update record and
@@ -292,6 +326,7 @@ public interface KTable<K, V> {
 
 
     /**
+<<<<<<< HEAD
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
      * (with possible new type)in the new {@code KTable}.
      * For each {@code KTable} update the provided {@link ValueMapper} is applied to the value of the update record and
@@ -376,6 +411,20 @@ public interface KTable<K, V> {
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
      * @param <VR>   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
+=======
+     * Print the update records of this {@code KTable} to {@code System.out}.
+     * This function will use the generated name of the parent processor node to label the key/value pairs printed to
+     * the console.
+     * <p>
+     * The provided serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
+     * {@code toString()} on the deserialized object.
+     * <p>
+     * Implementors will need to override {@code toString()} for keys and values that are not of type {@link String},
+     * {@link Integer} etc. to get meaningful information.
+     * <p>
+     * Note that {@code print()} is not applied to the internal state store and only called for each new {@code KTable}
+     * update record.
+>>>>>>> origin/0.10.2
      */
     <VR> KTable<K, VR> mapValues(final ValueMapper<? super V, ? extends VR> mapper,
                                  final Serde<VR> valueSerde,
@@ -416,6 +465,7 @@ public interface KTable<K, V> {
      * update record.
      *
      * @param streamName the name used to label the key/value pairs printed to the console
+<<<<<<< HEAD
      * @deprecated Use the Interactive Queries APIs (e.g., {@link KafkaStreams#store(String, QueryableStoreType) }
      * followed by {@link ReadOnlyKeyValueStore#all()}) to iterate over the keys of a KTable. Alternatively
      * convert to a KStream using {@code toStream()} and then use {@link KStream#print(String)} on the result.
@@ -450,6 +500,15 @@ public interface KTable<K, V> {
     /**
      * Print the update records of this {@code KTable} to {@code System.out}.
      * This function will use the given name to label the key/value pairs printed to the console.
+=======
+     */
+    void print(final String streamName);
+
+    /**
+     * Print the update records of this {@code KTable} to {@code System.out}.
+     * This function will use the generated name of the parent processor node to label the key/value pairs printed to
+     * the console.
+>>>>>>> origin/0.10.2
      * <p>
      * The provided serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
      * {@code toString()} on the deserialized object.
@@ -460,6 +519,7 @@ public interface KTable<K, V> {
      * Note that {@code print()} is not applied to the internal state store and only called for each new {@code KTable}
      * update record.
      *
+<<<<<<< HEAD
      * @param keySerde   key serde used to deserialize key if type is {@code byte[]},
      * @param valSerde   value serde used to deserialize value if type is {@code byte[]},
      * @param streamName the name used to label the key/value pairs printed to the console
@@ -521,6 +581,17 @@ public interface KTable<K, V> {
      * Write the update records of this {@code KTable} to a file at the given path.
      * This function will use the generated name of the parent processor node to label the key/value pairs printed to
      * the file.
+=======
+     * @param keySerde key serde used to deserialize key if type is {@code byte[]},
+     * @param valSerde value serde used to deserialize value if type is {@code byte[]},
+     */
+    void print(final Serde<K> keySerde,
+               final Serde<V> valSerde);
+
+    /**
+     * Print the update records of this {@code KTable} to {@code System.out}.
+     * This function will use the given name to label the key/value pairs printed to the console.
+>>>>>>> origin/0.10.2
      * <p>
      * The provided serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
      * {@code toString()} on the deserialized object.
@@ -528,6 +599,7 @@ public interface KTable<K, V> {
      * Implementors will need to override {@code toString()} for keys and values that are not of type {@link String},
      * {@link Integer} etc. to get meaningful information.
      * <p>
+<<<<<<< HEAD
      * Note that {@code writeAsText()} is not applied to the internal state store and only called for each new
      * {@code KTable} update record.
      *
@@ -546,6 +618,23 @@ public interface KTable<K, V> {
     /**
      * Write the update records of this {@code KTable} to a file at the given path.
      * This function will use the given name to label the key/value printed to the file.
+=======
+     * Note that {@code print()} is not applied to the internal state store and only called for each new {@code KTable}
+     * update record.
+     *
+     * @param keySerde   key serde used to deserialize key if type is {@code byte[]},
+     * @param valSerde   value serde used to deserialize value if type is {@code byte[]},
+     * @param streamName the name used to label the key/value pairs printed to the console
+     */
+    void print(final Serde<K> keySerde,
+               final Serde<V> valSerde,
+               final String streamName);
+
+    /**
+     * Write the update records of this {@code KTable} to a file at the given path.
+     * This function will use the generated name of the parent processor node to label the key/value pairs printed to
+     * the file.
+>>>>>>> origin/0.10.2
      * <p>
      * The default serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
      * {@code toString()} on the deserialized object.
@@ -555,6 +644,7 @@ public interface KTable<K, V> {
      * <p>
      * Note that {@code writeAsText()} is not applied to the internal state store and only called for each new
      * {@code KTable} update record.
+<<<<<<< HEAD
      *
      * @param filePath name of file to write to
      * @param streamName the name used to label the key/value pairs printed to the console
@@ -785,11 +875,138 @@ public interface KTable<K, V> {
      * used&mdash;otherwise producer's {@link DefaultPartitioner} is used.
      * <p>
      * This is equivalent to calling {@link #to(Serde, Serde, String) #to(keySerde, valueSerde, someTopicName)} and
+=======
+     *
+     * @param filePath name of file to write to
+     */
+    void writeAsText(final String filePath);
+
+    /**
+     * Write the update records of this {@code KTable} to a file at the given path.
+     * This function will use the given name to label the key/value printed to the file.
+     * <p>
+     * The default serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
+     * {@code toString()} on the deserialized object.
+     * <p>
+     * Implementors will need to override {@code toString()} for keys and values that are not of type {@link String},
+     * {@link Integer} etc. to get meaningful information.
+     * <p>
+     * Note that {@code writeAsText()} is not applied to the internal state store and only called for each new
+     * {@code KTable} update record.
+     *
+     * @param filePath   name of file to write to
+     * @param streamName the name used to label the key/value pairs printed out to the console
+     */
+    void writeAsText(final String filePath,
+                     final String streamName);
+
+    /**
+     * Write the update records of this {@code KTable} to a file at the given path.
+     * This function will use the generated name of the parent processor node to label the key/value pairs printed to
+     * the file.
+     * <p>
+     * The provided serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
+     * {@code toString()} on the deserialized object.
+     * <p>
+     * Implementors will need to override {@code toString()} for keys and values that are not of type {@link String},
+     * {@link Integer} etc. to get meaningful information.
+     * <p>
+     * Note that {@code writeAsText()} is not applied to the internal state store and only called for each new
+     * {@code KTable} update record.
+     *
+     * @param filePath name of file to write to
+     * @param keySerde key serde used to deserialize key if type is {@code byte[]},
+     * @param valSerde value serde used to deserialize value if type is {@code byte[]},
+     */
+    void  writeAsText(final String filePath,
+                      final Serde<K> keySerde,
+                      final Serde<V> valSerde);
+
+    /**
+     * Write the update records of this {@code KTable} to a file at the given path.
+     * This function will use the given name to label the key/value printed to the file.
+     * <p>
+     * The default serde will be used to deserialize the key or value in case the type is {@code byte[]} before calling
+     * {@code toString()} on the deserialized object.
+     * <p>
+     * Implementors will need to override {@code toString()} for keys and values that are not of type {@link String},
+     * {@link Integer} etc. to get meaningful information.
+     * <p>
+     * Note that {@code writeAsText()} is not applied to the internal state store and only called for each new
+     * {@code KTable} update record.
+     *
+     * @param filePath name of file to write to
+     * @param streamName the name used to label the key/value pairs printed to the console
+     * @param keySerde key serde used to deserialize key if type is {@code byte[]},
+     * @param valSerde value serde used to deserialize value if type is {@code byte[]},
+     */
+    void writeAsText(final String filePath,
+                     final String streamName,
+                     final Serde<K> keySerde,
+                     final Serde<V> valSerde);
+
+    /**
+     * Perform an action on each update record of this {@code KTable}.
+     * Note that this is a terminal operation that returns void.
+     * <p>
+     * Note that {@code foreach()} is not applied to the internal state store and only called for each new
+     * {@code KTable} update record.
+     *
+     * @param action an action to perform on each record
+     */
+    void foreach(final ForeachAction<? super K, ? super V> action);
+
+    /**
+     * Convert this changelog stream to a {@link KStream}.
+     * <p>
+     * Note that this is a logical operation and only changes the "interpretation" of the stream, i.e., each record of
+     * this changelog stream is no longer treated as an update record (cf. {@link KStream} vs {@code KTable}).
+     *
+     * @return a {@link KStream} that contains the same records as this {@code KTable}
+     */
+    KStream<K, V> toStream();
+
+    /**
+     * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
+     * <p>
+     * For example, you can compute the new key as the length of the value string.
+     * <pre>{@code
+     * KTable<String, String> table = builder.table("topic");
+     * KTable<Integer, String> keyedStream = table.toStream(new KeyValueMapper<String, String, Integer> {
+     *     Integer apply(String key, String value) {
+     *         return value.length();
+     *     }
+     * });
+     * }</pre>
+     * Setting a new key might result in an internal data redistribution if a key based operator (like an aggregation or
+     * join) is applied to the result {@link KStream}.
+     * <p>
+     * This operation is equivalent to calling
+     * {@code table.}{@link #toStream() toStream}{@code ().}{@link KStream#selectKey(KeyValueMapper) selectKey(KeyValueMapper)}.
+     * <p>
+     * Note that {@link #toStream()} is a logical operation and only changes the "interpretation" of the stream, i.e.,
+     * each record of this changelog stream is no longer treated as an update record (cf. {@link KStream} vs {@code KTable}).
+     *
+     * @param mapper a {@link KeyValueMapper} that computes a new key for each record
+     * @param <KR> the new key type of the result stream
+     * @return a {@link KStream} that contains the same records as this {@code KTable}
+     */
+    <KR> KStream<KR, V> toStream(final KeyValueMapper<? super K, ? super V, ? extends KR> mapper);
+
+    /**
+     * Materialize this changelog stream to a topic and creates a new {@code KTable} from the topic using default
+     * serializers and deserializers and producer's {@link DefaultPartitioner}.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     * <p>
+     * This is equivalent to calling {@link #to(String) #to(someTopicName)} and
+>>>>>>> origin/0.10.2
      * {@link KStreamBuilder#table(String, String) KStreamBuilder#table(someTopicName, queryableStoreName)}.
      * <p>
      * The resulting {@code KTable} will be materialized in a local state store with the given store name (cf.
      * {@link KStreamBuilder#table(String, String)})
      *
+<<<<<<< HEAD
      * @param keySerde  key serde used to send key-value pairs,
      *                  if not specified the default key serde defined in the configuration will be used
      * @param valSerde  value serde used to send key-value pairs,
@@ -834,11 +1051,53 @@ public interface KTable<K, V> {
      * <p>
      * This is equivalent to calling {@link #to(Serde, Serde, StreamPartitioner, String)
      * #to(keySerde, valueSerde, partitioner, someTopicName)} and
+=======
+     * @param topic     the topic name
+     * @param storeName the state store name used for the result {@code KTable}
+     * @return a {@code KTable} that contains the exact same (and potentially repartitioned) records as this {@code KTable}
+     */
+    KTable<K, V> through(final String topic,
+                         final String storeName);
+
+    /**
+     * Materialize this changelog stream to a topic and creates a new {@code KTable} from the topic using default
+     * serializers and deserializers and a customizable {@link StreamPartitioner} to determine the distribution of
+     * records to partitions.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     * <p>
+     * This is equivalent to calling {@link #to(StreamPartitioner, String) #to(partitioner, someTopicName)} and
      * {@link KStreamBuilder#table(String, String) KStreamBuilder#table(someTopicName, queryableStoreName)}.
      * <p>
      * The resulting {@code KTable} will be materialized in a local state store with the given store name (cf.
      * {@link KStreamBuilder#table(String, String)})
      *
+     * @param partitioner the function used to determine how records are distributed among partitions of the topic,
+     *                    if not specified producer's {@link DefaultPartitioner} will be used
+     * @param topic       the topic name
+     * @param storeName   the state store name used for the result {@code KTable}
+     * @return a {@code KTable} that contains the exact same (and potentially repartitioned) records as this {@code KTable}
+     */
+    KTable<K, V> through(final StreamPartitioner<? super K, ? super V> partitioner,
+                         final String topic,
+                         final String storeName);
+
+    /**
+     * Materialize this changelog stream to a topic and creates a new {@code KTable} from the topic.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     * <p>
+     * If {@code keySerde} provides a {@link WindowedSerializer} for the key {@link WindowedStreamPartitioner} is
+     * used&mdash;otherwise producer's {@link DefaultPartitioner} is used.
+     * <p>
+     * This is equivalent to calling {@link #to(Serde, Serde, String) #to(keySerde, valueSerde, someTopicName)} and
+>>>>>>> origin/0.10.2
+     * {@link KStreamBuilder#table(String, String) KStreamBuilder#table(someTopicName, queryableStoreName)}.
+     * <p>
+     * The resulting {@code KTable} will be materialized in a local state store with the given store name (cf.
+     * {@link KStreamBuilder#table(String, String)})
+     *
+<<<<<<< HEAD
      * @param keySerde    key serde used to send key-value pairs,
      *                    if not specified the default key serde defined in the configuration will be used
      * @param valSerde    value serde used to send key-value pairs,
@@ -857,6 +1116,19 @@ public interface KTable<K, V> {
                          final StreamPartitioner<? super K, ? super V> partitioner,
                          final String topic,
                          final String queryableStoreName);
+=======
+     * @param keySerde  key serde used to send key-value pairs,
+     *                  if not specified the default key serde defined in the configuration will be used
+     * @param valSerde  value serde used to send key-value pairs,
+     *                  if not specified the default value serde defined in the configuration will be used
+     * @param topic     the topic name
+     * @param storeName the state store name used for the result {@code KTable}
+     * @return a {@code KTable} that contains the exact same (and potentially repartitioned) records as this {@code KTable}
+     */
+    KTable<K, V> through(final Serde<K> keySerde, Serde<V> valSerde,
+                         final String topic,
+                         final String storeName);
+>>>>>>> origin/0.10.2
 
     /**
      * Materialize this changelog stream to a topic and creates a new {@code KTable} from the topic using a customizable
@@ -880,13 +1152,18 @@ public interface KTable<K, V> {
      *                    {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} will
      *                    be used
      * @param topic      the topic name
+<<<<<<< HEAD
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
+=======
+     * @param storeName  the state store name used for the result {@code KTable}
+>>>>>>> origin/0.10.2
      * @return a {@code KTable} that contains the exact same (and potentially repartitioned) records as this {@code KTable}
      */
     KTable<K, V> through(final Serde<K> keySerde,
                          final Serde<V> valSerde,
                          final StreamPartitioner<? super K, ? super V> partitioner,
                          final String topic,
+<<<<<<< HEAD
                          final StateStoreSupplier<KeyValueStore> storeSupplier);
 
     /**
@@ -939,6 +1216,30 @@ public interface KTable<K, V> {
      *                    if not specified producer's {@link DefaultPartitioner} will be used
      * @param topic       the topic name
      */
+=======
+                         final String storeName);
+
+    /**
+     * Materialize this changelog stream to a topic using default serializers and deserializers and producer's
+     * {@link DefaultPartitioner}.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     *
+     * @param topic the topic name
+     */
+    void to(final String topic);
+
+    /**
+     * Materialize this changelog stream to a topic using default serializers and deserializers and a customizable
+     * {@link StreamPartitioner} to determine the distribution of records to partitions.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     *
+     * @param partitioner the function used to determine how records are distributed among partitions of the topic,
+     *                    if not specified producer's {@link DefaultPartitioner} will be used
+     * @param topic       the topic name
+     */
+>>>>>>> origin/0.10.2
     void to(final StreamPartitioner<? super K, ? super V> partitioner,
             final String topic);
 
@@ -949,6 +1250,7 @@ public interface KTable<K, V> {
      * <p>
      * If {@code keySerde} provides a {@link WindowedSerializer} for the key {@link WindowedStreamPartitioner} is
      * used&mdash;otherwise producer's {@link DefaultPartitioner} is used.
+<<<<<<< HEAD
      *
      * @param keySerde key serde used to send key-value pairs,
      *                 if not specified the default key serde defined in the configuration will be used
@@ -1452,6 +1754,105 @@ public interface KTable<K, V> {
      * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
      * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
      * an output record (cf. below).
+=======
+     *
+     * @param keySerde key serde used to send key-value pairs,
+     *                 if not specified the default key serde defined in the configuration will be used
+     * @param valSerde value serde used to send key-value pairs,
+     *                 if not specified the default value serde defined in the configuration will be used
+     * @param topic    the topic name
+     */
+    void to(final Serde<K> keySerde,
+            final Serde<V> valSerde,
+            final String topic);
+
+    /**
+     * Materialize this changelog stream to a topic using a customizable {@link StreamPartitioner} to determine the
+     * distribution of records to partitions.
+     * The specified topic should be manually created before it is used (i.e., before the Kafka Streams application is
+     * started).
+     *
+     * @param keySerde    key serde used to send key-value pairs,
+     *                    if not specified the default key serde defined in the configuration will be used
+     * @param valSerde    value serde used to send key-value pairs,
+     *                    if not specified the default value serde defined in the configuration will be used
+     * @param partitioner the function used to determine how records are distributed among partitions of the topic,
+     *                    if not specified and {@code keySerde} provides a {@link WindowedSerializer} for the key
+     *                    {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} will
+     *                    be used
+     * @param topic      the topic name
+     */
+    void to(final Serde<K> keySerde,
+            final Serde<V> valSerde,
+            final StreamPartitioner<? super K, ? super V> partitioner,
+            final String topic);
+
+    /**
+     * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper} and default serializers
+     * and deserializers.
+     * Each {@link KeyValue} pair of this {@code KTable} is mapped to a new {@link KeyValue} pair by applying the
+     * provided {@link KeyValueMapper}.
+     * Re-grouping a {@code KTable} is required before an aggregation operator can be applied to the data
+     * (cf. {@link KGroupedTable}).
+     * The {@link KeyValueMapper} selects a new key and value (with should both have unmodified type).
+     * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedTable}
+     * <p>
+     * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
+     * This topic will be named "${applicationId}-XXX-repartition", where "applicationId" is user-specified in
+     * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "XXX" is
+     * an internally generated name, and "-repartition" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     * <p>
+     * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing all update
+     * records to and rereading all update records from it, such that the resulting {@link KGroupedTable} is partitioned
+     * on the new key.
+     * <p>
+     * If the key or value type is changed, it is recommended to use {@link #groupBy(KeyValueMapper, Serde, Serde)}
+     * instead.
+     *
+     * @param selector a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
+     * @param <KR>     the key type of the result {@link KGroupedTable}
+     * @param <VR>     the value type of the result {@link KGroupedTable}
+     * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
+     */
+    <KR, VR> KGroupedTable<KR, VR> groupBy(final KeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector);
+
+    /**
+     * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}.
+     * Each {@link KeyValue} pair of this {@code KTable} is mapped to a new {@link KeyValue} pair by applying the
+     * provided {@link KeyValueMapper}.
+     * Re-grouping a {@code KTable} is required before an aggregation operator can be applied to the data
+     * (cf. {@link KGroupedTable}).
+     * The {@link KeyValueMapper} selects a new key and value (both with potentially different type).
+     * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedTable}
+     * <p>
+     * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
+     * This topic will be named "${applicationId}-XXX-repartition", where "applicationId" is user-specified in
+     * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "XXX" is
+     * an internally generated name, and "-repartition" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     * <p>
+     * All data of this {@code KTable} will be redistributed through the repartitioning topic by writing all update
+     * records to and rereading all update records from it, such that the resulting {@link KGroupedTable} is partitioned
+     * on the new key.
+     *
+     * @param selector   a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
+     * @param keySerde   key serdes for materializing this stream,
+     *                   if not specified the default serdes defined in the configs will be used
+     * @param valueSerde value serdes for materializing this stream,
+     *                   if not specified the default serdes defined in the configs will be used
+     * @param <KR>       the key type of the result {@link KGroupedTable}
+     * @param <VR>       the value type of the result {@link KGroupedTable}
+     * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
+     */
+    <KR, VR> KGroupedTable<KR, VR> groupBy(final KeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
+                                           final Serde<KR> keySerde,
+                                           final Serde<VR> valueSerde);
+
+    /**
+     * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join.
+     * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
+>>>>>>> origin/0.10.2
      * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
      * of the join.
      * <p>
@@ -1460,6 +1861,7 @@ public interface KTable<K, V> {
      * This happens in a symmetric way, i.e., for each update of either {@code this} or the {@code other} input
      * {@code KTable} the result gets updated.
      * <p>
+<<<<<<< HEAD
      * For each {@code KTable} record that finds a corresponding record in the other {@code KTable}'s state the
      * provided {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
      * Additionally, for each record of left {@code KTable} that does not find a corresponding record in the
@@ -1471,6 +1873,15 @@ public interface KTable<K, V> {
      * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
      * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
      * deleted).
+=======
+     * For each {@code KTable} record that finds a corresponding record in the other {@code KTable} the provided
+     * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
+     * The key of the result record is the same as for both joining input records.
+     * <p>
+     * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+     * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded
+     * directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
+>>>>>>> origin/0.10.2
      * <p>
      * Input records with {@code null} key will be dropped and no join computation is performed.
      * <p>
@@ -1488,7 +1899,11 @@ public interface KTable<K, V> {
      * <td>&lt;K1:A&gt;</td>
      * <td></td>
      * <td></td>
+<<<<<<< HEAD
      * <td>&lt;K1:ValueJoiner(A,null)&gt;</td>
+=======
+     * <td></td>
+>>>>>>> origin/0.10.2
      * </tr>
      * <tr>
      * <td></td>
@@ -1498,6 +1913,7 @@ public interface KTable<K, V> {
      * <td>&lt;K1:ValueJoiner(A,b)&gt;</td>
      * </tr>
      * <tr>
+<<<<<<< HEAD
      * <td>&lt;K1:null&gt;</td>
      * <td></td>
      * <td></td>
@@ -1510,6 +1926,20 @@ public interface KTable<K, V> {
      * <td>&lt;K1:null&gt;</td>
      * <td></td>
      * <td></td>
+=======
+     * <td>&lt;K1:C&gt;</td>
+     * <td>&lt;K1:C&gt;</td>
+     * <td></td>
+     * <td>&lt;K1:b&gt;</td>
+     * <td>&lt;K1:ValueJoiner(C,b)&gt;</td>
+     * </tr>
+     * <tr>
+     * <td></td>
+     * <td>&lt;K1:C&gt;</td>
+     * <td>&lt;K1:null&gt;</td>
+     * <td></td>
+     * <td>&lt;K1:null&gt;</td>
+>>>>>>> origin/0.10.2
      * </tr>
      * </table>
      * Both input streams (or to be more precise, their underlying source topics) need to have the same number of
@@ -1519,6 +1949,7 @@ public interface KTable<K, V> {
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param <VO>   the value type of the other {@code KTable}
      * @param <VR>   the value type of the result {@code KTable}
+<<<<<<< HEAD
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
@@ -1537,6 +1968,22 @@ public interface KTable<K, V> {
      * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
      * In contrast to {@link #join(KTable, ValueJoiner) inner-join} or {@link #leftJoin(KTable, ValueJoiner) left-join},
      * all records from both input {@code KTable}s will produce an output record (cf. below).
+=======
+     * @return a {@code KTable} that contains join-records for each key and values computed by the given
+     * {@link ValueJoiner}, one for each matched record-pair with the same key
+     * @see #leftJoin(KTable, ValueJoiner)
+     * @see #outerJoin(KTable, ValueJoiner)
+     */
+    <VO, VR> KTable<K, VR> join(final KTable<K, VO> other,
+                                final ValueJoiner<? super V, ? super VO, ? extends VR> joiner);
+
+    /**
+     * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
+     * non-windowed left equi join.
+     * The join is a primary key join with join attribute {@code thisKTable.key == otherKTable.key}.
+     * In contrast to {@link #join(KTable, ValueJoiner) inner-join}, all records from left {@code KTable} will produce
+     * an output record (cf. below).
+>>>>>>> origin/0.10.2
      * The result is an ever updating {@code KTable} that represents the <em>current</em> (i.e., processing time) result
      * of the join.
      * <p>
@@ -1547,6 +1994,7 @@ public interface KTable<K, V> {
      * <p>
      * For each {@code KTable} record that finds a corresponding record in the other {@code KTable}'s state the
      * provided {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
+<<<<<<< HEAD
      * Additionally, for each record that does not find a corresponding record in the corresponding other
      * {@code KTable}'s state the provided {@link ValueJoiner} will be called with {@code null} value for the
      * corresponding other value to compute a value (with arbitrary type) for the result record.
@@ -1555,6 +2003,17 @@ public interface KTable<K, V> {
      * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
      * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded directly
      * to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
+=======
+     * Additionally, for each record of left {@code KTable} that does not find a corresponding record in the
+     * right {@code KTable}'s state the provided {@link ValueJoiner} will be called with {@code rightValue =
+     * null} to compute a value (with arbitrary type) for the result record.
+     * The key of the result record is the same as for both joining input records.
+     * <p>
+     * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+     * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
+     * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
+     * deleted).
+>>>>>>> origin/0.10.2
      * <p>
      * Input records with {@code null} key will be dropped and no join computation is performed.
      * <p>
@@ -1586,6 +2045,7 @@ public interface KTable<K, V> {
      * <td></td>
      * <td></td>
      * <td>&lt;K1:b&gt;</td>
+<<<<<<< HEAD
      * <td>&lt;K1:ValueJoiner(null,b)&gt;</td>
      * </tr>
      * <tr>
@@ -1675,6 +2135,16 @@ public interface KTable<K, V> {
      * <td>&lt;K1:null&gt;</td>
      * <td></td>
      * <td>&lt;K1:null&gt;</td>
+=======
+     * <td>&lt;K1:null&gt;</td>
+     * </tr>
+     * <tr>
+     * <td></td>
+     * <td></td>
+     * <td>&lt;K1:null&gt;</td>
+     * <td></td>
+     * <td></td>
+>>>>>>> origin/0.10.2
      * </tr>
      * </table>
      * Both input streams (or to be more precise, their underlying source topics) need to have the same number of
@@ -1684,6 +2154,7 @@ public interface KTable<K, V> {
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param <VO>   the value type of the other {@code KTable}
      * @param <VR>   the value type of the result {@code KTable}
+<<<<<<< HEAD
      * @param joinSerde serializer for join result value type
      * @param queryableStoreName a user-provided name of the underlying {@link KTable} that can be
      * used to subsequently query the operation results; valid characters are ASCII
@@ -1699,6 +2170,16 @@ public interface KTable<K, V> {
                                      final ValueJoiner<? super V, ? super VO, ? extends VR> joiner,
                                      final Serde<VR> joinSerde,
                                      final String queryableStoreName);
+=======
+     * @return a {@code KTable} that contains join-records for each key and values computed by the given
+     * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
+     * left {@code KTable}
+     * @see #join(KTable, ValueJoiner)
+     * @see #outerJoin(KTable, ValueJoiner)
+     */
+    <VO, VR> KTable<K, VR> leftJoin(final KTable<K, VO> other,
+                                    final ValueJoiner<? super V, ? super VO, ? extends VR> joiner);
+>>>>>>> origin/0.10.2
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1772,7 +2253,10 @@ public interface KTable<K, V> {
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param <VO>   the value type of the other {@code KTable}
      * @param <VR>   the value type of the result {@code KTable}
+<<<<<<< HEAD
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
+=======
+>>>>>>> origin/0.10.2
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KTable}s
@@ -1780,6 +2264,7 @@ public interface KTable<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> outerJoin(final KTable<K, VO> other,
+<<<<<<< HEAD
                                      final ValueJoiner<? super V, ? super VO, ? extends VR> joiner,
                                      final StateStoreSupplier<KeyValueStore> storeSupplier);
 
@@ -1787,6 +2272,14 @@ public interface KTable<K, V> {
      * Get the name of the local state store used that can be used to query this {@code KTable}.
      *
      * @return the underlying state store name, or {@code null} if this {@code KTable} cannot be queried.
+=======
+                                     final ValueJoiner<? super V, ? super VO, ? extends VR> joiner);
+
+    /**
+     * Get the name of the local state store used for materializing this {@code KTable}.
+     *
+     * @return the underlying state store name, or {@code null} if this {@code KTable} is not materialized
+>>>>>>> origin/0.10.2
      */
     String queryableStoreName();
 }

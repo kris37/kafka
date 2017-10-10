@@ -46,7 +46,11 @@ public interface KGroupedTable<K, V> {
      * the same key into a new instance of {@link KTable}.
      * Records with {@code null} key are ignored.
      * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
+<<<<<<< HEAD
      * that can be queried using the provided {@code queryableStoreName}.
+=======
+     * that can be queried using the provided {@code storeName}.
+>>>>>>> origin/0.10.2
      * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
      * <p>
      * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
@@ -60,7 +64,11 @@ public interface KGroupedTable<K, V> {
      * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
      * KafkaStreams streams = ... // counting words
+<<<<<<< HEAD
      * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+=======
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+>>>>>>> origin/0.10.2
      * String key = "some-word";
      * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
@@ -68,6 +76,7 @@ public interface KGroupedTable<K, V> {
      * query the value of the key on a parallel running instance of your Kafka Streams application.
      * <p>
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+<<<<<<< HEAD
      * The changelog topic will be named "${applicationId}-${queryableStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "queryableStoreName" is the
@@ -110,6 +119,19 @@ public interface KGroupedTable<K, V> {
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
     KTable<K, Long> count();
+=======
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     *
+     * @param storeName the name of the underlying {@link KTable} state store
+     * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
+     * represent the latest (rolling) count (i.e., number of records) for each key
+     */
+    KTable<K, Long> count(final String storeName);
+>>>>>>> origin/0.10.2
 
     /**
      * Count number of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper) mapped} to
@@ -130,8 +152,13 @@ public interface KGroupedTable<K, V> {
      * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
      * KafkaStreams streams = ... // counting words
+<<<<<<< HEAD
      * String queryableStoreName = storeSupplier.name();
      * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+=======
+     * String storeName = storeSupplier.name();
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+>>>>>>> origin/0.10.2
      * String key = "some-word";
      * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
@@ -139,6 +166,7 @@ public interface KGroupedTable<K, V> {
      * query the value of the key on a parallel running instance of your Kafka Streams application.
      * <p>
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+<<<<<<< HEAD
      * The changelog topic will be named "${applicationId}-${queryableStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "queryableStoreName" is the
@@ -146,10 +174,20 @@ public interface KGroupedTable<K, V> {
      * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
      *
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
+=======
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     *
+     * @param storeSupplier user defined state store supplier
+>>>>>>> origin/0.10.2
      * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
     KTable<K, Long> count(final StateStoreSupplier<KeyValueStore> storeSupplier);
+<<<<<<< HEAD
 
     /**
      * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -389,6 +427,39 @@ public interface KGroupedTable<K, V> {
      * public class SumSubstractor implements Aggregator<String, Integer, Long> {
      *   public Long apply(String key, Integer oldValue, Long aggregate) {
      *     return aggregate - oldValue;
+=======
+
+    /**
+     * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
+     * mapped} to the same key into a new instance of {@link KTable}.
+     * Records with {@code null} key are ignored.
+     * Combining implies that the type of the aggregate result is the same as the type of the input value
+     * (c.f. {@link #aggregate(Initializer, Aggregator, Aggregator, Serde, String)}).
+     * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
+     * that can be queried using the provided {@code storeName}.
+     * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
+     * <p>
+     * Each update to the original {@link KTable} results in a two step update of the result {@link KTable}.
+     * The specified {@link Reducer adder} is applied for each update record and computes a new aggregate using the
+     * current aggregate and the record's value by adding the new record to the aggregate.
+     * The specified {@link Reducer substractor} is applied for each "replaced" record of the original {@link KTable}
+     * and computes a new aggregate using the current aggregate and the record's value by "removing" the "replaced"
+     * record from the aggregate.
+     * If there is no current aggregate the {@link Reducer} is not applied and the new aggregate will be the record's
+     * value as-is.
+     * Thus, {@code reduce(Reducer, Reducer, String)} can be used to compute aggregate functions like sum.
+     * For sum, the adder and substractor would work as follows:
+     * <pre>{@code
+     * public class SumAdder implements Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer newValue) {
+     *     return currentAgg + newValue;
+     *   }
+     * }
+     *
+     * public class SumSubtractor implements Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer oldValue) {
+     *     return currentAgg - oldValue;
+>>>>>>> origin/0.10.2
      *   }
      * }
      * }</pre>
@@ -403,7 +474,11 @@ public interface KGroupedTable<K, V> {
      * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
      * KafkaStreams streams = ... // counting words
+<<<<<<< HEAD
      * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+=======
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+>>>>>>> origin/0.10.2
      * String key = "some-word";
      * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
@@ -411,6 +486,7 @@ public interface KGroupedTable<K, V> {
      * query the value of the key on a parallel running instance of your Kafka Streams application.
      * <p>
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+<<<<<<< HEAD
      * The changelog topic will be named "${applicationId}-${queryableStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "queryableStoreName" is the
@@ -440,10 +516,35 @@ public interface KGroupedTable<K, V> {
      * If the result value type does not match the {@link StreamsConfig#VALUE_SERDE_CLASS_CONFIG default value
      * serde} you should use {@link KGroupedTable#aggregate(Initializer, Aggregator, Aggregator, Serde, String)
      * aggregate(Initializer, Aggregator, Aggregator, Serde, String)}.
+=======
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     *
+     * @param adder      a {@link Reducer} that adds a new value to the aggregate result
+     * @param subtractor a {@link Reducer} that removed an old value from the aggregate result
+     * @param storeName  the name of the underlying {@link KTable} state store
+     * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
+     * latest (rolling) aggregate for each key
+     */
+    KTable<K, V> reduce(final Reducer<V> adder,
+                        final Reducer<V> subtractor,
+                        final String storeName);
+
+    /**
+     * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
+     * mapped} to the same key into a new instance of {@link KTable}.
+     * Records with {@code null} key are ignored.
+     * Combining implies that the type of the aggregate result is the same as the type of the input value
+     * (c.f. {@link #aggregate(Initializer, Aggregator, Aggregator, Serde, String)}).
+>>>>>>> origin/0.10.2
      * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
      * provided by the given {@code storeSupplier}.
      * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
      * <p>
+<<<<<<< HEAD
      * The specified {@link Initializer} is applied once directly before the first input record is processed to
      * provide an initial intermediate aggregation result that is used to process the first record.
      * Each update to the original {@link KTable} results in a two step update of the result {@link KTable}.
@@ -473,6 +574,28 @@ public interface KGroupedTable<K, V> {
      * public class SumSubstractor implements Aggregator<String, Integer, Long> {
      *   public Long apply(String key, Integer oldValue, Long aggregate) {
      *     return aggregate - oldValue;
+=======
+     * Each update to the original {@link KTable} results in a two step update of the result {@link KTable}.
+     * The specified {@link Reducer adder} is applied for each update record and computes a new aggregate using the
+     * current aggregate and the record's value by adding the new record to the aggregate.
+     * The specified {@link Reducer substractor} is applied for each "replaced" record of the original {@link KTable}
+     * and computes a new aggregate using the current aggregate and the record's value by "removing" the "replaced"
+     * record from the aggregate.
+     * If there is no current aggregate the {@link Reducer} is not applied and the new aggregate will be the record's
+     * value as-is.
+     * Thus, {@code reduce(Reducer, Reducer, String)} can be used to compute aggregate functions like sum.
+     * For sum, the adder and substractor would work as follows:
+     * <pre>{@code
+     * public class SumAdder implements Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer newValue) {
+     *     return currentAgg + newValue;
+     *   }
+     * }
+     *
+     * public class SumSubtractor implements Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer oldValue) {
+     *     return currentAgg - oldValue;
+>>>>>>> origin/0.10.2
      *   }
      * }
      * }</pre>
@@ -482,6 +605,7 @@ public interface KGroupedTable<K, V> {
      * parallel running Kafka Streams instances, and the {@link StreamsConfig configuration} parameters for
      * {@link StreamsConfig#CACHE_MAX_BYTES_BUFFERING_CONFIG cache size}, and
      * {@link StreamsConfig#COMMIT_INTERVAL_MS_CONFIG commit intervall}.
+<<<<<<< HEAD
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
      * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
@@ -501,6 +625,37 @@ public interface KGroupedTable<K, V> {
                                  final Aggregator<? super K, ? super V, VR> adder,
                                  final Aggregator<? super K, ? super V, VR> subtractor);
 
+=======
+     * <p>
+     * To query the local {@link KeyValueStore} it must be obtained via
+     * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
+     * <pre>{@code
+     * KafkaStreams streams = ... // counting words
+     * String storeName = storeSupplier.name();
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+     * String key = "some-word";
+     * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * }</pre>
+     * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
+     * query the value of the key on a parallel running instance of your Kafka Streams application.
+     * <p>
+     * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     *
+     * @param adder         a {@link Reducer} that adds a new value to the aggregate result
+     * @param subtractor    a {@link Reducer} that removed an old value from the aggregate result
+     * @param storeSupplier user defined state store supplier
+     * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
+     * latest (rolling) aggregate for each key
+     */
+    KTable<K, V> reduce(final Reducer<V> adder,
+                        final Reducer<V> subtractor,
+                        final StateStoreSupplier<KeyValueStore> storeSupplier);
+>>>>>>> origin/0.10.2
 
     /**
      * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -508,8 +663,16 @@ public interface KGroupedTable<K, V> {
      * Records with {@code null} key are ignored.
      * Aggregating is a generalization of {@link #reduce(Reducer, Reducer, String) combining via reduce(...)} as it,
      * for example, allows the result to have a different type than the input values.
+<<<<<<< HEAD
      * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
      * that can be queried using the provided {@code queryableStoreName}.
+=======
+     * If the result value type does not match the {@link StreamsConfig#VALUE_SERDE_CLASS_CONFIG default value
+     * serde} you should use {@link KGroupedTable#aggregate(Initializer, Aggregator, Aggregator, Serde, String)
+     * aggregate(Initializer, Aggregator, Aggregator, Serde, String)}.
+     * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
+     * provided by the given {@code storeSupplier}.
+>>>>>>> origin/0.10.2
      * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
      * <p>
      * The specified {@link Initializer} is applied once directly before the first input record is processed to
@@ -525,6 +688,10 @@ public interface KGroupedTable<K, V> {
      * like sum.
      * For sum, the initializer, adder, and substractor would work as follows:
      * <pre>{@code
+<<<<<<< HEAD
+=======
+     * // in this example, LongSerde.class must be set as default value serde in StreamsConfig
+>>>>>>> origin/0.10.2
      * public class SumInitializer implements Initializer<Long> {
      *   public Long apply() {
      *     return 0L;
@@ -554,7 +721,11 @@ public interface KGroupedTable<K, V> {
      * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
      * KafkaStreams streams = ... // counting words
+<<<<<<< HEAD
      * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+=======
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+>>>>>>> origin/0.10.2
      * String key = "some-word";
      * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
@@ -562,6 +733,7 @@ public interface KGroupedTable<K, V> {
      * query the value of the key on a parallel running instance of your Kafka Streams application.
      * <p>
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+<<<<<<< HEAD
      * The changelog topic will be named "${applicationId}-${queryableStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "queryableStoreName" is the
@@ -578,14 +750,31 @@ public interface KGroupedTable<K, V> {
      * @param queryableStoreName     the name of the underlying {@link KTable} state store; valid characters are ASCII
      * alphanumerics, '.', '_' and '-'. If {@code null} this is the equivalent of {@link KGroupedTable#aggregate(Initializer, Aggregator, Aggregator, Serde)} ()}.
      * @param <VR>          the value type of the aggregated {@link KTable}
+=======
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+     * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
+     *
+     * @param initializer a {@link Initializer} that provides an initial aggregate result value
+     * @param adder       a {@link Aggregator} that adds a new record to the aggregate result
+     * @param subtractor  a {@link Aggregator} that removed an old record from the aggregate result
+     * @param storeName   the name of the underlying {@link KTable} state store
+     * @param <VR>        the value type of the aggregated {@link KTable}
+>>>>>>> origin/0.10.2
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
     <VR> KTable<K, VR> aggregate(final Initializer<VR> initializer,
                                  final Aggregator<? super K, ? super V, VR> adder,
                                  final Aggregator<? super K, ? super V, VR> subtractor,
+<<<<<<< HEAD
                                  final Serde<VR> aggValueSerde,
                                  final String queryableStoreName);
+=======
+                                 final String storeName);
+>>>>>>> origin/0.10.2
 
     /**
      * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -594,7 +783,11 @@ public interface KGroupedTable<K, V> {
      * Aggregating is a generalization of {@link #reduce(Reducer, Reducer, String) combining via reduce(...)} as it,
      * for example, allows the result to have a different type than the input values.
      * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
+<<<<<<< HEAD
      * that can be queried using the provided {@code queryableStoreName}.
+=======
+     * that can be queried using the provided {@code storeName}.
+>>>>>>> origin/0.10.2
      * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
      * <p>
      * The specified {@link Initializer} is applied once directly before the first input record is processed to
@@ -635,12 +828,31 @@ public interface KGroupedTable<K, V> {
      * {@link StreamsConfig#CACHE_MAX_BYTES_BUFFERING_CONFIG cache size}, and
      * {@link StreamsConfig#COMMIT_INTERVAL_MS_CONFIG commit intervall}.
      * <p>
+<<<<<<< HEAD
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
      * The changelog topic will be named "${applicationId}-${internalStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "internalStoreName" is an internal name
      * and "-changelog" is a fixed suffix.
      * Note that the internal store name may not be queriable through Interactive Queries.
+=======
+     * To query the local {@link KeyValueStore} it must be obtained via
+     * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
+     * <pre>{@code
+     * KafkaStreams streams = ... // counting words
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+     * String key = "some-word";
+     * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * }</pre>
+     * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
+     * query the value of the key on a parallel running instance of your Kafka Streams application.
+     * <p>
+     * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+>>>>>>> origin/0.10.2
      * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
      *
      * @param initializer   a {@link Initializer} that provides an initial aggregate result value
@@ -648,6 +860,10 @@ public interface KGroupedTable<K, V> {
      * @param subtractor    a {@link Aggregator} that removed an old record from the aggregate result
      * @param aggValueSerde aggregate value serdes for materializing the aggregated table,
      *                      if not specified the default serdes defined in the configs will be used
+<<<<<<< HEAD
+=======
+     * @param storeName     the name of the underlying {@link KTable} state store
+>>>>>>> origin/0.10.2
      * @param <VR>          the value type of the aggregated {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
@@ -655,8 +871,13 @@ public interface KGroupedTable<K, V> {
     <VR> KTable<K, VR> aggregate(final Initializer<VR> initializer,
                                  final Aggregator<? super K, ? super V, VR> adder,
                                  final Aggregator<? super K, ? super V, VR> subtractor,
+<<<<<<< HEAD
                                  final Serde<VR> aggValueSerde);
 
+=======
+                                 final Serde<VR> aggValueSerde,
+                                 final String storeName);
+>>>>>>> origin/0.10.2
 
     /**
      * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -710,8 +931,13 @@ public interface KGroupedTable<K, V> {
      * {@link KafkaStreams#store(String, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
      * KafkaStreams streams = ... // counting words
+<<<<<<< HEAD
      * String queryableStoreName = storeSupplier.name();
      * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<String, Long>keyValueStore());
+=======
+     * String storeName = storeSupplier.name();
+     * ReadOnlyKeyValueStore<String,Long> localStore = streams.store(storeName, QueryableStoreTypes.<String, Long>keyValueStore());
+>>>>>>> origin/0.10.2
      * String key = "some-word";
      * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
@@ -719,16 +945,27 @@ public interface KGroupedTable<K, V> {
      * query the value of the key on a parallel running instance of your Kafka Streams application.
      * <p>
      * For failure and recovery the store will be backed by an internal changelog topic that will be created in Kafka.
+<<<<<<< HEAD
      * The changelog topic will be named "${applicationId}-${queryableStoreName}-changelog", where "applicationId" is
      * user-specified in {@link StreamsConfig} via parameter
      * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "queryableStoreName" is the
      * provide {@code queryableStoreName}, and "-changelog" is a fixed suffix.
+=======
+     * The changelog topic will be named "${applicationId}-${storeName}-changelog", where "applicationId" is
+     * user-specified in {@link StreamsConfig} via parameter
+     * {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG}, "storeName" is the
+     * provide {@code storeName}, and "-changelog" is a fixed suffix.
+>>>>>>> origin/0.10.2
      * You can retrieve all generated internal topic names via {@link KafkaStreams#toString()}.
      *
      * @param initializer   a {@link Initializer} that provides an initial aggregate result value
      * @param adder         a {@link Aggregator} that adds a new record to the aggregate result
      * @param subtractor    a {@link Aggregator} that removed an old record from the aggregate result
+<<<<<<< HEAD
      * @param storeSupplier user defined state store supplier. Cannot be {@code null}.
+=======
+     * @param storeSupplier user defined state store supplier
+>>>>>>> origin/0.10.2
      * @param <VR>          the value type of the aggregated {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key

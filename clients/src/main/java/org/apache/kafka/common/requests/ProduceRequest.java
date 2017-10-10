@@ -101,7 +101,17 @@ public class ProduceRequest extends AbstractRequest {
 
     private final short acks;
     private final int timeout;
+<<<<<<< HEAD
     private final String transactionalId;
+=======
+
+    private final Map<TopicPartition, Integer> partitionSizes;
+
+    // This is set to null by `clearPartitionRecords` to prevent unnecessary memory retention when a produce request is
+    // put in the purgatory (due to client throttling, it can take a while before the response is sent).
+    // Care should be taken in methods that use this field.
+    private volatile Map<TopicPartition, MemoryRecords> partitionRecords;
+>>>>>>> origin/0.10.2
 
     private final Map<TopicPartition, Integer> partitionSizes;
 
@@ -120,9 +130,12 @@ public class ProduceRequest extends AbstractRequest {
         this.transactionalId = transactionalId;
         this.partitionRecords = partitionRecords;
         this.partitionSizes = createPartitionSizes(partitionRecords);
+<<<<<<< HEAD
 
         for (MemoryRecords records : partitionRecords.values())
             validateRecords(version, records);
+=======
+>>>>>>> origin/0.10.2
     }
 
     private static Map<TopicPartition, Integer> createPartitionSizes(Map<TopicPartition, MemoryRecords> partitionRecords) {
@@ -180,6 +193,7 @@ public class ProduceRequest extends AbstractRequest {
      * Visible for testing.
      */
     @Override
+<<<<<<< HEAD
     public Struct toStruct() {
         // Store it in a local variable to protect against concurrent updates
         Map<TopicPartition, MemoryRecords> partitionRecords = partitionRecordsOrFail();
@@ -224,18 +238,36 @@ public class ProduceRequest extends AbstractRequest {
             bld.append(",numPartitions=").append(partitionSizes.size());
 
         bld.append("}");
+=======
+    public String toString() {
+        // Use the same format as `Struct.toString()`
+        StringBuilder bld = new StringBuilder();
+        bld.append("{acks=").append(acks)
+                .append(",timeout=").append(timeout)
+                .append(",partitionSizes=")
+                .append(Utils.mkString(partitionSizes, "[", "]", "=", ","))
+                .append("}");
+>>>>>>> origin/0.10.2
         return bld.toString();
     }
 
     @Override
+<<<<<<< HEAD
     public ProduceResponse getErrorResponse(int throttleTimeMs, Throwable e) {
+=======
+    public AbstractResponse getErrorResponse(Throwable e) {
+>>>>>>> origin/0.10.2
         /* In case the producer doesn't actually want any response */
         if (acks == 0)
             return null;
 
         Errors error = Errors.forException(e);
         Map<TopicPartition, ProduceResponse.PartitionResponse> responseMap = new HashMap<>();
+<<<<<<< HEAD
         ProduceResponse.PartitionResponse partitionResponse = new ProduceResponse.PartitionResponse(error);
+=======
+        ProduceResponse.PartitionResponse partitionResponse = new ProduceResponse.PartitionResponse(Errors.forException(e));
+>>>>>>> origin/0.10.2
 
         for (TopicPartition tp : partitions())
             responseMap.put(tp, partitionResponse);
@@ -265,6 +297,7 @@ public class ProduceRequest extends AbstractRequest {
         return timeout;
     }
 
+<<<<<<< HEAD
     public String transactionalId() {
         return transactionalId;
     }
@@ -277,6 +310,8 @@ public class ProduceRequest extends AbstractRequest {
         return idempotent;
     }
 
+=======
+>>>>>>> origin/0.10.2
     /**
      * Returns the partition records or throws IllegalStateException if clearPartitionRecords() has been invoked.
      */
@@ -291,6 +326,12 @@ public class ProduceRequest extends AbstractRequest {
 
     public void clearPartitionRecords() {
         partitionRecords = null;
+<<<<<<< HEAD
+=======
+        // It would be better to make this null, but the change is too large for 0.10.2. In trunk, the struct field
+        // was removed
+        struct.clear();
+>>>>>>> origin/0.10.2
     }
 
     public static ProduceRequest parse(ByteBuffer buffer, short version) {

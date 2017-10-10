@@ -59,6 +59,7 @@ public class CachingWindowStoreTest {
     private CachingKeyValueStoreTest.CacheFlushListenerStub<Windowed<String>> cacheListener;
     private ThreadCache cache;
     private String topic;
+<<<<<<< HEAD
     private WindowKeySchema keySchema;
 
     @Before
@@ -68,6 +69,17 @@ public class CachingWindowStoreTest {
         final int numSegments = 3;
         underlying = new RocksDBSegmentedBytesStore("test", retention, numSegments, keySchema);
         final RocksDBWindowStore<Bytes, byte[]> windowStore = new RocksDBWindowStore<>(underlying, Serdes.Bytes(), Serdes.ByteArray(), false, WINDOW_SIZE);
+=======
+    private static final long DEFAULT_TIMESTAMP = 10L;
+    private WindowStoreKeySchema keySchema;
+    private RocksDBWindowStore<Bytes, byte[]> windowStore;
+
+    @Before
+    public void setUp() throws Exception {
+        keySchema = new WindowStoreKeySchema();
+        underlying = new RocksDBSegmentedBytesStore("test", 30000, 3, keySchema);
+        windowStore = new RocksDBWindowStore<>(underlying, Serdes.Bytes(), Serdes.ByteArray(), false);
+>>>>>>> origin/0.10.2
         cacheListener = new CachingKeyValueStoreTest.CacheFlushListenerStub<>();
         cachingStore = new CachingWindowStore<>(windowStore,
                                                 Serdes.String(),
@@ -77,14 +89,21 @@ public class CachingWindowStoreTest {
         cachingStore.setFlushListener(cacheListener);
         cache = new ThreadCache("testCache", MAX_CACHE_SIZE_BYTES, new MockStreamsMetrics(new Metrics()));
         topic = "topic";
+<<<<<<< HEAD
         context = new MockProcessorContext(TestUtils.tempDirectory(), null, null, (RecordCollector) null, cache);
+=======
+        final MockProcessorContext context = new MockProcessorContext(TestUtils.tempDirectory(), null, null, (RecordCollector) null, cache);
+>>>>>>> origin/0.10.2
         context.setRecordContext(new ProcessorRecordContext(DEFAULT_TIMESTAMP, 0, 0, topic));
         cachingStore.init(context, cachingStore);
     }
 
     @After
     public void closeStore() {
+<<<<<<< HEAD
         context.close();
+=======
+>>>>>>> origin/0.10.2
         cachingStore.close();
     }
 
@@ -178,7 +197,11 @@ public class CachingWindowStoreTest {
     @Test
     public void shouldIterateCacheAndStore() throws Exception {
         final Bytes key = Bytes.wrap("1" .getBytes());
+<<<<<<< HEAD
         underlying.put(WindowStoreUtils.toBinaryKey(key, DEFAULT_TIMESTAMP, 0, WindowStoreUtils.getInnerStateSerde("app-id")), "a".getBytes());
+=======
+        underlying.put(Bytes.wrap(WindowStoreUtils.toBinaryKey(key, DEFAULT_TIMESTAMP, 0, WindowStoreUtils.getInnerStateSerde("topic"))), "a".getBytes());
+>>>>>>> origin/0.10.2
         cachingStore.put("1", "b", DEFAULT_TIMESTAMP + WINDOW_SIZE);
         final WindowStoreIterator<String> fetch = cachingStore.fetch("1", DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE);
         assertEquals(KeyValue.pair(DEFAULT_TIMESTAMP, "a"), fetch.next());
@@ -225,6 +248,10 @@ public class CachingWindowStoreTest {
         cachingStore.put("a", "a");
     }
 
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("unchecked")
+>>>>>>> origin/0.10.2
     @Test
     public void shouldFetchAndIterateOverExactKeys() throws Exception {
         cachingStore.put("a", "0001", 0);
@@ -236,6 +263,7 @@ public class CachingWindowStoreTest {
         final List<KeyValue<Long, String>> expected = Utils.mkList(KeyValue.pair(0L, "0001"), KeyValue.pair(1L, "0003"), KeyValue.pair(60000L, "0005"));
         assertThat(toList(cachingStore.fetch("a", 0, Long.MAX_VALUE)), equalTo(expected));
     }
+<<<<<<< HEAD
 
     @Test
     public void shouldFetchAndIterateOverKeyRange() throws Exception {
@@ -264,6 +292,8 @@ public class CachingWindowStoreTest {
     private static <K, V> KeyValue<Windowed<K>, V> windowedPair(K key, V value, long timestamp) {
         return KeyValue.pair(new Windowed<>(key, new TimeWindow(timestamp, timestamp + WINDOW_SIZE)), value);
     }
+=======
+>>>>>>> origin/0.10.2
 
     private int addItemsToCache() throws IOException {
         int cachedSize = 0;

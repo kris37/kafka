@@ -63,7 +63,12 @@ public class OffsetFetchResponse extends AbstractResponse {
      */
 
     private static final List<Errors> PARTITION_ERRORS = Arrays.asList(
+<<<<<<< HEAD
             Errors.UNKNOWN_TOPIC_OR_PARTITION);
+=======
+            Errors.UNKNOWN_TOPIC_OR_PARTITION,
+            Errors.TOPIC_AUTHORIZATION_FAILED);
+>>>>>>> origin/0.10.2
 
     private final Map<TopicPartition, PartitionData> responseData;
     private final Errors error;
@@ -86,6 +91,7 @@ public class OffsetFetchResponse extends AbstractResponse {
     }
 
     /**
+<<<<<<< HEAD
      * Constructor for all versions without throttle time.
      * @param error Potential coordinator or group level error code (for api version 2 and later)
      * @param responseData Fetched offset information grouped by topic-partition
@@ -104,6 +110,49 @@ public class OffsetFetchResponse extends AbstractResponse {
         this.throttleTimeMs = throttleTimeMs;
         this.responseData = responseData;
         this.error = error;
+=======
+     * Constructor for the latest version.
+     * @param error Potential coordinator or group level error code
+     * @param responseData Fetched offset information grouped by topic-partition
+     */
+    public OffsetFetchResponse(Errors error, Map<TopicPartition, PartitionData> responseData) {
+        this(error, responseData, CURRENT_VERSION);
+    }
+
+    /**
+     * Unified constructor for all versions.
+     * @param error Potential coordinator or group level error code (for api version 2 and later)
+     * @param responseData Fetched offset information grouped by topic-partition
+     * @param version The request API version
+     */
+    public OffsetFetchResponse(Errors error, Map<TopicPartition, PartitionData> responseData, int version) {
+        super(new Struct(ProtoUtils.responseSchema(ApiKeys.OFFSET_FETCH.id, version)));
+
+        Map<String, Map<Integer, PartitionData>> topicsData = CollectionUtils.groupDataByTopic(responseData);
+        List<Struct> topicArray = new ArrayList<>();
+        for (Map.Entry<String, Map<Integer, PartitionData>> entries : topicsData.entrySet()) {
+            Struct topicData = this.struct.instance(RESPONSES_KEY_NAME);
+            topicData.set(TOPIC_KEY_NAME, entries.getKey());
+            List<Struct> partitionArray = new ArrayList<>();
+            for (Map.Entry<Integer, PartitionData> partitionEntry : entries.getValue().entrySet()) {
+                PartitionData fetchPartitionData = partitionEntry.getValue();
+                Struct partitionData = topicData.instance(PARTITIONS_KEY_NAME);
+                partitionData.set(PARTITION_KEY_NAME, partitionEntry.getKey());
+                partitionData.set(COMMIT_OFFSET_KEY_NAME, fetchPartitionData.offset);
+                partitionData.set(METADATA_KEY_NAME, fetchPartitionData.metadata);
+                partitionData.set(ERROR_CODE_KEY_NAME, fetchPartitionData.error.code());
+                partitionArray.add(partitionData);
+            }
+            topicData.set(PARTITIONS_KEY_NAME, partitionArray.toArray());
+            topicArray.add(topicData);
+        }
+
+        this.struct.set(RESPONSES_KEY_NAME, topicArray.toArray());
+        this.responseData = responseData;
+        this.error = error;
+        if (version > 1)
+            this.struct.set(ERROR_CODE_KEY_NAME, this.error.code());
+>>>>>>> origin/0.10.2
     }
 
     public OffsetFetchResponse(Struct struct) {

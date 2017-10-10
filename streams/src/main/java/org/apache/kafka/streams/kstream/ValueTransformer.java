@@ -16,6 +16,10 @@
  */
 package org.apache.kafka.streams.kstream;
 
+<<<<<<< HEAD
+=======
+import org.apache.kafka.common.annotation.InterfaceStability;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.errors.StreamsException;
 import org.apache.kafka.streams.processor.ProcessorContext;
@@ -41,11 +45,16 @@ import org.apache.kafka.streams.processor.TimestampExtractor;
  * @see KStream#transformValues(ValueTransformerSupplier, String...)
  * @see Transformer
  */
+<<<<<<< HEAD
+=======
+@InterfaceStability.Unstable
+>>>>>>> origin/0.10.2
 public interface ValueTransformer<V, VR> {
 
     /**
      * Initialize this transformer.
      * This is called once per instance when the topology gets initialized.
+<<<<<<< HEAD
      * <p>
      * The provided {@link ProcessorContext context} can be used to access topology and record meta data, to
      * {@link ProcessorContext#schedule(long) schedule itself} for periodical calls (cf. {@link #punctuate(long)}), and
@@ -54,6 +63,16 @@ public interface ValueTransformer<V, VR> {
      * Note that {@link ProcessorContext} is updated in the background with the current record's meta data.
      * Thus, it only contains valid record meta data when accessed within {@link #transform(Object)}.
      * <p>
+=======
+     * <p>
+     * The provided {@link ProcessorContext context} can be used to access topology and record meta data, to
+     * {@link ProcessorContext#schedule(long) schedule itself} for periodical calls (cf. {@link #punctuate(long)}), and
+     * to access attached {@link StateStore}s.
+     * <p>
+     * Note that {@link ProcessorContext} is updated in the background with the current record's meta data.
+     * Thus, it only contains valid record meta data when accessed within {@link #transform(Object)}.
+     * <p>
+>>>>>>> origin/0.10.2
      * Note that using {@link ProcessorContext#forward(Object, Object)},
      * {@link ProcessorContext#forward(Object, Object, int)}, or
      * {@link ProcessorContext#forward(Object, Object, String)} is not allowed within any method of

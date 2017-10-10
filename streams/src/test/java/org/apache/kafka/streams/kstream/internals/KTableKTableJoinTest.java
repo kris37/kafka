@@ -331,10 +331,18 @@ public class KTableKTableJoinTest {
 
         final int[] expectedKeys = new int[]{0, 1, 2, 3};
 
+<<<<<<< HEAD
         final KTable<Integer, String> table1;
         final KTable<Integer, String> table2;
         final KTable<Integer, String> joined;
         final MockProcessorSupplier<Integer, String> proc;
+=======
+        for (int expectedKey : expectedKeys) {
+            driver.process(topic1, expectedKey, "X" + expectedKey);
+        }
+        driver.flushState();
+        proc.checkAndClearProcessResult("0:(X0+YY0<-XX0+YY0)", "1:(X1+YY1<-XX1+YY1)", "2:(X2+YY2<-XX2+YY2)", "3:(X3+YY3<-XX3+YY3)");
+>>>>>>> origin/0.10.2
 
         table1 = builder.table(intSerde, stringSerde, topic1, storeName1);
         table2 = builder.table(intSerde, stringSerde, topic2, storeName2);

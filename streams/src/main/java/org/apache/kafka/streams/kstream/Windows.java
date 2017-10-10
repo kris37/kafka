@@ -4,10 +4,17 @@
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
+<<<<<<< HEAD
  * the License. You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
+=======
+ * the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+>>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +23,10 @@
  */
 package org.apache.kafka.streams.kstream;
 
+<<<<<<< HEAD
+=======
+import org.apache.kafka.common.annotation.InterfaceStability;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.streams.processor.TimestampExtractor;
 
 import java.util.Map;
@@ -34,6 +45,7 @@ import java.util.Map;
  * @see SessionWindows
  * @see TimestampExtractor
  */
+@InterfaceStability.Unstable
 public abstract class Windows<W extends Window> {
 
     private static final int DEFAULT_NUM_SEGMENTS = 3;
@@ -69,6 +81,7 @@ public abstract class Windows<W extends Window> {
 
     /**
      * Return the window maintain duration (retention time) in milliseconds.
+<<<<<<< HEAD
      *
      * @return the window maintain duration
      */
@@ -84,6 +97,23 @@ public abstract class Windows<W extends Window> {
      * @return itself
      * @throws IllegalArgumentException if specified segments is small than 2
      */
+=======
+     *
+     * @return the window maintain duration
+     */
+    public long maintainMs() {
+        return maintainDurationMs;
+    }
+
+    /**
+     * Set the number of segments to be used for rolling the window store.
+     * This function is not exposed to users but can be called by developers that extend this class.
+     *
+     * @param segments the number of segments to be used
+     * @return itself
+     * @throws IllegalArgumentException if specified segments is small than 2
+     */
+>>>>>>> origin/0.10.2
     protected Windows<W> segments(final int segments) throws IllegalArgumentException {
         if (segments < 2) {
             throw new IllegalArgumentException("Number of segments must be at least 2.");

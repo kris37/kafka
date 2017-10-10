@@ -30,19 +30,36 @@ public class WindowStoreUtils {
     static final int TIMESTAMP_SIZE = 8;
 
     /** Inner byte array serde used for segments */
+<<<<<<< HEAD
     static final Serde<Bytes> INNER_KEY_SERDE = Serdes.Bytes();
     static final Serde<byte[]> INNER_VALUE_SERDE = Serdes.ByteArray();
+=======
+    public static final Serde<Bytes> INNER_KEY_SERDE = Serdes.Bytes();
+    public static final Serde<byte[]> INNER_VALUE_SERDE = Serdes.ByteArray();
+>>>>>>> origin/0.10.2
 
     static StateSerdes<Bytes, byte[]> getInnerStateSerde(final String topic) {
         return new StateSerdes<>(topic, INNER_KEY_SERDE, INNER_VALUE_SERDE);
     }
 
+<<<<<<< HEAD
     static <K> Bytes toBinaryKey(K key, final long timestamp, final int seqnum, StateSerdes<K, ?> serdes) {
+=======
+    static StateSerdes<Bytes, byte[]> getInnerStateSerde(final String topic) {
+        return new StateSerdes<>(topic, INNER_KEY_SERDE, INNER_VALUE_SERDE);
+    }
+
+    public static <K> byte[] toBinaryKey(K key, final long timestamp, final int seqnum, StateSerdes<K, ?> serdes) {
+>>>>>>> origin/0.10.2
         byte[] serializedKey = serdes.rawKey(key);
         return toBinaryKey(serializedKey, timestamp, seqnum);
     }
 
+<<<<<<< HEAD
     static Bytes toBinaryKey(byte[] serializedKey, final long timestamp, final int seqnum) {
+=======
+    static byte[] toBinaryKey(byte[] serializedKey, final long timestamp, final int seqnum) {
+>>>>>>> origin/0.10.2
         ByteBuffer buf = ByteBuffer.allocate(serializedKey.length + TIMESTAMP_SIZE + SEQNUM_SIZE);
         buf.put(serializedKey);
         buf.putLong(timestamp);

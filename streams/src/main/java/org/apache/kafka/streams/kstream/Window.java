@@ -4,10 +4,17 @@
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
+<<<<<<< HEAD
  * the License. You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
+=======
+ * the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+>>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +23,10 @@
  */
 package org.apache.kafka.streams.kstream;
 
+<<<<<<< HEAD
+=======
+import org.apache.kafka.common.annotation.InterfaceStability;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.streams.processor.TimestampExtractor;
 
 /**
@@ -32,6 +43,7 @@ import org.apache.kafka.streams.processor.TimestampExtractor;
  * @see org.apache.kafka.streams.kstream.internals.UnlimitedWindow
  * @see TimestampExtractor
  */
+@InterfaceStability.Unstable
 public abstract class Window {
 
     protected final long startMs;
@@ -47,10 +59,17 @@ public abstract class Window {
     public Window(final long startMs, final long endMs) throws IllegalArgumentException {
         if (startMs < 0) {
             throw new IllegalArgumentException("Window startMs time cannot be negative.");
+<<<<<<< HEAD
         }
         if (endMs < startMs) {
             throw new IllegalArgumentException("Window endMs time cannot be smaller than window startMs time.");
         }
+=======
+        }
+        if (endMs < startMs) {
+            throw new IllegalArgumentException("Window endMs time cannot be smaller than window startMs time.");
+        }
+>>>>>>> origin/0.10.2
         this.startMs = startMs;
         this.endMs = endMs;
     }

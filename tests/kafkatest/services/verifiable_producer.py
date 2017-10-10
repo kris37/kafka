@@ -23,7 +23,12 @@ from ducktape.cluster.remoteaccount import RemoteCommandError
 from kafkatest.directory_layout.kafka_path import KafkaPathResolverMixin
 from kafkatest.services.verifiable_client import VerifiableClientMixin
 from kafkatest.utils import is_int, is_int_with_prefix
+<<<<<<< HEAD
 from kafkatest.version import DEV_BRANCH
+=======
+from kafkatest.version import DEV_BRANCH, LATEST_0_8_2
+from kafkatest.utils.remote_account import line_count
+>>>>>>> origin/0.10.2
 
 class VerifiableProducer(KafkaPathResolverMixin, VerifiableClientMixin, BackgroundThreadService):
     """This service wraps org.apache.kafka.tools.VerifiableProducer for use in
@@ -56,7 +61,11 @@ class VerifiableProducer(KafkaPathResolverMixin, VerifiableClientMixin, Backgrou
 
     def __init__(self, context, num_nodes, kafka, topic, max_messages=-1, throughput=100000,
                  message_validator=is_int, compression_types=None, version=DEV_BRANCH, acks=None,
+<<<<<<< HEAD
                  stop_timeout_sec=150, request_timeout_sec=30, log_level="INFO", enable_idempotence=False):
+=======
+                 stop_timeout_sec=150, request_timeout_sec=30, log_level="INFO"):
+>>>>>>> origin/0.10.2
         """
         :param max_messages is a number of messages to be produced per producer
         :param message_validator checks for an expected format of messages produced. There are
@@ -89,10 +98,13 @@ class VerifiableProducer(KafkaPathResolverMixin, VerifiableClientMixin, Backgrou
         self.acks = acks
         self.stop_timeout_sec = stop_timeout_sec
         self.request_timeout_sec = request_timeout_sec
+<<<<<<< HEAD
         self.enable_idempotence = enable_idempotence
 
     def java_class_name(self):
         return "VerifiableProducer"
+=======
+>>>>>>> origin/0.10.2
 
     def prop_file(self, node):
         idx = self.idx(node)
@@ -122,12 +134,15 @@ class VerifiableProducer(KafkaPathResolverMixin, VerifiableClientMixin, Backgrou
             producer_prop_file += "\nacks=%s\n" % self.acks
 
         producer_prop_file += "\nrequest.timeout.ms=%d\n" % (self.request_timeout_sec * 1000)
+<<<<<<< HEAD
         if self.enable_idempotence:
             self.logger.info("Setting up an idempotent producer")
             producer_prop_file += "\nmax.in.flight.requests.per.connection=1\n"
             producer_prop_file += "\nretries=50\n"
             producer_prop_file += "\nenable.idempotence=true\n"
 
+=======
+>>>>>>> origin/0.10.2
         self.logger.info("verifiable_producer.properties:")
         self.logger.info(producer_prop_file)
         node.account.create_file(VerifiableProducer.CONFIG_FILE, producer_prop_file)
@@ -180,7 +195,22 @@ class VerifiableProducer(KafkaPathResolverMixin, VerifiableClientMixin, Backgrou
             return True
 
     def start_cmd(self, node, idx):
+<<<<<<< HEAD
         cmd  = "export LOG_DIR=%s;" % VerifiableProducer.LOG_DIR
+=======
+        cmd = ""
+        if node.version <= LATEST_0_8_2:
+            # 0.8.2.X releases do not have VerifiableProducer.java, so cheat and add
+            # the tools jar from the development branch to the classpath
+            tools_jar = self.path.jar(TOOLS_JAR_NAME, DEV_BRANCH)
+            tools_dependant_libs_jar = self.path.jar(TOOLS_DEPENDANT_TEST_LIBS_JAR_NAME, DEV_BRANCH)
+
+            cmd += "for file in %s; do CLASSPATH=$CLASSPATH:$file; done; " % tools_jar
+            cmd += "for file in %s; do CLASSPATH=$CLASSPATH:$file; done; " % tools_dependant_libs_jar
+            cmd += "export CLASSPATH; "
+
+        cmd += "export LOG_DIR=%s;" % VerifiableProducer.LOG_DIR
+>>>>>>> origin/0.10.2
         cmd += " export KAFKA_OPTS=%s;" % self.security_config.kafka_opts
         cmd += " export KAFKA_LOG4J_OPTS=\"-Dlog4j.configuration=file:%s\"; " % VerifiableProducer.LOG4J_CONFIG
         cmd += self.impl.exec_cmd(node)

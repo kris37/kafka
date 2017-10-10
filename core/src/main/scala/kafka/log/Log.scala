@@ -41,12 +41,16 @@ import kafka.message.{BrokerCompressionCodec, CompressionCodec, NoCompressionCod
 import kafka.server.checkpoints.{LeaderEpochCheckpointFile, LeaderEpochFile}
 import kafka.server.epoch.{LeaderEpochCache, LeaderEpochFileCache}
 import org.apache.kafka.common.TopicPartition
+<<<<<<< HEAD
 import org.apache.kafka.common.requests.FetchResponse.AbortedTransaction
 import java.util.Map.{Entry => JEntry}
 import java.lang.{Long => JLong}
 import java.util.regex.Pattern
 
 import org.apache.kafka.common.internals.Topic
+=======
+import java.util.regex.Pattern
+>>>>>>> origin/0.10.2
 
 object LogAppendInfo {
   val UnknownLogAppendInfo = LogAppendInfo(-1, -1, RecordBatch.NO_TIMESTAMP, -1L, RecordBatch.NO_TIMESTAMP,
@@ -1162,12 +1166,20 @@ class Log(@volatile var dir: File,
   def roll(expectedNextOffset: Long = 0): LogSegment = {
     val start = time.nanoseconds
     lock synchronized {
+<<<<<<< HEAD
       val newOffset = math.max(expectedNextOffset, logEndOffset)
       val logFile = Log.logFile(dir, newOffset)
       val offsetIdxFile = offsetIndexFile(dir, newOffset)
       val timeIdxFile = timeIndexFile(dir, newOffset)
       val txnIdxFile = transactionIndexFile(dir, newOffset)
       for(file <- List(logFile, offsetIdxFile, timeIdxFile, txnIdxFile) if file.exists) {
+=======
+      val newOffset = Math.max(expectedNextOffset, logEndOffset)
+      val logFile = Log.logFile(dir, newOffset)
+      val indexFile = indexFilename(dir, newOffset)
+      val timeIndexFile = timeIndexFilename(dir, newOffset)
+      for(file <- List(logFile, indexFile, timeIndexFile); if file.exists) {
+>>>>>>> origin/0.10.2
         warn("Newly rolled segment file " + file.getName + " already exists; deleting it first")
         file.delete()
       }
@@ -1520,8 +1532,11 @@ object Log {
 
   private val DeleteDirPattern = Pattern.compile(s"^(\\S+)-(\\S+)\\.(\\S+)$DeleteDirSuffix")
 
+<<<<<<< HEAD
   val UnknownLogStartOffset = -1L
 
+=======
+>>>>>>> origin/0.10.2
   /**
    * Make log segment file name from offset bytes. All this does is pad out the offset number with zeros
    * so that ls sorts the files numerically.
@@ -1545,6 +1560,15 @@ object Log {
    */
   def logFile(dir: File, offset: Long) =
     new File(dir, filenamePrefixFromOffset(offset) + LogFileSuffix)
+
+   /**
+    * Return a directory name to rename the log directory to for async deletion. The name will be in the following
+    * format: topic-partition.uniqueId-delete where topic, partition and uniqueId are variables.
+    */
+  def logDeleteDirName(logName: String): String = {
+    val uniqueId = java.util.UUID.randomUUID.toString.replaceAll("-", "")
+    s"$logName.$uniqueId$DeleteDirSuffix"
+  }
 
   /**
     * Return a directory name to rename the log directory to for async deletion. The name will be in the following

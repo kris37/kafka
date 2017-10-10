@@ -51,11 +51,19 @@ public class MinTimestampTracker<E> implements TimestampTracker<E> {
             return;
         }
 
+<<<<<<< HEAD
         if (ascendingSubsequence.peekFirst() == elem) {
             ascendingSubsequence.removeFirst();
         }
 
         if (ascendingSubsequence.isEmpty()) {
+=======
+        if (descendingSubsequence.peekFirst() == elem) {
+            descendingSubsequence.removeFirst();
+        }
+
+        if (descendingSubsequence.isEmpty()) {
+>>>>>>> origin/0.10.2
             lastKnownTime = elem.timestamp;
         }
 

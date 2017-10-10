@@ -16,7 +16,10 @@
  */
 package org.apache.kafka.streams.processor.internals;
 
+<<<<<<< HEAD
 import org.apache.kafka.clients.producer.Producer;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.processor.StreamPartitioner;
@@ -24,6 +27,7 @@ import org.apache.kafka.streams.processor.StreamPartitioner;
 import java.util.Map;
 
 public interface RecordCollector {
+<<<<<<< HEAD
 
     <K, V> void send(final String topic,
                      final K key,
@@ -32,6 +36,24 @@ public interface RecordCollector {
                      final Long timestamp,
                      final Serializer<K> keySerializer,
                      final Serializer<V> valueSerializer);
+=======
+    <K, V> void send(final String topic,
+                     K key,
+                     V value,
+                     Integer partition,
+                     Long timestamp,
+                     Serializer<K> keySerializer,
+                     Serializer<V> valueSerializer);
+
+    <K, V> void send(final String topic,
+                     K key,
+                     V value,
+                     Integer partition,
+                     Long timestamp,
+                     Serializer<K> keySerializer,
+                     Serializer<V> valueSerializer,
+                     StreamPartitioner<? super K, ? super V> partitioner);
+>>>>>>> origin/0.10.2
 
     <K, V> void send(final String topic,
                      final K key,

@@ -106,12 +106,15 @@ public class StreamPartitionAssignorTest {
     private final MockClientSupplier mockClientSupplier = new MockClientSupplier();
     private final TopologyBuilder builder = new TopologyBuilder();
     private final StreamsConfig config = new StreamsConfig(configProps());
+<<<<<<< HEAD
     private final StreamThread mockStreamThread = new StreamThread(builder, config,
                                                                    mockClientSupplier, "appID",
                                                                    "clientId", UUID.randomUUID(),
                                                                    new Metrics(), new MockTime(),
                                                                    null, 1L);
     private final Map<String, Object> configurationMap = new HashMap<>();
+=======
+>>>>>>> origin/0.10.2
 
     private Properties configProps() {
         return new Properties() {

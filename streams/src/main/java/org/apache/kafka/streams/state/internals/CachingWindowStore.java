@@ -26,22 +26,30 @@ import org.apache.kafka.streams.processor.StateStore;
 import org.apache.kafka.streams.processor.internals.InternalProcessorContext;
 import org.apache.kafka.streams.processor.internals.ProcessorStateManager;
 import org.apache.kafka.streams.processor.internals.RecordContext;
-import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.StateSerdes;
 import org.apache.kafka.streams.state.WindowStore;
 import org.apache.kafka.streams.state.WindowStoreIterator;
 
 import java.util.List;
 
+<<<<<<< HEAD
 class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore implements WindowStore<K, V>, CachedStateStore<Windowed<K>, V> {
 
 
+=======
+class CachingWindowStore<K, V> extends WrappedStateStore.AbstractWrappedStateStore implements WindowStore<K, V>, CachedStateStore<Windowed<K>, V> {
+
+>>>>>>> origin/0.10.2
     private final WindowStore<Bytes, byte[]> underlying;
     private final Serde<K> keySerde;
     private final Serde<V> valueSerde;
     private final long windowSize;
+<<<<<<< HEAD
     private final SegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
 
+=======
+    private final SegmentedBytesStore.KeySchema keySchema = new WindowStoreKeySchema();
+>>>>>>> origin/0.10.2
 
     private String name;
     private ThreadCache cache;
@@ -53,14 +61,21 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
     CachingWindowStore(final WindowStore<Bytes, byte[]> underlying,
                        final Serde<K> keySerde,
                        final Serde<V> valueSerde,
+<<<<<<< HEAD
                        final long windowSize,
                        final long segmentInterval) {
+=======
+                       final long windowSize) {
+>>>>>>> origin/0.10.2
         super(underlying);
         this.underlying = underlying;
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
         this.windowSize = windowSize;
+<<<<<<< HEAD
         this.cacheFunction = new SegmentedCacheFunction(keySchema, segmentInterval);
+=======
+>>>>>>> origin/0.10.2
     }
 
     @SuppressWarnings("unchecked")
@@ -74,22 +89,36 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
     @SuppressWarnings("unchecked")
     private void initInternal(final ProcessorContext context) {
         this.context = (InternalProcessorContext) context;
+<<<<<<< HEAD
         serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), underlying.name()),
                                    keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
                                    valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
 
         name = context.taskId() + "-" + underlying.name();
         cache = this.context.getCache();
+=======
+        this.serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), underlying.name()),
+                                        keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
+                                        valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
+>>>>>>> origin/0.10.2
 
         cache.addDirtyEntryFlushListener(name, new ThreadCache.DirtyEntryFlushListener() {
             @Override
             public void apply(final List<ThreadCache.DirtyEntry> entries) {
                 for (ThreadCache.DirtyEntry entry : entries) {
+<<<<<<< HEAD
                     final byte[] binaryWindowKey = cacheFunction.key(entry.key()).get();
                     final long timestamp = WindowStoreUtils.timestampFromBinaryKey(binaryWindowKey);
 
                     final Windowed<K> windowedKey = new Windowed<>(WindowStoreUtils.keyFromBinaryKey(binaryWindowKey, serdes),
                             WindowStoreUtils.timeWindowForSize(timestamp, windowSize));
+=======
+                    final byte[] binaryWindowKey = entry.key().get();
+                    final long timestamp = WindowStoreUtils.timestampFromBinaryKey(binaryWindowKey);
+
+                    final Windowed<K> windowedKey = new Windowed<>(WindowStoreUtils.keyFromBinaryKey(binaryWindowKey, serdes),
+                                                                   new TimeWindow(timestamp, timestamp + windowSize));
+>>>>>>> origin/0.10.2
                     final Bytes key = WindowStoreUtils.bytesKeyFromBinaryKey(binaryWindowKey);
                     maybeForward(entry, key, windowedKey, (InternalProcessorContext) context);
                     underlying.put(key, entry.newValue(), timestamp);
@@ -128,7 +157,10 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
     public void close() {
         flush();
         cache.close(name);
+<<<<<<< HEAD
         underlying.close();
+=======
+>>>>>>> origin/0.10.2
     }
 
     @Override
@@ -154,6 +186,7 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
         // if store is open outside as well.
         validateStoreOpen();
 
+<<<<<<< HEAD
         final Bytes keyBytes = Bytes.wrap(serdes.rawKey(key));
         final WindowStoreIterator<byte[]> underlyingIterator = underlying.fetch(keyBytes, timeFrom, timeTo);
 
@@ -173,6 +206,10 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
                                                           underlyingIterator,
                                                           new StateSerdes<>(serdes.topic(), Serdes.Long(), serdes.valueSerde()));
     }
+=======
+        final WindowStoreIterator<byte[]> underlyingIterator = underlying.fetch(Bytes.wrap(serdes.rawKey(key)), timeFrom, timeTo);
+        final ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.range(name, binaryFrom, binaryTo);
+>>>>>>> origin/0.10.2
 
     @Override
     public KeyValueIterator<Windowed<K>, V> fetch(final K from, final K to, final long timeFrom, final long timeTo) {
@@ -180,6 +217,7 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
         // if store is open outside as well.
         validateStoreOpen();
 
+<<<<<<< HEAD
         final Bytes keyFromBytes = Bytes.wrap(serdes.rawKey(from));
         final Bytes keyToBytes = Bytes.wrap(serdes.rawKey(to));
         final KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = underlying.fetch(keyFromBytes, keyToBytes, timeFrom, timeTo);
@@ -203,6 +241,19 @@ class CachingWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
         );
     }
 
+=======
+        final HasNextCondition hasNextCondition = keySchema.hasNextCondition(Bytes.wrap(serdes.rawKey(key)),
+                                                                             timeFrom,
+                                                                             timeTo);
+        final PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(cacheIterator, hasNextCondition);
+
+        return new MergedSortedCacheWindowStoreIterator<>(filteredCacheIterator,
+                                                          underlyingIterator,
+                                                          new StateSerdes<>(serdes.topic(), Serdes.Long(), serdes.valueSerde()));
+    }
+
+
+>>>>>>> origin/0.10.2
     private V fetchPrevious(final Bytes key, final long timestamp) {
         try (final WindowStoreIterator<byte[]> iter = underlying.fetch(key, timestamp, timestamp)) {
             if (!iter.hasNext()) {

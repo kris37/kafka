@@ -70,11 +70,19 @@ public class KStreamTestDriver {
                              final Serde<?> valSerde,
                              final long cacheSize) {
         builder.setApplicationId("TestDriver");
+<<<<<<< HEAD
         topology = builder.build(null);
         globalTopology = builder.buildGlobalStateTopology();
         final ThreadCache cache = new ThreadCache("testCache", cacheSize, new MockStreamsMetrics(new Metrics()));
         context = new MockProcessorContext(stateDir, keySerde, valSerde, new MockRecordCollector(), cache);
         context.setRecordContext(new ProcessorRecordContext(0, 0, 0, "topic"));
+=======
+        this.topology = builder.build(null);
+        this.globalTopology = builder.buildGlobalStateTopology();
+        ThreadCache cache = new ThreadCache("testCache", cacheSize, new MockStreamsMetrics(new Metrics()));
+        this.context = new MockProcessorContext(stateDir, keySerde, valSerde, new MockRecordCollector(), cache);
+        this.context.setRecordContext(new ProcessorRecordContext(0, 0, 0, "topic"));
+>>>>>>> origin/0.10.2
         // init global topology first as it will add stores to the
         // store map that are required for joins etc.
         if (globalTopology != null) {
@@ -106,6 +114,7 @@ public class KStreamTestDriver {
         return context;
     }
 
+<<<<<<< HEAD
     public void process(final String topicName, final Object key, final Object value) {
         final ProcessorNode prevNode = context.currentNode();
         final ProcessorNode currNode = sourceNodeByTopicName(topicName);
@@ -134,6 +143,32 @@ public class KStreamTestDriver {
     public void punctuate(final long timestamp) {
         final ProcessorNode prevNode = context.currentNode();
         for (final ProcessorNode processor : topology.processors()) {
+=======
+    public void process(String topicName, Object key, Object value) {
+        final ProcessorNode prevNode = context.currentNode();
+        ProcessorNode currNode = topology.source(topicName);
+        if (currNode == null && globalTopology != null) {
+            currNode = globalTopology.source(topicName);
+        }
+
+        // if currNode is null, check if this topic is a changelog topic;
+        // if yes, skip
+        if (topicName.endsWith(ProcessorStateManager.STATE_CHANGELOG_TOPIC_SUFFIX)) {
+            return;
+        }
+        context.setRecordContext(createRecordContext(context.timestamp()));
+        context.setCurrentNode(currNode);
+        try {
+            context.forward(key, value);
+        } finally {
+            context.setCurrentNode(prevNode);
+        }
+    }
+
+    public void punctuate(long timestamp) {
+        final ProcessorNode prevNode = context.currentNode();
+        for (ProcessorNode processor : topology.processors()) {
+>>>>>>> origin/0.10.2
             if (processor.processor() != null) {
                 context.setRecordContext(createRecordContext(timestamp));
                 context.setCurrentNode(processor);
@@ -152,7 +187,11 @@ public class KStreamTestDriver {
 
     public void close() {
         // close all processors
+<<<<<<< HEAD
         for (final ProcessorNode node : topology.processors()) {
+=======
+        for (ProcessorNode node : topology.processors()) {
+>>>>>>> origin/0.10.2
             context.setCurrentNode(node);
             try {
                 node.close();
@@ -161,7 +200,10 @@ public class KStreamTestDriver {
             }
         }
 
+<<<<<<< HEAD
         context.close();
+=======
+>>>>>>> origin/0.10.2
         closeState();
     }
 
@@ -204,12 +246,20 @@ public class KStreamTestDriver {
         // of them since the flushing could cause eviction and hence tries to access other stores
         flushState();
 
+<<<<<<< HEAD
         for (final StateStore stateStore : context.allStateStores().values()) {
+=======
+        for (StateStore stateStore : context.allStateStores().values()) {
+>>>>>>> origin/0.10.2
             stateStore.close();
         }
     }
 
+<<<<<<< HEAD
     private ProcessorRecordContext createRecordContext(final long timestamp) {
+=======
+    private ProcessorRecordContext createRecordContext(long timestamp) {
+>>>>>>> origin/0.10.2
         return new ProcessorRecordContext(timestamp, -1, -1, "topic");
     }
 
@@ -220,6 +270,7 @@ public class KStreamTestDriver {
 
         @Override
         public <K, V> void send(final String topic,
+<<<<<<< HEAD
                                 final K key,
                                 final V value,
                                 final Long timestamp,
@@ -230,10 +281,22 @@ public class KStreamTestDriver {
             if (sourceNodeByTopicName(topic) != null) {
                 process(topic, key, value);
             }
+=======
+                                K key,
+                                V value,
+                                Integer partition,
+                                Long timestamp,
+                                Serializer<K> keySerializer,
+                                Serializer<V> valueSerializer,
+                                StreamPartitioner<? super K, ? super V> partitioner) {
+            // The serialization is skipped.
+            process(topic, key, value);
+>>>>>>> origin/0.10.2
         }
 
         @Override
         public <K, V> void send(final String topic,
+<<<<<<< HEAD
                                 final K key,
                                 final V value,
                                 final Integer partition,
@@ -244,6 +307,16 @@ public class KStreamTestDriver {
             if (sourceNodeByTopicName(topic) != null) {
                 process(topic, key, value);
             }
+=======
+                                K key,
+                                V value,
+                                Integer partition,
+                                Long timestamp,
+                                Serializer<K> keySerializer,
+                                Serializer<V> valueSerializer) {
+        // The serialization is skipped.
+            process(topic, key, value);
+>>>>>>> origin/0.10.2
         }
 
         @Override

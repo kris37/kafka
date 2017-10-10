@@ -27,8 +27,12 @@ class UserQuotaTest extends BaseQuotaTest with SaslSetup {
 
   override protected def securityProtocol = SecurityProtocol.SASL_SSL
   override protected lazy val trustStoreFile = Some(File.createTempFile("truststore", ".jks"))
+<<<<<<< HEAD
   private val kafkaServerSaslMechanisms = Seq("GSSAPI")
   private val kafkaClientSaslMechanism = "GSSAPI"
+=======
+  override protected val zkSaslEnabled = false
+>>>>>>> origin/0.10.2
   override protected val serverSaslProperties = Some(kafkaServerSaslProperties(kafkaServerSaslMechanisms, kafkaClientSaslMechanism))
   override protected val clientSaslProperties = Some(kafkaClientSaslProperties(kafkaClientSaslMechanism))
 

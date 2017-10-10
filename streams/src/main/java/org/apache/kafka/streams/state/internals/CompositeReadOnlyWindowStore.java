@@ -77,8 +77,18 @@ public class CompositeReadOnlyWindowStore<K, V> implements ReadOnlyWindowStore<K
             }
 
             @Override
+<<<<<<< HEAD
             public WindowStoreIterator<V> empty() {
                 return KeyValueIterators.emptyWindowStoreIterator();
+=======
+            public Long peekNextKey() {
+                throw new NoSuchElementException();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+>>>>>>> origin/0.10.2
             }
         });
     }

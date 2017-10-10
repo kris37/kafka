@@ -68,7 +68,11 @@ class ProduceConsumeValidateTest(Test):
             remaining_time = self.consumer_init_timeout_sec - (end - start)
             if remaining_time < 0 :
                 remaining_time = 0
+<<<<<<< HEAD
             if self.consumer.new_consumer:
+=======
+            if self.consumer.new_consumer is True:
+>>>>>>> origin/0.10.2
                 wait_until(lambda: self.consumer.has_partitions_assigned(self.consumer.nodes[0]) is True,
                            timeout_sec=remaining_time,
                            err_msg="Consumer process took more than %d s to have partitions assigned" %\

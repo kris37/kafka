@@ -20,7 +20,10 @@ import org.apache.kafka.clients.ApiVersions;
 import org.apache.kafka.clients.ClientRequest;
 import org.apache.kafka.clients.Metadata;
 import org.apache.kafka.clients.MockClient;
+<<<<<<< HEAD
 import org.apache.kafka.clients.NetworkClient;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.clients.NodeApiVersions;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -43,8 +46,11 @@ import org.apache.kafka.common.errors.TopicAuthorizationException;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.metrics.KafkaMetric;
 import org.apache.kafka.common.metrics.Metrics;
+<<<<<<< HEAD
 import org.apache.kafka.common.metrics.Sensor;
 import org.apache.kafka.common.network.NetworkReceive;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.protocol.ApiKeys;
 import org.apache.kafka.common.protocol.Errors;
 import org.apache.kafka.common.record.CompressionType;
@@ -76,8 +82,11 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.utils.MockTime;
 import org.apache.kafka.common.utils.Utils;
+<<<<<<< HEAD
 import org.apache.kafka.test.DelayedReceive;
 import org.apache.kafka.test.MockSelector;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.test.TestUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -110,8 +119,13 @@ public class FetcherTest {
     private String topicName = "test";
     private String groupId = "test-group";
     private final String metricGroup = "consumer" + groupId + "-fetch-manager-metrics";
+<<<<<<< HEAD
     private TopicPartition tp1 = new TopicPartition(topicName, 0);
     private TopicPartition tp2 = new TopicPartition(topicName, 1);
+=======
+    private TopicPartition tp = new TopicPartition(topicName, 0);
+    private TopicPartition tp1 = new TopicPartition(topicName, 1);
+>>>>>>> origin/0.10.2
     private int minBytes = 1;
     private int maxBytes = Integer.MAX_VALUE;
     private int maxWaitMs = 0;
@@ -123,8 +137,11 @@ public class FetcherTest {
     private Cluster cluster = TestUtils.singletonCluster(topicName, 2);
     private Node node = cluster.nodes().get(0);
     private Metrics metrics = new Metrics(time);
+<<<<<<< HEAD
     FetcherMetricsRegistry metricsRegistry = new FetcherMetricsRegistry("consumer" + groupId);
 
+=======
+>>>>>>> origin/0.10.2
     private SubscriptionState subscriptions = new SubscriptionState(OffsetResetStrategy.EARLIEST);
     private SubscriptionState subscriptionsNoAutoReset = new SubscriptionState(OffsetResetStrategy.NONE);
     private static final double EPSILON = 0.0001;
@@ -589,7 +606,11 @@ public class FetcherTest {
             } catch (RecordTooLargeException e) {
                 assertTrue(e.getMessage().startsWith("There are some messages at [Partition=Offset]: "));
                 // the position should not advance since no data has been returned
+<<<<<<< HEAD
                 assertEquals(0, subscriptions.position(tp1).longValue());
+=======
+                assertEquals(0, subscriptions.position(tp).longValue());
+>>>>>>> origin/0.10.2
             }
         } finally {
             client.setNodeApiVersions(NodeApiVersions.create());
@@ -611,18 +632,31 @@ public class FetcherTest {
         } catch (KafkaException e) {
             assertTrue(e.getMessage().startsWith("Failed to make progress reading messages"));
             // the position should not advance since no data has been returned
+<<<<<<< HEAD
             assertEquals(0, subscriptions.position(tp1).longValue());
+=======
+            assertEquals(0, subscriptions.position(tp).longValue());
+>>>>>>> origin/0.10.2
         }
     }
 
     private void makeFetchRequestWithIncompleteRecord() {
+<<<<<<< HEAD
         subscriptions.assignFromUser(singleton(tp1));
         subscriptions.seek(tp1, 0);
+=======
+        subscriptions.assignFromUser(singleton(tp));
+        subscriptions.seek(tp, 0);
+>>>>>>> origin/0.10.2
         assertEquals(1, fetcher.sendFetches());
         assertFalse(fetcher.hasCompletedFetches());
         MemoryRecords partialRecord = MemoryRecords.readableRecords(
             ByteBuffer.wrap(new byte[]{0, 0, 0, 0, 0, 0, 0, 0}));
+<<<<<<< HEAD
         client.prepareResponse(fetchResponse(partialRecord, Errors.NONE, 100L, 0));
+=======
+        client.prepareResponse(fetchResponse(partialRecord, Errors.NONE.code(), 100L, 0));
+>>>>>>> origin/0.10.2
         consumerClient.poll(0);
         assertTrue(fetcher.hasCompletedFetches());
     }
@@ -1029,6 +1063,68 @@ public class FetcherTest {
     }
 
     @Test
+    public void testUpdateFetchPositionOfPausedPartitionsRequiringOffsetReset() {
+        subscriptions.assignFromUser(singleton(tp));
+        subscriptions.committed(tp, new OffsetAndMetadata(0));
+        subscriptions.pause(tp); // paused partition does not have a valid position
+        subscriptions.needOffsetReset(tp, OffsetResetStrategy.LATEST);
+
+        client.prepareResponse(listOffsetRequestMatcher(ListOffsetRequest.LATEST_TIMESTAMP),
+                               listOffsetResponse(Errors.NONE, 1L, 10L));
+        fetcher.updateFetchPositions(singleton(tp));
+
+        assertFalse(subscriptions.isOffsetResetNeeded(tp));
+        assertFalse(subscriptions.isFetchable(tp)); // because tp is paused
+        assertTrue(subscriptions.hasValidPosition(tp));
+        assertEquals(10, subscriptions.position(tp).longValue());
+    }
+
+    @Test
+    public void testUpdateFetchPositionOfPausedPartitionsWithoutACommittedOffset() {
+        subscriptions.assignFromUser(singleton(tp));
+        subscriptions.pause(tp); // paused partition does not have a valid position
+
+        client.prepareResponse(listOffsetRequestMatcher(ListOffsetRequest.EARLIEST_TIMESTAMP),
+                               listOffsetResponse(Errors.NONE, 1L, 0L));
+        fetcher.updateFetchPositions(singleton(tp));
+
+        assertFalse(subscriptions.isOffsetResetNeeded(tp));
+        assertFalse(subscriptions.isFetchable(tp)); // because tp is paused
+        assertTrue(subscriptions.hasValidPosition(tp));
+        assertEquals(0, subscriptions.position(tp).longValue());
+    }
+
+    @Test
+    public void testUpdateFetchPositionOfPausedPartitionsWithoutAValidPosition() {
+        subscriptions.assignFromUser(singleton(tp));
+        subscriptions.committed(tp, new OffsetAndMetadata(0));
+        subscriptions.pause(tp); // paused partition does not have a valid position
+        subscriptions.seek(tp, 10);
+
+        fetcher.updateFetchPositions(singleton(tp));
+
+        assertFalse(subscriptions.isOffsetResetNeeded(tp));
+        assertFalse(subscriptions.isFetchable(tp)); // because tp is paused
+        assertTrue(subscriptions.hasValidPosition(tp));
+        assertEquals(10, subscriptions.position(tp).longValue());
+    }
+
+    @Test
+    public void testUpdateFetchPositionOfPausedPartitionsWithAValidPosition() {
+        subscriptions.assignFromUser(singleton(tp));
+        subscriptions.committed(tp, new OffsetAndMetadata(0));
+        subscriptions.seek(tp, 10);
+        subscriptions.pause(tp); // paused partition already has a valid position
+
+        fetcher.updateFetchPositions(singleton(tp));
+
+        assertFalse(subscriptions.isOffsetResetNeeded(tp));
+        assertFalse(subscriptions.isFetchable(tp)); // because tp is paused
+        assertTrue(subscriptions.hasValidPosition(tp));
+        assertEquals(10, subscriptions.position(tp).longValue());
+    }
+
+    @Test
     public void testGetAllTopics() {
         // sending response before request, as getTopicMetadata is a blocking call
         client.prepareResponse(newMetadataResponse(topicName, Errors.NONE));
@@ -1143,6 +1239,9 @@ public class FetcherTest {
         MetricName maxLagMetric = metrics.metricInstance(metricsRegistry.recordsLagMax);
         MetricName partitionLagMetric = metrics.metricName(tp1 + ".records-lag", metricGroup);
 
+        MetricName maxLagMetric = metrics.metricName("records-lag-max", metricGroup, "");
+        MetricName partitionLagMetric = metrics.metricName(tp + ".records-lag", metricGroup, "");
+
         Map<MetricName, KafkaMetric> allMetrics = metrics.metrics();
         KafkaMetric recordsFetchLagMax = allMetrics.get(maxLagMetric);
 
@@ -1167,6 +1266,7 @@ public class FetcherTest {
         // verify de-registration of partition lag
         subscriptions.unsubscribe();
         assertFalse(allMetrics.containsKey(partitionLagMetric));
+<<<<<<< HEAD
     }
 
     @Test
@@ -1191,6 +1291,8 @@ public class FetcherTest {
         fetchRecords(records, Errors.NONE, 100L, 0);
         assertEquals(expectedBytes, fetchSizeAverage.value(), EPSILON);
         assertEquals(3, recordsCountAverage.value(), EPSILON);
+=======
+>>>>>>> origin/0.10.2
     }
 
     @Test
@@ -1749,28 +1851,33 @@ public class FetcherTest {
     }
 
     private void testGetOffsetsForTimesWithError(Errors errorForTp0,
-                                                 Errors errorForTp1,
+                                                 Errors errorFortp,
                                                  long offsetForTp0,
-                                                 long offsetForTp1,
+                                                 long offsetFortp,
                                                  Long expectedOffsetForTp0,
-                                                 Long expectedOffsetForTp1) {
+                                                 Long expectedOffsetFortp) {
         client.reset();
+<<<<<<< HEAD
         TopicPartition tp0 = tp1;
         TopicPartition tp1 = new TopicPartition(topicName, 1);
+=======
+        TopicPartition tp0 = tp;
+        TopicPartition tp = new TopicPartition(topicName, 1);
+>>>>>>> origin/0.10.2
         // Ensure metadata has both partition.
         Cluster cluster = TestUtils.clusterWith(2, topicName, 2);
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         // First try should fail due to metadata error.
         client.prepareResponseFrom(listOffsetResponse(tp0, errorForTp0, offsetForTp0, offsetForTp0), cluster.leaderFor(tp0));
-        client.prepareResponseFrom(listOffsetResponse(tp1, errorForTp1, offsetForTp1, offsetForTp1), cluster.leaderFor(tp1));
+        client.prepareResponseFrom(listOffsetResponse(tp, errorFortp, offsetFortp, offsetFortp), cluster.leaderFor(tp));
         // Second try should succeed.
         client.prepareResponseFrom(listOffsetResponse(tp0, Errors.NONE, offsetForTp0, offsetForTp0), cluster.leaderFor(tp0));
-        client.prepareResponseFrom(listOffsetResponse(tp1, Errors.NONE, offsetForTp1, offsetForTp1), cluster.leaderFor(tp1));
+        client.prepareResponseFrom(listOffsetResponse(tp, Errors.NONE, offsetFortp, offsetFortp), cluster.leaderFor(tp));
 
         Map<TopicPartition, Long> timestampToSearch = new HashMap<>();
         timestampToSearch.put(tp0, 0L);
-        timestampToSearch.put(tp1, 0L);
+        timestampToSearch.put(tp, 0L);
         Map<TopicPartition, OffsetAndTimestamp> offsetAndTimestampMap = fetcher.getOffsetsByTimes(timestampToSearch, Long.MAX_VALUE);
 
         if (expectedOffsetForTp0 == null)
@@ -1780,12 +1887,85 @@ public class FetcherTest {
             assertEquals(expectedOffsetForTp0.longValue(), offsetAndTimestampMap.get(tp0).offset());
         }
 
-        if (expectedOffsetForTp1 == null)
-            assertNull(offsetAndTimestampMap.get(tp1));
+        if (expectedOffsetFortp == null)
+            assertNull(offsetAndTimestampMap.get(tp));
         else {
-            assertEquals(expectedOffsetForTp1.longValue(), offsetAndTimestampMap.get(tp1).timestamp());
-            assertEquals(expectedOffsetForTp1.longValue(), offsetAndTimestampMap.get(tp1).offset());
+            assertEquals(expectedOffsetFortp.longValue(), offsetAndTimestampMap.get(tp).timestamp());
+            assertEquals(expectedOffsetFortp.longValue(), offsetAndTimestampMap.get(tp).offset());
         }
+    }
+
+    @Test
+    public void testFetchPositionAfterException() {
+    // verify the advancement in the next fetch offset equals the number of fetched records when
+        // some fetched partitions cause Exception. This ensures that consumer won't lose record upon exception
+        subscriptionsNoAutoReset.assignFromUser(Utils.mkSet(tp, tp1));
+        subscriptionsNoAutoReset.seek(tp, 1);
+        subscriptionsNoAutoReset.seek(tp1, 1);
+
+        assertEquals(1, fetcherNoAutoReset.sendFetches());
+
+        Map<TopicPartition, FetchResponse.PartitionData> partitions = new HashMap<>();
+        partitions.put(tp, new FetchResponse.PartitionData(Errors.OFFSET_OUT_OF_RANGE.code(), 100, MemoryRecords.EMPTY));
+        partitions.put(tp1, new FetchResponse.PartitionData(Errors.NONE.code(), 100, records));
+        client.prepareResponse(new FetchResponse(new LinkedHashMap<>(partitions), 0));
+        consumerClient.poll(0);
+
+        List<ConsumerRecord<byte[], byte[]>> fetchedRecords = new ArrayList<>();
+        List<OffsetOutOfRangeException> exceptions = new ArrayList<>();
+
+        try {
+            for (List<ConsumerRecord<byte[], byte[]>> records: fetcherNoAutoReset.fetchedRecords().values())
+                fetchedRecords.addAll(records);
+        } catch (OffsetOutOfRangeException e) {
+            exceptions.add(e);
+        }
+
+        assertEquals(fetchedRecords.size(), subscriptionsNoAutoReset.position(tp1) - 1);
+
+        try {
+            for (List<ConsumerRecord<byte[], byte[]>> records: fetcherNoAutoReset.fetchedRecords().values())
+                fetchedRecords.addAll(records);
+        } catch (OffsetOutOfRangeException e) {
+            exceptions.add(e);
+        }
+
+        assertEquals(4, subscriptionsNoAutoReset.position(tp1).longValue());
+        assertEquals(3, fetchedRecords.size());
+
+        // Should have received one OffsetOutOfRangeException for partition tp
+        assertEquals(1, exceptions.size());
+        OffsetOutOfRangeException e = exceptions.get(0);
+        assertTrue(e.offsetOutOfRangePartitions().containsKey(tp));
+        assertEquals(e.offsetOutOfRangePartitions().size(), 1);
+    }
+
+    @Test
+    public void testSeekBeforeException() {
+        Fetcher<byte[], byte[]> fetcher = createFetcher(subscriptionsNoAutoReset, new Metrics(time), 2);
+
+        subscriptionsNoAutoReset.assignFromUser(Utils.mkSet(tp));
+        subscriptionsNoAutoReset.seek(tp, 1);
+        assertEquals(1, fetcher.sendFetches());
+        Map<TopicPartition, FetchResponse.PartitionData> partitions = new HashMap<>();
+        partitions.put(tp, new FetchResponse.PartitionData(Errors.NONE.code(), 100, records));
+        client.prepareResponse(fetchResponse(this.records, Errors.NONE.code(), 100L, 0));
+        consumerClient.poll(0);
+
+        assertEquals(2, fetcher.fetchedRecords().get(tp).size());
+
+        subscriptionsNoAutoReset.assignFromUser(Utils.mkSet(tp, tp1));
+        subscriptionsNoAutoReset.seek(tp1, 1);
+        assertEquals(1, fetcher.sendFetches());
+        partitions = new HashMap<>();
+        partitions.put(tp1, new FetchResponse.PartitionData(Errors.OFFSET_OUT_OF_RANGE.code(), 100, MemoryRecords.EMPTY));
+        client.prepareResponse(new FetchResponse(new LinkedHashMap<>(partitions), 0));
+        consumerClient.poll(0);
+        assertEquals(1, fetcher.fetchedRecords().get(tp).size());
+
+        subscriptionsNoAutoReset.seek(tp1, 10);
+        // Should not throw OffsetOutOfRangeException after the seek
+        assertEquals(0, fetcher.fetchedRecords().size());
     }
 
     private MockClient.RequestMatcher listOffsetRequestMatcher(final long timestamp) {

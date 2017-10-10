@@ -16,7 +16,10 @@
  */
 package org.apache.kafka.streams.processor.internals;
 
+<<<<<<< HEAD
 import org.apache.kafka.clients.ApiVersions;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.clients.ClientRequest;
 import org.apache.kafka.clients.ClientResponse;
 import org.apache.kafka.clients.ClientUtils;
@@ -38,7 +41,10 @@ import org.apache.kafka.common.network.ChannelBuilder;
 import org.apache.kafka.common.network.Selector;
 import org.apache.kafka.common.protocol.ApiKeys;
 import org.apache.kafka.common.protocol.Errors;
+<<<<<<< HEAD
 import org.apache.kafka.common.requests.ApiError;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.requests.ApiVersionsRequest;
 import org.apache.kafka.common.requests.ApiVersionsResponse;
 import org.apache.kafka.common.requests.CreateTopicsRequest;
@@ -101,8 +107,12 @@ public class StreamsKafkaClient {
 
         final Metadata metadata = new Metadata(streamsConfig.getLong(
             StreamsConfig.RETRY_BACKOFF_MS_CONFIG),
+<<<<<<< HEAD
             streamsConfig.getLong(StreamsConfig.METADATA_MAX_AGE_CONFIG),
             false
+=======
+            streamsConfig.getLong(StreamsConfig.METADATA_MAX_AGE_CONFIG)
+>>>>>>> origin/0.10.2
         );
         final List<InetSocketAddress> addresses = ClientUtils.parseAndValidateAddresses(streamsConfig.getList(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
         metadata.update(Cluster.bootstrap(addresses), Collections.<String>emptySet(), time.milliseconds());
@@ -131,13 +141,20 @@ public class StreamsKafkaClient {
             streamsConfig.getString(StreamsConfig.CLIENT_ID_CONFIG),
             MAX_INFLIGHT_REQUESTS, // a fixed large enough value will suffice
             streamsConfig.getLong(StreamsConfig.RECONNECT_BACKOFF_MS_CONFIG),
+<<<<<<< HEAD
             streamsConfig.getLong(StreamsConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG),
+=======
+>>>>>>> origin/0.10.2
             streamsConfig.getInt(StreamsConfig.SEND_BUFFER_CONFIG),
             streamsConfig.getInt(StreamsConfig.RECEIVE_BUFFER_CONFIG),
             streamsConfig.getInt(StreamsConfig.REQUEST_TIMEOUT_MS_CONFIG),
             time,
+<<<<<<< HEAD
             true,
             new ApiVersions());
+=======
+            true);
+>>>>>>> origin/0.10.2
     }
 
     public void close() throws IOException {
@@ -166,7 +183,11 @@ public class StreamsKafkaClient {
                 topicConfig.put(key, topicProperties.getProperty(key));
             }
             final CreateTopicsRequest.TopicDetails topicDetails = new CreateTopicsRequest.TopicDetails(
+<<<<<<< HEAD
                 partitions,
+=======
+                topicsMap.get(internalTopicConfig),
+>>>>>>> origin/0.10.2
                 (short) replicationFactor,
                 topicConfig);
 
@@ -192,7 +213,11 @@ public class StreamsKafkaClient {
         final CreateTopicsResponse createTopicsResponse =  (CreateTopicsResponse) clientResponse.responseBody();
 
         for (InternalTopicConfig internalTopicConfig : topicsMap.keySet()) {
+<<<<<<< HEAD
             ApiError error = createTopicsResponse.errors().get(internalTopicConfig.name());
+=======
+            CreateTopicsResponse.Error error = createTopicsResponse.errors().get(internalTopicConfig.name());
+>>>>>>> origin/0.10.2
             if (!error.is(Errors.NONE) && !error.is(Errors.TOPIC_ALREADY_EXISTS)) {
                 throw new StreamsException("Could not create topic: " + internalTopicConfig.name() + " due to " + error.messageWithFallback());
             }
@@ -239,6 +264,7 @@ public class StreamsKafkaClient {
     private String getControllerReadyBrokerId(final MetadataResponse metadata) {
         return ensureOneNodeIsReady(Collections.singletonList(metadata.controller()));
     }
+<<<<<<< HEAD
 
     /**
      * @return the Id of any broker that is ready, or an exception if no broker is ready.
@@ -255,6 +281,23 @@ public class StreamsKafkaClient {
         return ensureOneNodeIsReady(nodes);
     }
 
+=======
+
+    /**
+     * @return the Id of any broker that is ready, or an exception if no broker is ready.
+     */
+    private String getAnyReadyBrokerId() {
+        final Metadata metadata = new Metadata(
+            streamsConfig.getLong(StreamsConfig.RETRY_BACKOFF_MS_CONFIG),
+            streamsConfig.getLong(StreamsConfig.METADATA_MAX_AGE_CONFIG));
+        final List<InetSocketAddress> addresses = ClientUtils.parseAndValidateAddresses(streamsConfig.getList(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG));
+        metadata.update(Cluster.bootstrap(addresses), Collections.<String>emptySet(), Time.SYSTEM.milliseconds());
+
+        final List<Node> nodes = metadata.fetch().nodes();
+        return ensureOneNodeIsReady(nodes);
+    }
+
+>>>>>>> origin/0.10.2
     private ClientResponse sendRequest(final ClientRequest clientRequest) {
         try {
             kafkaClient.send(clientRequest, Time.SYSTEM.milliseconds());
@@ -295,11 +338,18 @@ public class StreamsKafkaClient {
 
         final ClientRequest clientRequest = kafkaClient.newClientRequest(
             getAnyReadyBrokerId(),
+<<<<<<< HEAD
             MetadataRequest.Builder.allTopics(),
             Time.SYSTEM.milliseconds(),
             true);
         final ClientResponse clientResponse = sendRequest(clientRequest);
 
+=======
+            new MetadataRequest.Builder(null),
+            Time.SYSTEM.milliseconds(),
+            true);
+        final ClientResponse clientResponse = sendRequest(clientRequest);
+>>>>>>> origin/0.10.2
         if (!clientResponse.hasResponse()) {
             throw new StreamsException("Empty response for client request.");
         }
@@ -319,7 +369,11 @@ public class StreamsKafkaClient {
      *
      * @throws StreamsException if brokers have version 0.10.0.x
      */
+<<<<<<< HEAD
     public void checkBrokerCompatibility(final boolean eosEnabled) throws StreamsException {
+=======
+    public void checkBrokerCompatibility() throws StreamsException {
+>>>>>>> origin/0.10.2
         final ClientRequest clientRequest = kafkaClient.newClientRequest(
             getAnyReadyBrokerId(),
             new ApiVersionsRequest.Builder(),
@@ -340,6 +394,7 @@ public class StreamsKafkaClient {
         if (apiVersionsResponse.apiVersion(ApiKeys.CREATE_TOPICS.id) == null) {
             throw new StreamsException("Kafka Streams requires broker version 0.10.1.x or higher.");
         }
+<<<<<<< HEAD
 
         if (eosEnabled && !brokerSupportsTransactions(apiVersionsResponse)) {
             throw new StreamsException("Setting " + PROCESSING_GUARANTEE_CONFIG + "=" + EXACTLY_ONCE + " requires broker version 0.11.0.x or higher.");
@@ -353,6 +408,7 @@ public class StreamsKafkaClient {
             && apiVersionsResponse.apiVersion(ApiKeys.END_TXN.id) != null
             && apiVersionsResponse.apiVersion(ApiKeys.WRITE_TXN_MARKERS.id) != null
             && apiVersionsResponse.apiVersion(ApiKeys.TXN_OFFSET_COMMIT.id) != null;
+=======
+>>>>>>> origin/0.10.2
     }
-
 }

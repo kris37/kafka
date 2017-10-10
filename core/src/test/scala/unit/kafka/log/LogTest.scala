@@ -64,7 +64,11 @@ class LogTest {
   def createEmptyLogs(dir: File, offsets: Int*) {
     for(offset <- offsets) {
       Log.logFile(dir, offset).createNewFile()
+<<<<<<< HEAD
       Log.offsetIndexFile(dir, offset).createNewFile()
+=======
+      Log.indexFilename(dir, offset).createNewFile()
+>>>>>>> origin/0.10.2
     }
   }
 
@@ -1729,6 +1733,10 @@ class LogTest {
     assertEquals("Unexpected partition number parsed", partition.toInt, topicPartition.partition)
   }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/0.10.2
   @Test
   def testParseTopicPartitionNameForEmptyName() {
     try {
@@ -1736,7 +1744,11 @@ class LogTest {
       Log.parseTopicPartitionName(dir)
       fail("KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
     } catch {
+<<<<<<< HEAD
       case _: KafkaException => // its GOOD!
+=======
+      case _: KafkaException => // expected
+>>>>>>> origin/0.10.2
     }
   }
 
@@ -1747,7 +1759,11 @@ class LogTest {
       Log.parseTopicPartitionName(dir)
       fail("KafkaException should have been thrown for dir: " + dir)
     } catch {
+<<<<<<< HEAD
       case _: KafkaException => // its GOOD!
+=======
+      case _: KafkaException => // expected
+>>>>>>> origin/0.10.2
     }
   }
 
@@ -1803,7 +1819,11 @@ class LogTest {
       Log.parseTopicPartitionName(dir)
       fail("KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
     } catch {
+<<<<<<< HEAD
       case _: KafkaException => // expected
+=======
+      case _: KafkaException => // its GOOD!
+>>>>>>> origin/0.10.2
     }
     // also test the "-delete" marker case
     val deleteMarkerDir = new File(logDir, Log.logDeleteDirName(topicPartitionName(topic, partition)))

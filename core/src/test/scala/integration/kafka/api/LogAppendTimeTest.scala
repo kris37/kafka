@@ -41,6 +41,10 @@ class LogAppendTimeTest extends IntegrationTestHarness {
 
   // This will be used for the offsets topic as well
   serverConfig.put(KafkaConfig.LogMessageTimestampTypeProp, TimestampType.LOG_APPEND_TIME.name)
+<<<<<<< HEAD
+=======
+  serverConfig.put(KafkaConfig.OffsetsTopicPartitionsProp, "1")
+>>>>>>> origin/0.10.2
   serverConfig.put(KafkaConfig.OffsetsTopicReplicationFactorProp, "2")
 
   private val topic = "topic"

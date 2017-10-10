@@ -166,8 +166,16 @@ class StreamsSmokeTestShutdownDeadlockService(StreamsSmokeTestBaseService):
 
 
 class StreamsBrokerCompatibilityService(StreamsTestBaseService):
+<<<<<<< HEAD
     def __init__(self, test_context, kafka, eosEnabled):
         super(StreamsBrokerCompatibilityService, self).__init__(test_context,
                                                                 kafka,
                                                                 "org.apache.kafka.streams.tests.BrokerCompatibilityTest",
                                                                 eosEnabled)
+=======
+    def __init__(self, test_context, kafka):
+        super(StreamsBrokerCompatibilityService, self).__init__(test_context,
+                                                                kafka,
+                                                                "org.apache.kafka.streams.tests.BrokerCompatibilityTest",
+                                                                "dummy")
+>>>>>>> origin/0.10.2

@@ -79,9 +79,20 @@ public class AbstractTaskTest {
                                 consumer,
                                 new StoreChangelogReader(consumer, Time.SYSTEM, 5000),
                                 false,
+<<<<<<< HEAD
                                 new StateDirectory("app", TestUtils.tempDirectory().getPath(), time),
                                 new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())),
                                 config) {
+=======
+
+                                new StateDirectory("app", TestUtils.tempDirectory().getPath()),
+                                new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics()))) {
+            @Override
+            public void commit() {
+                // do nothing
+            }
+
+>>>>>>> origin/0.10.2
             @Override
             public void resume() {}
 

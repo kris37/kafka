@@ -28,6 +28,7 @@ public class NoOpRecordCollector implements RecordCollector {
 
     @Override
     public <K, V> void send(final String topic,
+<<<<<<< HEAD
                             final K key,
                             final V value,
                             final Integer partition,
@@ -43,6 +44,28 @@ public class NoOpRecordCollector implements RecordCollector {
                             final Serializer<K> keySerializer,
                             final Serializer<V> valueSerializer,
                             final StreamPartitioner<? super K, ? super V> partitioner) {}
+=======
+                            K key,
+                            V value,
+                            Integer partition,
+                            Long timestamp,
+                            Serializer<K> keySerializer,
+                            Serializer<V> valueSerializer) {
+    // no-op
+    }
+
+    @Override
+    public <K, V> void send(final String topic,
+                                K key,
+                                V value,
+                                Integer partition,
+                                Long timestamp,
+                                Serializer<K> keySerializer,
+                                Serializer<V> valueSerializer,
+                                StreamPartitioner<? super K, ? super V> partitioner) {
+        // no-op
+    }
+>>>>>>> origin/0.10.2
 
     @Override
     public void flush() {}

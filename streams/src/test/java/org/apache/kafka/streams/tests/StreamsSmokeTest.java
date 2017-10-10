@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+<<<<<<< HEAD:streams/src/test/java/org/apache/kafka/streams/tests/StreamsSmokeTest.java
+=======
+
+>>>>>>> origin/0.10.2:streams/src/test/java/org/apache/kafka/streams/tests/StreamsSmokeTest.java
 package org.apache.kafka.streams.tests;
 
 import java.io.File;

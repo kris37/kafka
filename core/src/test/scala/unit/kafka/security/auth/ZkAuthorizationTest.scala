@@ -83,7 +83,11 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
         val aclList = zkUtils.zkConnection.getAcl(path).getKey
         assertTrue(aclList.size == 2)
         for (acl: ACL <- aclList.asScala) {
+<<<<<<< HEAD
           assertTrue(TestUtils.isAclSecure(acl, false))
+=======
+          assertTrue(isAclSecure(acl, false))
+>>>>>>> origin/0.10.2
         }
       }
     }
@@ -226,7 +230,11 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
   private def verify(path: String): Boolean = {
     val sensitive = ZkUtils.sensitivePath(path)
     val list = zkUtils.zkConnection.getAcl(path).getKey
+<<<<<<< HEAD
     list.asScala.forall(TestUtils.isAclSecure(_, sensitive))
+=======
+    list.asScala.forall(isAclSecure(_, sensitive))
+>>>>>>> origin/0.10.2
   }
 
   /**
@@ -240,13 +248,45 @@ class ZkAuthorizationTest extends ZooKeeperTestHarness with Logging {
         list.size == 1
     isListSizeCorrect && list.asScala.forall(
       if (secure)
+<<<<<<< HEAD
         TestUtils.isAclSecure(_, sensitive)
+=======
+        isAclSecure(_, sensitive)
+>>>>>>> origin/0.10.2
       else
         TestUtils.isAclUnsecure
     )
   }
   
   /**
+<<<<<<< HEAD
+=======
+   * Verifies that this ACL is the secure one. The
+   * values are based on the constants used in the 
+   * ZooKeeper code base.
+   */
+  private def isAclSecure(acl: ACL, sensitive: Boolean): Boolean = {
+    info(s"ACL $acl")
+    acl.getPerms match {
+      case 1 => !sensitive && acl.getId.getScheme.equals("world")
+      case 31 => acl.getId.getScheme.equals("sasl")
+      case _ => false
+    }
+  }
+  
+  /**
+   * Verifies that the ACL corresponds to the unsecure one.
+   */
+  private def isAclUnsecure(acl: ACL): Boolean = {
+    info(s"ACL $acl")
+    acl.getPerms match {
+      case 31 => acl.getId.getScheme.equals("world")
+      case _ => false
+    }
+  }
+  
+  /**
+>>>>>>> origin/0.10.2
    * Sets up and starts the recursive execution of deletes.
    * This is used in the testDelete and testDeleteRecursive
    * test cases.

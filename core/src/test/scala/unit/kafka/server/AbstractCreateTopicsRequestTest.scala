@@ -133,12 +133,15 @@ class AbstractCreateTopicsRequestTest extends BaseRequestTest {
 
   protected def replicaAssignmentToJava(assignments: Map[Int, List[Int]]) = {
     assignments.map { case (k, v) => (k: Integer, v.map { i => i: Integer }.asJava) }.asJava
+<<<<<<< HEAD
   }
 
   protected def sendCreateTopicRequestStruct(requestStruct: Struct, apiVersion: Short,
                                              socketServer: SocketServer = controllerSocketServer): CreateTopicsResponse = {
     val response = connectAndSendStruct(requestStruct, ApiKeys.CREATE_TOPICS, apiVersion, socketServer)
     CreateTopicsResponse.parse(response, apiVersion)
+=======
+>>>>>>> origin/0.10.2
   }
 
   protected def sendCreateTopicRequest(request: CreateTopicsRequest, socketServer: SocketServer = controllerSocketServer): CreateTopicsResponse = {

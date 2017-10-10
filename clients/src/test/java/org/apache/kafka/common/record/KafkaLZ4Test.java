@@ -119,8 +119,20 @@ public class KafkaLZ4Test {
         makeInputStream(buffer);
     }
 
+<<<<<<< HEAD
     private KafkaLZ4BlockInputStream makeInputStream(ByteBuffer buffer) throws IOException {
         return new KafkaLZ4BlockInputStream(buffer, BufferSupplier.create(), ignoreFlagDescriptorChecksum);
+=======
+    private KafkaLZ4BlockInputStream makeInputStream(
+        ByteBuffer buffer
+    )
+        throws IOException {
+        return new KafkaLZ4BlockInputStream(
+            buffer,
+            BufferSupplier.create(),
+            ignoreFlagDescriptorChecksum
+        );
+>>>>>>> origin/0.10.2
     }
 
     @Test

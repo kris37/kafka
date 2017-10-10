@@ -55,6 +55,7 @@ public abstract class AbstractTask {
     /**
      * @throws ProcessorStateException if the state manager cannot be created
      */
+<<<<<<< HEAD
     AbstractTask(final TaskId id,
                  final String applicationId,
                  final Collection<TopicPartition> partitions,
@@ -65,6 +66,17 @@ public abstract class AbstractTask {
                  final StateDirectory stateDirectory,
                  final ThreadCache cache,
                  final StreamsConfig config) {
+=======
+    protected AbstractTask(final TaskId id,
+                           final String applicationId,
+                           final Collection<TopicPartition> partitions,
+                           final ProcessorTopology topology,
+                           final Consumer<byte[], byte[]> consumer,
+                           final Consumer<byte[], byte[]> restoreConsumer,
+                           final boolean isStandby,
+                           final StateDirectory stateDirectory,
+                           final ThreadCache cache) {
+>>>>>>> origin/0.10.2
         this.id = id;
         this.applicationId = applicationId;
         this.partitions = new HashSet<>(partitions);
@@ -77,6 +89,7 @@ public abstract class AbstractTask {
 
         // create the processor state manager
         try {
+<<<<<<< HEAD
             stateMgr = new ProcessorStateManager(
                 id,
                 partitions,
@@ -87,6 +100,11 @@ public abstract class AbstractTask {
                 eosEnabled);
         } catch (final IOException e) {
             throw new ProcessorStateException(String.format("%s Error while creating the state manager", logPrefix), e);
+=======
+            stateMgr = new ProcessorStateManager(id, partitions, restoreConsumer, isStandby, stateDirectory, topology.storeToChangelogTopic());
+        } catch (IOException e) {
+            throw new ProcessorStateException(String.format("task [%s] Error while creating the state manager", id), e);
+>>>>>>> origin/0.10.2
         }
     }
 

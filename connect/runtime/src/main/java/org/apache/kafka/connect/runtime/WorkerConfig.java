@@ -16,7 +16,10 @@
  */
 package org.apache.kafka.connect.runtime;
 
+<<<<<<< HEAD
 import org.apache.kafka.clients.CommonClientConfigs;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigDef.Importance;

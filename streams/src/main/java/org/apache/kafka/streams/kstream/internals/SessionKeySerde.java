@@ -134,18 +134,22 @@ public class SessionKeySerde<K> implements Serde<Windowed<K>> {
 
     public static <K> Windowed<K> from(final byte[] binaryKey, final Deserializer<K> keyDeserializer, final String topic) {
         final K key = extractKey(binaryKey, keyDeserializer, topic);
+<<<<<<< HEAD
         final Window window = extractWindow(binaryKey);
         return new Windowed<>(key, window);
     }
 
     public static Windowed<Bytes> fromBytes(Bytes bytesKey) {
         final byte[] binaryKey = bytesKey.get();
+=======
+>>>>>>> origin/0.10.2
         final ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
         final long start = buffer.getLong(binaryKey.length - TIMESTAMP_SIZE);
         final long end = buffer.getLong(binaryKey.length - 2 * TIMESTAMP_SIZE);
         return new Windowed<>(Bytes.wrap(extractKeyBytes(binaryKey)), new SessionWindow(start, end));
     }
 
+<<<<<<< HEAD
     private static <K> K extractKey(final byte[] binaryKey, final Deserializer<K> deserializer, final String topic) {
         return deserializer.deserialize(topic, extractKeyBytes(binaryKey));
     }
@@ -161,10 +165,43 @@ public class SessionKeySerde<K> implements Serde<Windowed<K>> {
 
     public static Bytes bytesToBinary(final Windowed<Bytes> sessionKey) {
         final byte[] bytes = sessionKey.key().get();
+=======
+    private static <K> K extractKey(final byte[] binaryKey, Deserializer<K> deserializer, final String topic) {
+        return deserializer.deserialize(topic, extractKeyBytes(binaryKey));
+    }
+
+    public static <K> Bytes toBinary(final Windowed<K> sessionKey, final Serializer<K> serializer, final String topic) {
+        final byte[] bytes = serializer.serialize(topic, sessionKey.key());
+>>>>>>> origin/0.10.2
         ByteBuffer buf = ByteBuffer.allocate(bytes.length + 2 * TIMESTAMP_SIZE);
         buf.put(bytes);
         buf.putLong(sessionKey.window().end());
         buf.putLong(sessionKey.window().start());
         return new Bytes(buf.array());
     }
+
+    public static Bytes bytesToBinary(final Windowed<Bytes> sessionKey) {
+        final byte[] bytes = sessionKey.key().get();
+        ByteBuffer buf = ByteBuffer.allocate(bytes.length + 2 * TIMESTAMP_SIZE);
+        buf.put(bytes);
+        buf.putLong(sessionKey.window().end());
+        buf.putLong(sessionKey.window().start());
+        return new Bytes(buf.array());
+    }
+
+    public static Window extractWindow(final byte [] binaryKey) {
+        final ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
+        final long start = buffer.getLong(binaryKey.length - TIMESTAMP_SIZE);
+        final long end = buffer.getLong(binaryKey.length - 2 * TIMESTAMP_SIZE);
+        return new TimeWindow(start, end);
+    }
+
+    public static Windowed<Bytes> fromBytes(Bytes bytesKey) {
+        final byte[] binaryKey = bytesKey.get();
+        final ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
+        final long start = buffer.getLong(binaryKey.length - TIMESTAMP_SIZE);
+        final long end = buffer.getLong(binaryKey.length - 2 * TIMESTAMP_SIZE);
+        return new Windowed<>(Bytes.wrap(extractKeyBytes(binaryKey)), new SessionWindow(start, end));
+    }
+
 }

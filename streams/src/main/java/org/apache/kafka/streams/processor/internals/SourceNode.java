@@ -27,16 +27,25 @@ import java.util.List;
 
 import static org.apache.kafka.common.serialization.ExtendedDeserializer.Wrapper.ensureExtended;
 
+import java.util.List;
+
 public class SourceNode<K, V> extends ProcessorNode<K, V> {
 
     private final List<String> topics;
 
     private ProcessorContext context;
+<<<<<<< HEAD
     private ExtendedDeserializer<K> keyDeserializer;
     private ExtendedDeserializer<V> valDeserializer;
     private final TimestampExtractor timestampExtractor;
 
     public SourceNode(String name, List<String> topics, TimestampExtractor timestampExtractor, Deserializer<K> keyDeserializer, Deserializer<V> valDeserializer) {
+=======
+    private Deserializer<K> keyDeserializer;
+    private Deserializer<V> valDeserializer;
+
+    public SourceNode(String name, List<String> topics, Deserializer<K> keyDeserializer, Deserializer<V> valDeserializer) {
+>>>>>>> origin/0.10.2
         super(name);
         this.topics = topics;
         this.timestampExtractor = timestampExtractor;

@@ -190,13 +190,28 @@ class KafkaController(val config: KafkaConfig, zkUtils: ZkUtils, time: Time, met
   newGauge(
     "OfflinePartitionsCount",
     new Gauge[Int] {
+<<<<<<< HEAD
       def value: Int = offlinePartitionCount
+=======
+      def value(): Int = {
+        inLock(controllerContext.controllerLock) {
+          if (!isActive)
+            0
+          else
+            controllerContext.partitionLeadershipInfo.count(p => 
+              (!controllerContext.liveOrShuttingDownBrokerIds.contains(p._2.leaderAndIsr.leader))
+              && (!deleteTopicManager.isTopicQueuedUpForDeletion(p._1.topic))
+            )
+        }
+      }
+>>>>>>> origin/0.10.2
     }
   )
 
   newGauge(
     "PreferredReplicaImbalanceCount",
     new Gauge[Int] {
+<<<<<<< HEAD
       def value: Int = preferredReplicaImbalanceCount
     }
   )
@@ -205,6 +220,21 @@ class KafkaController(val config: KafkaConfig, zkUtils: ZkUtils, time: Time, met
     "ControllerState",
     new Gauge[Byte] {
       def value: Byte = state.value
+=======
+      def value(): Int = {
+        inLock(controllerContext.controllerLock) {
+          if (!isActive)
+            0
+          else
+            controllerContext.partitionReplicaAssignment.count {
+              case (topicPartition, replicas) => 
+                (controllerContext.partitionLeadershipInfo(topicPartition).leaderAndIsr.leader != replicas.head 
+                && (!deleteTopicManager.isTopicQueuedUpForDeletion(topicPartition.topic))
+                )
+            }
+        }
+      }
+>>>>>>> origin/0.10.2
     }
   )
 
@@ -1130,10 +1160,33 @@ class KafkaController(val config: KafkaConfig, zkUtils: ZkUtils, time: Time, met
     }
   }
 
+<<<<<<< HEAD
   def getControllerID(): Int = {
     controllerContext.zkUtils.readDataMaybeNull(ZkUtils.ControllerPath)._1 match {
       case Some(controller) => KafkaController.parseControllerId(controller)
       case None => -1
+=======
+    /**
+     * Called after the zookeeper session has expired and a new session has been created. You would have to re-create
+     * any ephemeral nodes here.
+     *
+     * @throws Exception On any error.
+     */
+    @throws[Exception]
+    def handleNewSession() {
+      info("ZK expired; shut down all controller components and try to re-elect")
+      if (controllerElector.getControllerID() != config.brokerId) {
+        onControllerResignation()
+        inLock(controllerContext.controllerLock) {
+          controllerElector.elect
+        }
+      } else {
+        // This can happen when there are multiple consecutive session expiration and handleNewSession() are called multiple
+        // times. The first call may already register the controller path using the newest ZK session. Therefore, the
+        // controller path will exist in subsequent calls to handleNewSession().
+        info("ZK expired, but the current controller id %d is the same as this broker id, skip re-elect".format(config.brokerId))
+      }
+>>>>>>> origin/0.10.2
     }
   }
 

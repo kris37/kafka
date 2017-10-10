@@ -25,6 +25,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+<<<<<<< HEAD:connect/transforms/src/test/java/org/apache/kafka/connect/transforms/HoistFieldTest.java
 
 public class HoistFieldTest {
 
@@ -41,6 +42,24 @@ public class HoistFieldTest {
     }
 
     @Test
+=======
+
+public class HoistFieldTest {
+
+    @Test
+    public void schemaless() {
+        final HoistField<SinkRecord> xform = new HoistField.Key<>();
+        xform.configure(Collections.singletonMap("field", "magic"));
+
+        final SinkRecord record = new SinkRecord("test", 0, null, 42, null, null, 0);
+        final SinkRecord transformedRecord = xform.apply(record);
+
+        assertNull(transformedRecord.keySchema());
+        assertEquals(Collections.singletonMap("magic", 42), transformedRecord.key());
+    }
+
+    @Test
+>>>>>>> origin/0.10.2:connect/transforms/src/test/java/org/apache/kafka/connect/transforms/HoistFieldTest.java
     public void withSchema() {
         final HoistField<SinkRecord> xform = new HoistField.Key<>();
         xform.configure(Collections.singletonMap("field", "magic"));

@@ -368,7 +368,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -409,7 +413,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -450,7 +458,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -486,7 +498,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -536,7 +552,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -666,7 +686,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -722,7 +746,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         final Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         final MockClient client = new MockClient(time, metadata);
@@ -762,7 +790,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(singletonMap(topic, 1));
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -810,7 +842,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(tpCounts);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -930,7 +966,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(tpCounts);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -998,7 +1038,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(tpCounts);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -1063,7 +1107,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(tpCounts);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -1124,7 +1172,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 2);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -1135,7 +1187,11 @@ public class KafkaConsumerTest {
                 rebalanceTimeoutMs, sessionTimeoutMs, heartbeatIntervalMs, true, autoCommitIntervalMs);
 
         // lookup coordinator
+<<<<<<< HEAD
         client.prepareResponseFrom(new FindCoordinatorResponse(Errors.NONE, node), node);
+=======
+        client.prepareResponseFrom(new GroupCoordinatorResponse(Errors.NONE.code(), node), node);
+>>>>>>> origin/0.10.2
         Node coordinator = new Node(Integer.MAX_VALUE - node.id(), node.host(), node.port());
 
         // manual assignment
@@ -1154,6 +1210,7 @@ public class KafkaConsumerTest {
 
         client.prepareResponseFrom(offsetResponse(offsets, Errors.NONE), coordinator);
         assertEquals(0, consumer.committed(tp0).offset());
+<<<<<<< HEAD
 
         offsets.remove(tp0);
         offsets.put(tp1, 0L);
@@ -1165,6 +1222,13 @@ public class KafkaConsumerTest {
         offsetResponse.put(tp0, 3L);
         offsetResponse.put(tp1, 3L);
         client.prepareResponse(listOffsetsResponse(offsetResponse, Errors.NONE));
+=======
+        assertEquals(0, consumer.committed(tp1).offset());
+
+        // fetch and verify consumer's position in the two partitions
+        client.prepareResponse(listOffsetsResponse(Collections.singletonMap(tp0, 3L), Errors.NONE.code()));
+        client.prepareResponse(listOffsetsResponse(Collections.singletonMap(tp1, 3L), Errors.NONE.code()));
+>>>>>>> origin/0.10.2
         assertEquals(3L, consumer.position(tp0));
         assertEquals(3L, consumer.position(tp1));
 
@@ -1341,7 +1405,11 @@ public class KafkaConsumerTest {
         Cluster cluster = TestUtils.singletonCluster(topic, 1);
         Node node = cluster.nodes().get(0);
 
+<<<<<<< HEAD
         Metadata metadata = createMetadata();
+=======
+        Metadata metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
 
         MockClient client = new MockClient(time, metadata);
@@ -1617,8 +1685,11 @@ public class KafkaConsumerTest {
         ConsumerInterceptors<String, String> interceptors = null;
 
         Metrics metrics = new Metrics();
+<<<<<<< HEAD
         ConsumerMetrics metricsRegistry = new ConsumerMetrics(metricGroupPrefix);
 
+=======
+>>>>>>> origin/0.10.2
         SubscriptionState subscriptions = new SubscriptionState(autoResetStrategy);
         ConsumerNetworkClient consumerClient = new ConsumerNetworkClient(client, metadata, time, retryBackoffMs, requestTimeoutMs);
         ConsumerCoordinator consumerCoordinator = new ConsumerCoordinator(

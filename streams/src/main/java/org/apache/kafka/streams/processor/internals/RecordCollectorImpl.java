@@ -54,6 +54,7 @@ public class RecordCollectorImpl implements RecordCollector {
 
     @Override
     public <K, V> void send(final String topic,
+<<<<<<< HEAD
                             final K key,
                             final V value,
                             final Long timestamp,
@@ -73,10 +74,20 @@ public class RecordCollectorImpl implements RecordCollector {
         }
 
         send(topic, key, value, partition, timestamp, keySerializer, valueSerializer);
+=======
+                            K key,
+                            V value,
+                            Integer partition,
+                            Long timestamp,
+                            Serializer<K> keySerializer,
+                            Serializer<V> valueSerializer) {
+        send(topic, key, value, partition, timestamp, keySerializer, valueSerializer, null);
+>>>>>>> origin/0.10.2
     }
 
     @Override
     public <K, V> void  send(final String topic,
+<<<<<<< HEAD
                              final K key,
                              final V value,
                              final Integer partition,
@@ -88,6 +99,25 @@ public class RecordCollectorImpl implements RecordCollector {
         final byte[] valBytes = valueSerializer.serialize(topic, value);
 
         final ProducerRecord<byte[], byte[]> serializedRecord =
+=======
+                             K key,
+                             V value,
+                             Integer partition,
+                             Long timestamp,
+                             Serializer<K> keySerializer,
+                             Serializer<V> valueSerializer,
+                             StreamPartitioner<? super K, ? super V> partitioner) {
+        checkForException();
+        byte[] keyBytes = keySerializer.serialize(topic, key);
+        byte[] valBytes = valueSerializer.serialize(topic, value);
+        if (partition == null && partitioner != null) {
+            List<PartitionInfo> partitions = this.producer.partitionsFor(topic);
+            if (partitions != null && partitions.size() > 0)
+                partition = partitioner.partition(key, value, partitions.size());
+        }
+
+        ProducerRecord<byte[], byte[]> serializedRecord =
+>>>>>>> origin/0.10.2
                 new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes);
 
         // counting from 1 to make check further down more natural

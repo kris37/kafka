@@ -164,7 +164,11 @@ public class ReadOnlyWindowStoreStub<K, V> implements ReadOnlyWindowStore<K, V>,
 
         @Override
         public Long peekNextKey() {
+<<<<<<< HEAD
             throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
+=======
+            throw new UnsupportedOperationException("peekNextKey not supported in stub");
+>>>>>>> origin/0.10.2
         }
 
         @Override

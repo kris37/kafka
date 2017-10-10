@@ -199,11 +199,19 @@ public class SimpleBenchmark {
         System.out.println("numRecords=" + numRecords);
         System.out.println("loadPhase=" + loadPhase);
         System.out.println("testName=" + testName);
+<<<<<<< HEAD
 
         SimpleBenchmark benchmark = new SimpleBenchmark(stateDir, kafka, loadPhase, testName);
         benchmark.run();
     }
 
+=======
+
+        SimpleBenchmark benchmark = new SimpleBenchmark(stateDir, kafka, loadPhase, testName);
+        benchmark.run();
+    }
+
+>>>>>>> origin/0.10.2
     private Properties setStreamProperties(final String applicationId) {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
@@ -214,8 +222,13 @@ public class SimpleBenchmark {
         // the socket buffer needs to be large, especially when running in AWS with
         // high latency. if running locally the default is fine.
         props.put(ConsumerConfig.RECEIVE_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
+<<<<<<< HEAD
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
+=======
+        props.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass());
+        props.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
+>>>>>>> origin/0.10.2
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
         props.put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
         return props;

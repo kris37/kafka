@@ -41,7 +41,10 @@ import org.apache.kafka.streams.processor.internals.StreamThread;
 import org.apache.kafka.streams.processor.internals.StreamsMetadataState;
 import org.apache.kafka.test.MockProcessorSupplier;
 import org.apache.kafka.test.MockStateStoreSupplier;
+<<<<<<< HEAD
 import org.apache.kafka.test.IntegrationTest;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.test.StreamsTestUtils;
 import org.apache.kafka.test.TestCondition;
 import org.apache.kafka.test.TestUtils;
@@ -64,6 +67,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -239,17 +243,25 @@ public class RegexSourceIntegrationTest {
     @Test
     public void shouldAddStateStoreToRegexDefinedSource() throws Exception {
 
+<<<<<<< HEAD
         final ProcessorSupplier<String, String> processorSupplier = new MockProcessorSupplier<>();
         final MockStateStoreSupplier stateStoreSupplier = new MockStateStoreSupplier("testStateStore", false);
         final long thirtySecondTimeout = 30 * 1000;
 
         final TopologyBuilder builder = new TopologyBuilder()
+=======
+        ProcessorSupplier<String, String> processorSupplier = new MockProcessorSupplier<>();
+        MockStateStoreSupplier stateStoreSupplier = new MockStateStoreSupplier("testStateStore", false);
+
+        TopologyBuilder builder = new TopologyBuilder()
+>>>>>>> origin/0.10.2
                 .addSource("ingest", Pattern.compile("topic-\\d+"))
                 .addProcessor("my-processor", processorSupplier, "ingest")
                 .addStateStore(stateStoreSupplier, "my-processor");
 
 
         final KafkaStreams streams = new KafkaStreams(builder, streamsConfiguration);
+<<<<<<< HEAD
         try {
             streams.start();
 
@@ -267,6 +279,18 @@ public class RegexSourceIntegrationTest {
         } finally {
             streams.close();
         }
+=======
+        streams.start();
+
+        final Properties producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), StringSerializer.class, StringSerializer.class);
+
+        IntegrationTestUtils.produceValuesSynchronously(TOPIC_1, Arrays.asList("message for test"), producerConfig, mockTime);
+        streams.close();
+
+        Map<String, List<String>> stateStoreToSourceTopic = builder.stateStoreNameToSourceTopics();
+
+        assertThat(stateStoreToSourceTopic.get("testStateStore").get(0), is("topic-1"));
+>>>>>>> origin/0.10.2
     }
 
 

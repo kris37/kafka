@@ -83,7 +83,11 @@ public class KStreamBuilderTest {
         assertEquals("Y-0000000001", builder.newName("Y-"));
         assertEquals("Z-0000000002", builder.newName("Z-"));
 
+<<<<<<< HEAD
         final KStreamBuilder newBuilder = new KStreamBuilder();
+=======
+        KStreamBuilder newBuilder = new KStreamBuilder();
+>>>>>>> origin/0.10.2
 
         assertEquals("X-0000000000", newBuilder.newName("X-"));
         assertEquals("Y-0000000001", newBuilder.newName("Y-"));
@@ -129,6 +133,7 @@ public class KStreamBuilderTest {
         assertEquals(Utils.mkList("A:aa"), throughProcessorSupplier.processed);
     }
 
+<<<<<<< HEAD
     @Test
     public void testNewStoreName() {
         assertEquals("X-STATE-STORE-0000000000", builder.newStoreName("X-"));
@@ -146,6 +151,11 @@ public class KStreamBuilderTest {
     public void testMerge() {
         final String topic1 = "topic-1";
         final String topic2 = "topic-2";
+=======
+        KStream<String, String> source1 = builder.stream(topic1);
+        KStream<String, String> source2 = builder.stream(topic2);
+        KStream<String, String> merged = builder.merge(source1, source2);
+>>>>>>> origin/0.10.2
 
         final KStream<String, String> source1 = builder.stream(topic1);
         final KStream<String, String> source2 = builder.stream(topic2);
@@ -209,9 +219,15 @@ public class KStreamBuilderTest {
     }
 
     @Test
+<<<<<<< HEAD
     public void shouldStillMaterializeSourceKTableIfStateNameNotSpecified() throws Exception {
         KTable table1 = builder.table("topic1", "table1");
         KTable table2 = builder.table("topic2", (String) null);
+=======
+    public void shouldNotMaterializeSourceKTableIfStateNameNotSpecified() throws Exception {
+        builder.table("topic1", "table1");
+        builder.table("topic2", null);
+>>>>>>> origin/0.10.2
 
         final ProcessorTopology topology = builder.build(null);
 
@@ -236,6 +252,7 @@ public class KStreamBuilderTest {
 
         assertEquals(1, stateStores.size());
         assertEquals("globalTable", stateStores.get(0).name());
+<<<<<<< HEAD
     }
 
     private void doBuildGlobalTopologyWithAllGlobalTables() throws Exception {
@@ -246,6 +263,8 @@ public class KStreamBuilderTest {
 
         assertEquals(Utils.mkSet("table", "table2"), sourceTopics);
         assertEquals(2, stateStores.size());
+=======
+>>>>>>> origin/0.10.2
     }
 
     @Test
@@ -253,6 +272,7 @@ public class KStreamBuilderTest {
         builder.globalTable("table", "globalTable");
         builder.globalTable("table2", "globalTable2");
 
+<<<<<<< HEAD
         doBuildGlobalTopologyWithAllGlobalTables();
     }
 
@@ -262,6 +282,15 @@ public class KStreamBuilderTest {
         builder.globalTable("table2");
 
         doBuildGlobalTopologyWithAllGlobalTables();
+=======
+        final ProcessorTopology topology = builder.buildGlobalStateTopology();
+
+        final List<StateStore> stateStores = topology.globalStateStores();
+        final Set<String> sourceTopics = topology.sourceTopics();
+
+        assertEquals(Utils.mkSet("table", "table2"), sourceTopics);
+        assertEquals(2, stateStores.size());
+>>>>>>> origin/0.10.2
     }
 
     @Test
@@ -311,6 +340,7 @@ public class KStreamBuilderTest {
         mapped.leftJoin(table, MockValueJoiner.TOSTRING_JOINER).groupByKey().count("count");
         assertEquals(Collections.singletonList("table-topic"), builder.stateStoreNameToSourceTopics().get("table-store"));
         assertEquals(Collections.singletonList(APP_ID + "-KSTREAM-MAP-0000000003-repartition"), builder.stateStoreNameToSourceTopics().get("count"));
+<<<<<<< HEAD
     }
 
     @Test
@@ -449,5 +479,7 @@ public class KStreamBuilderTest {
         builder.table(null, new MockTimestampExtractor(), null, null, "topic", "store");
         final ProcessorTopology processorTopology = builder.build(null);
         assertThat(processorTopology.source("topic").getTimestampExtractor(), instanceOf(MockTimestampExtractor.class));
+=======
+>>>>>>> origin/0.10.2
     }
 }

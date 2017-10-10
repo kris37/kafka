@@ -50,6 +50,7 @@ public class StandbyTask extends AbstractTask {
      * @param metrics        the {@link StreamsMetrics} created by the thread
      * @param stateDirectory the {@link StateDirectory} created by the thread
      */
+<<<<<<< HEAD
     StandbyTask(final TaskId id,
                 final String applicationId,
                 final Collection<TopicPartition> partitions,
@@ -60,14 +61,41 @@ public class StandbyTask extends AbstractTask {
                 final StreamsMetrics metrics,
                 final StateDirectory stateDirectory) {
         super(id, applicationId, partitions, topology, consumer, changelogReader, true, stateDirectory, null, config);
+=======
+    public StandbyTask(final TaskId id,
+                       final String applicationId,
+                       final Collection<TopicPartition> partitions,
+                       final ProcessorTopology topology,
+                       final Consumer<byte[], byte[]> consumer,
+                       final Consumer<byte[], byte[]> restoreConsumer,
+                       final StreamsConfig config,
+                       final StreamsMetrics metrics,
+                       final StateDirectory stateDirectory) {
+        super(id, applicationId, partitions, topology, consumer, restoreConsumer, true, stateDirectory, null);
+>>>>>>> origin/0.10.2
 
         // initialize the topology with its own context
         processorContext = new StandbyContextImpl(id, applicationId, config, stateMgr, metrics);
 
         log.debug("{} Initializing", logPrefix);
         initializeStateStores();
+<<<<<<< HEAD
         processorContext.initialized();
         checkpointedOffsets = Collections.unmodifiableMap(stateMgr.checkpointed());
+=======
+
+        this.processorContext.initialized();
+
+        this.checkpointedOffsets = Collections.unmodifiableMap(stateMgr.checkpointed());
+    }
+
+    public Map<TopicPartition, Long> checkpointedOffsets() {
+        return checkpointedOffsets;
+    }
+
+    public Collection<TopicPartition> changeLogPartitions() {
+        return checkpointedOffsets.keySet();
+>>>>>>> origin/0.10.2
     }
 
     /**
@@ -90,8 +118,13 @@ public class StandbyTask extends AbstractTask {
      */
     @Override
     public void commit() {
+<<<<<<< HEAD
         log.trace("{} Committing", logPrefix);
         stateMgr.flush();
+=======
+        log.debug("standby-task [{}] Committing its state", id());
+        stateMgr.flush(processorContext);
+>>>>>>> origin/0.10.2
         stateMgr.checkpoint(Collections.<TopicPartition, Long>emptyMap());
         // reinitialize offset limits
         updateOffsetLimits();

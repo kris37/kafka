@@ -53,9 +53,12 @@ import static org.apache.kafka.common.utils.Utils.mkSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+<<<<<<< HEAD
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
+=======
+>>>>>>> origin/0.10.2
 
 public class TopologyBuilderTest {
 
@@ -704,6 +707,7 @@ public class TopologyBuilderTest {
 
     @SuppressWarnings("unchecked")
     @Test
+<<<<<<< HEAD
     public void shouldAddTimestampExtractorPerSource() throws Exception {
         final TopologyBuilder builder = new TopologyBuilder();
         builder.addSource(new MockTimestampExtractor(), "source", "topic");
@@ -759,6 +763,8 @@ public class TopologyBuilderTest {
         assertThat(processorTopology.source(pattern.pattern()).getTimestampExtractor(), instanceOf(MockTimestampExtractor.class));
     }
 
+=======
+>>>>>>> origin/0.10.2
     public void shouldConnectRegexMatchedTopicsToStateStore() throws Exception {
 
         final TopologyBuilder topologyBuilder = new TopologyBuilder()
@@ -766,7 +772,11 @@ public class TopologyBuilderTest {
                 .addProcessor("my-processor", new MockProcessorSupplier(), "ingest")
                 .addStateStore(new MockStateStoreSupplier("testStateStore", false), "my-processor");
 
+<<<<<<< HEAD
         final SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
+=======
+        final StreamPartitionAssignor.SubscriptionUpdates subscriptionUpdates = new StreamPartitionAssignor.SubscriptionUpdates();
+>>>>>>> origin/0.10.2
         final Field updatedTopicsField  = subscriptionUpdates.getClass().getDeclaredField("updatedTopicSubscriptions");
         updatedTopicsField.setAccessible(true);
 
@@ -789,6 +799,7 @@ public class TopologyBuilderTest {
         assertFalse(topics.contains("topic-A"));
     }
 
+<<<<<<< HEAD
     @Test(expected = TopologyBuilderException.class)
     public void shouldNotAllowToAddGlobalStoreWithSourceNameEqualsProcessorName() {
         final String sameNameForSourceAndProcessor = "sameName";
@@ -801,4 +812,6 @@ public class TopologyBuilderTest {
                 sameNameForSourceAndProcessor,
                 new MockProcessorSupplier());
     }
+=======
+>>>>>>> origin/0.10.2
 }

@@ -376,7 +376,7 @@ class ReplicaManagerTest {
       var fetchError = Errors.NONE
       var fetchedRecords: Records = null
       def fetchCallback(responseStatus: Seq[(TopicPartition, FetchPartitionData)]) = {
-        fetchError = responseStatus.map(_._2).head.error
+        fetchError = responseStatus.map(_._2).head.error.code
         fetchedRecords = responseStatus.map(_._2).head.records
         fetchCallbackFired = true
       }

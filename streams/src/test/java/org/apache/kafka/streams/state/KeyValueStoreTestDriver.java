@@ -18,6 +18,13 @@ package org.apache.kafka.streams.state;
 
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.clients.producer.Producer;
+<<<<<<< HEAD
+=======
+import org.apache.kafka.common.metrics.JmxReporter;
+import org.apache.kafka.common.metrics.MetricConfig;
+import org.apache.kafka.common.metrics.Metrics;
+import org.apache.kafka.common.metrics.MetricsReporter;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serdes;
@@ -166,8 +173,12 @@ public class KeyValueStoreTestDriver<K, V> {
                                                               final Deserializer<K> keyDeserializer,
                                                               final Serializer<V> valueSerializer,
                                                               final Deserializer<V> valueDeserializer) {
+<<<<<<< HEAD
         final StateSerdes<K, V> serdes = new StateSerdes<>(
             "unexpected",
+=======
+        StateSerdes<K, V> serdes = new StateSerdes<K, V>("unexpected",
+>>>>>>> origin/0.10.2
             Serdes.serdeFrom(keySerializer, keyDeserializer),
             Serdes.serdeFrom(valueSerializer, valueDeserializer));
         return new KeyValueStoreTestDriver<>(serdes);
@@ -188,6 +199,7 @@ public class KeyValueStoreTestDriver<K, V> {
             @SuppressWarnings("unchecked")
             @Override
             public <K1, V1> void send(final String topic,
+<<<<<<< HEAD
                                       final K1 key,
                                       final V1 value,
                                       final Integer partition,
@@ -198,12 +210,25 @@ public class KeyValueStoreTestDriver<K, V> {
 
                 final K keyTest = serdes.keyFrom(keySerializer.serialize(topic, key));
                 final V valueTest = serdes.valueFrom(valueSerializer.serialize(topic, value));
+=======
+                                      K1 key,
+                                      V1 value,
+                                      Integer partition,
+                                      Long timestamp,
+                                      Serializer<K1> keySerializer,
+                                      Serializer<V1> valueSerializer) {
+            // for byte arrays we need to wrap it for comparison
+
+                K keyTest = serdes.keyFrom(keySerializer.serialize(topic, key));
+                V valueTest = serdes.valueFrom(valueSerializer.serialize(topic, value));
+>>>>>>> origin/0.10.2
 
                 recordFlushed(keyTest, valueTest);
             }
 
             @Override
             public <K1, V1> void send(final String topic,
+<<<<<<< HEAD
                                       final K1 key,
                                       final V1 value,
                                       final Long timestamp,
@@ -211,6 +236,17 @@ public class KeyValueStoreTestDriver<K, V> {
                                       final Serializer<V1> valueSerializer,
                                       final StreamPartitioner<? super K1, ? super V1> partitioner) {
                 throw new UnsupportedOperationException();
+=======
+                                      K1 key,
+                                      V1 value,
+                                      Integer partition,
+                                      Long timestamp,
+                                      Serializer<K1> keySerializer,
+                                      Serializer<V1> valueSerializer,
+                                      StreamPartitioner<? super K1, ? super V1> partitioner) {
+                // ignore partitioner
+                send(topic, key, value, partition, timestamp, keySerializer, valueSerializer);
+>>>>>>> origin/0.10.2
             }
         };
 
@@ -221,10 +257,35 @@ public class KeyValueStoreTestDriver<K, V> {
         props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "application-id");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+<<<<<<< HEAD
         props.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor.class);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, serdes.keySerde().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, serdes.valueSerde().getClass());
         props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBKeyValueStoreTest.TheRocksDbConfigSetter.class);
+=======
+        props.put(StreamsConfig.TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor.class);
+        props.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, serdes.keySerde().getClass());
+        props.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, serdes.valueSerde().getClass());
+
+
+
+        this.context = new MockProcessorContext(this.stateDir, serdes.keySerde(), serdes.valueSerde(), recordCollector, null) {
+            @Override
+            public TaskId taskId() {
+                return new TaskId(0, 1);
+            }
+
+            @Override
+            public <K1, V1> void forward(K1 key, V1 value, int childIndex) {
+                forward(key, value);
+            }
+
+            @Override
+            public void register(StateStore store, boolean loggingEnabled, StateRestoreCallback func) {
+                storeMap.put(store.name(), store);
+                restoreEntries(func, serdes);
+            }
+>>>>>>> origin/0.10.2
 
         context = new MockProcessorContext(stateDir, serdes.keySerde(), serdes.valueSerde(), recordCollector, null) {
             ThreadCache cache = new ThreadCache("testCache", 1024 * 1024L, metrics());

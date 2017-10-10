@@ -115,9 +115,28 @@ public class StateDirectoryTest {
         directory.directoryForTask(taskId);
     }
 
+<<<<<<< HEAD
     @Test
     public void shouldNotLockDeletedDirectory() throws Exception {
         final TaskId taskId = new TaskId(0, 0);
+=======
+    @Test(expected = ProcessorStateException.class)
+    public void shouldThrowProcessorStateException() throws Exception {
+        final TaskId taskId = new TaskId(0, 0);
+
+        Utils.delete(stateDir);
+        directory.directoryForTask(taskId);
+    }
+
+    @Test
+    public void shouldNotLockDeletedDirectory() throws Exception {
+        final TaskId taskId = new TaskId(0, 0);
+
+        Utils.delete(stateDir);
+        assertFalse(directory.lock(taskId, 0));
+    }
+
+>>>>>>> origin/0.10.2
 
         Utils.delete(stateDir);
         assertFalse(directory.lock(taskId, 0));

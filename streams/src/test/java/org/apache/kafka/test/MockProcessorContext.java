@@ -16,6 +16,15 @@
  */
 package org.apache.kafka.test;
 
+<<<<<<< HEAD
+=======
+import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.metrics.JmxReporter;
 import org.apache.kafka.common.metrics.MetricConfig;
 import org.apache.kafka.common.metrics.Metrics;
@@ -60,6 +69,7 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
     private RecordContext recordContext;
     private ProcessorNode currentNode;
 
+<<<<<<< HEAD
     public MockProcessorContext(final StateSerdes<?, ?> serdes, final RecordCollector collector) {
         this(null, serdes.keySerde(), serdes.valueSerde(), collector, null);
     }
@@ -67,6 +77,15 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
     public MockProcessorContext(final File stateDir,
                                 final Serde<?> keySerde,
                                 final Serde<?> valSerde,
+=======
+    public MockProcessorContext(StateSerdes<?, ?> serdes, RecordCollector collector) {
+        this(null, serdes.keySerde(), serdes.valueSerde(), collector, null);
+    }
+
+    public MockProcessorContext(File stateDir,
+                                Serde<?> keySerde,
+                                Serde<?> valSerde,
+>>>>>>> origin/0.10.2
                                 final RecordCollector collector,
                                 final ThreadCache cache) {
         this(stateDir, keySerde, valSerde,
@@ -87,8 +106,13 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
         this.stateDir = stateDir;
         this.keySerde = keySerde;
         this.valSerde = valSerde;
+<<<<<<< HEAD
         recordCollectorSupplier = collectorSupplier;
         metrics = new Metrics(new MetricConfig(), Collections.singletonList((MetricsReporter) new JmxReporter()), new MockTime(), true);
+=======
+        this.recordCollectorSupplier = collectorSupplier;
+        this.metrics = new Metrics(config, Collections.singletonList((MetricsReporter) new JmxReporter()), time, true);
+>>>>>>> origin/0.10.2
         this.cache = cache;
         streamsMetrics = new MockStreamsMetrics(metrics);
     }
@@ -174,9 +198,15 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
 
     @Override
     @SuppressWarnings("unchecked")
+<<<<<<< HEAD
     public <K, V> void forward(final K key, final V value) {
         final ProcessorNode thisNode = currentNode;
         for (final ProcessorNode childNode : (List<ProcessorNode<K, V>>) thisNode.children()) {
+=======
+    public <K, V> void forward(K key, V value) {
+        ProcessorNode thisNode = currentNode;
+        for (ProcessorNode childNode : (List<ProcessorNode<K, V>>) thisNode.children()) {
+>>>>>>> origin/0.10.2
             currentNode = childNode;
             try {
                 childNode.process(key, value);
@@ -188,9 +218,15 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
 
     @Override
     @SuppressWarnings("unchecked")
+<<<<<<< HEAD
     public <K, V> void forward(final K key, final V value, final int childIndex) {
         final ProcessorNode thisNode = currentNode;
         final ProcessorNode childNode = (ProcessorNode<K, V>) thisNode.children().get(childIndex);
+=======
+    public <K, V> void forward(K key, V value, int childIndex) {
+        ProcessorNode thisNode = currentNode;
+        ProcessorNode childNode = (ProcessorNode<K, V>) thisNode.children().get(childIndex);
+>>>>>>> origin/0.10.2
         currentNode = childNode;
         try {
             childNode.process(key, value);
@@ -201,9 +237,15 @@ public class MockProcessorContext implements InternalProcessorContext, RecordCol
 
     @Override
     @SuppressWarnings("unchecked")
+<<<<<<< HEAD
     public <K, V> void forward(final K key, final V value, final String childName) {
         final ProcessorNode thisNode = currentNode;
         for (final ProcessorNode childNode : (List<ProcessorNode<K, V>>) thisNode.children()) {
+=======
+    public <K, V> void forward(K key, V value, String childName) {
+        ProcessorNode thisNode = currentNode;
+        for (ProcessorNode childNode : (List<ProcessorNode<K, V>>) thisNode.children()) {
+>>>>>>> origin/0.10.2
             if (childNode.name().equals(childName)) {
                 currentNode = childNode;
                 try {

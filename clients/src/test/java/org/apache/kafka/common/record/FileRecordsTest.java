@@ -428,6 +428,7 @@ public class FileRecordsTest {
         assertEquals(initialOffsets.size(), i);
     }
 
+<<<<<<< HEAD
     private static List<RecordBatch> batches(Records buffer) {
         return TestUtils.toList(buffer.batches());
     }
@@ -436,6 +437,14 @@ public class FileRecordsTest {
         FileRecords fileRecords = FileRecords.open(tempFile());
         append(fileRecords, values);
         return fileRecords;
+=======
+    private static List<LogEntry> shallowEntries(Records buffer) {
+        return TestUtils.toList(buffer.shallowEntries());
+    }
+
+    private static List<LogEntry> deepEntries(Records buffer) {
+        return TestUtils.toList(buffer.deepEntries(BufferSupplier.NO_CACHING));
+>>>>>>> origin/0.10.2
     }
 
     private void append(FileRecords fileRecords, byte[][] values) throws IOException {

@@ -415,8 +415,13 @@ public class ConsumerNetworkClient implements Closeable {
         return requestsSent;
     }
 
+<<<<<<< HEAD
     public void maybeTriggerWakeup() {
         if (!wakeupDisabled.get() && wakeup.get()) {
+=======
+    private void maybeTriggerWakeup() {
+        if (wakeupDisabledCount == 0 && wakeup.get()) {
+>>>>>>> origin/0.10.2
             log.trace("Raising wakeup exception in response to user wakeup");
             wakeup.set(false);
             throw new WakeupException();

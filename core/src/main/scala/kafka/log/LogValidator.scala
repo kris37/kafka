@@ -214,6 +214,7 @@ private[kafka] object LogValidator extends Logging {
                                                  now: Long,
                                                  sourceCodec: CompressionCodec,
                                                  targetCodec: CompressionCodec,
+<<<<<<< HEAD
                                                  compactedTopic: Boolean,
                                                  toMagic: Byte,
                                                  timestampType: TimestampType,
@@ -255,6 +256,31 @@ private[kafka] object LogValidator extends Logging {
 
           validatedRecords += record
         }
+=======
+                                                 compactedTopic: Boolean = false,
+                                                 messageFormatVersion: Byte = Record.CURRENT_MAGIC_VALUE,
+                                                 messageTimestampType: TimestampType,
+                                                 messageTimestampDiffMaxMs: Long): ValidationAndOffsetAssignResult = {
+    // No in place assignment situation 1 and 2
+    var inPlaceAssignment = sourceCodec == targetCodec && messageFormatVersion > Record.MAGIC_VALUE_V0
+
+    var maxTimestamp = Record.NO_TIMESTAMP
+    val expectedInnerOffset = new LongRef(0)
+    val validatedRecords = new mutable.ArrayBuffer[Record]
+
+    records.deepEntries(true, BufferSupplier.NO_CACHING).asScala.foreach { logEntry =>
+      val record = logEntry.record
+      validateKey(record, compactedTopic)
+
+      if (record.magic > Record.MAGIC_VALUE_V0 && messageFormatVersion > Record.MAGIC_VALUE_V0) {
+        // Validate the timestamp
+        validateTimestamp(record, now, messageTimestampType, messageTimestampDiffMaxMs)
+        // Check if we need to overwrite offset, no in place assignment situation 3
+        if (logEntry.offset != expectedInnerOffset.getAndIncrement())
+          inPlaceAssignment = false
+        if (record.timestamp > maxTimestamp)
+          maxTimestamp = record.timestamp
+>>>>>>> origin/0.10.2
       }
 
       if (!inPlaceAssignment) {

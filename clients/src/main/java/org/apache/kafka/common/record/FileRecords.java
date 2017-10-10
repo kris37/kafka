@@ -42,7 +42,11 @@ public class FileRecords extends AbstractRecords implements Closeable {
     private final int start;
     private final int end;
 
+<<<<<<< HEAD
     private final Iterable<FileLogInputStream.FileChannelRecordBatch> batches;
+=======
+    private final Iterable<FileChannelLogEntry> shallowEntries;
+>>>>>>> origin/0.10.2
 
     // mutable state
     private final AtomicInteger size;
@@ -102,10 +106,17 @@ public class FileRecords extends AbstractRecords implements Closeable {
     }
 
     /**
+<<<<<<< HEAD
      * Read log batches into the given buffer until there are no bytes remaining in the buffer or the end of the file
      * is reached.
      *
      * @param buffer The buffer to write the batches to
+=======
+     * Read log entries into the given buffer until there are no bytes remaining in the buffer or the end of the file
+     * is reached.
+     *
+     * @param buffer The buffer to write the entries to
+>>>>>>> origin/0.10.2
      * @param position Position in the buffer to read from
      * @return The same buffer
      * @throws IOException If an I/O error occurs, see {@link FileChannel#read(ByteBuffer, long)} for details on the
@@ -348,14 +359,48 @@ public class FileRecords extends AbstractRecords implements Closeable {
         };
     }
 
+<<<<<<< HEAD
     private Iterator<FileChannelRecordBatch> batchIterator(int start) {
+=======
+    private Iterator<FileChannelLogEntry> shallowIterator(int maxRecordSize, int start) {
         final int end;
         if (isSlice)
             end = this.end;
         else
             end = this.sizeInBytes();
+        FileLogInputStream inputStream = new FileLogInputStream(channel, maxRecordSize, start, end);
+        return RecordsIterator.shallowIterator(inputStream);
+    }
+
+    @Override
+    public Iterable<LogEntry> deepEntries(final BufferSupplier bufferSupplier) {
+        return new Iterable<LogEntry>() {
+            @Override
+            public Iterator<LogEntry> iterator() {
+                return deepIterator(bufferSupplier);
+            }
+        };
+    }
+
+    @Override
+    public Iterable<LogEntry> deepEntries() {
+        return deepEntries(BufferSupplier.NO_CACHING);
+    }
+
+    private Iterator<LogEntry> deepIterator(BufferSupplier bufferSupplier) {
+>>>>>>> origin/0.10.2
+        final int end;
+        if (isSlice)
+            end = this.end;
+        else
+            end = this.sizeInBytes();
+<<<<<<< HEAD
         FileLogInputStream inputStream = new FileLogInputStream(channel, start, end);
         return new RecordBatchIterator<>(inputStream);
+=======
+        FileLogInputStream inputStream = new FileLogInputStream(channel, Integer.MAX_VALUE, start, end);
+        return new RecordsIterator(inputStream, false, false, Integer.MAX_VALUE, bufferSupplier);
+>>>>>>> origin/0.10.2
     }
 
     public static FileRecords open(File file,

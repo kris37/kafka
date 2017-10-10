@@ -86,9 +86,15 @@ public class RecordCollectorTest {
         assertEquals((Long) 0L, offsets.get(new TopicPartition("topic1", 2)));
 
         // ignore StreamPartitioner
+<<<<<<< HEAD
         collector.send("topic1", "999", "0", 0, null, stringSerializer, stringSerializer);
         collector.send("topic1", "999", "0", 1, null, stringSerializer, stringSerializer);
         collector.send("topic1", "999", "0", 2, null, stringSerializer, stringSerializer);
+=======
+        collector.send("topic1", "999", "0", 0, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "999", "0", 1, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "999", "0", 2, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
 
         assertEquals((Long) 3L, offsets.get(new TopicPartition("topic1", 0)));
         assertEquals((Long) 2L, offsets.get(new TopicPartition("topic1", 1)));
@@ -102,6 +108,7 @@ public class RecordCollectorTest {
                 new MockProducer<>(cluster, true, new DefaultPartitioner(), byteArraySerializer, byteArraySerializer),
                 "RecordCollectorTest-TestStreamPartitioner");
 
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
         collector.send("topic1", "9", "0", null, stringSerializer, stringSerializer, streamPartitioner);
         collector.send("topic1", "27", "0", null, stringSerializer, stringSerializer, streamPartitioner);
@@ -113,6 +120,19 @@ public class RecordCollectorTest {
         collector.send("topic1", "244", "0", null, stringSerializer, stringSerializer, streamPartitioner);
 
         collector.send("topic1", "245", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "9", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "27", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "81", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "243", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+
+        collector.send("topic1", "28", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "82", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "244", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+
+        collector.send("topic1", "245", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
 
         final Map<TopicPartition, Long> offsets = collector.offsets();
 
@@ -137,7 +157,11 @@ public class RecordCollectorTest {
                 },
                 "test");
 
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
         final Long offset = collector.offsets().get(new TopicPartition("topic1", 0));
         assertEquals(Long.valueOf(0L), offset);
     }
@@ -154,7 +178,11 @@ public class RecordCollectorTest {
                 },
                 "test");
 
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
 
     }
 
@@ -170,8 +198,13 @@ public class RecordCollectorTest {
                     }
                 },
                 "test");
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
     }
 
     @SuppressWarnings("unchecked")
@@ -186,7 +219,11 @@ public class RecordCollectorTest {
                     }
                 },
                 "test");
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
         collector.flush();
     }
 
@@ -202,7 +239,11 @@ public class RecordCollectorTest {
                     }
                 },
                 "test");
+<<<<<<< HEAD
         collector.send("topic1", "3", "0", null, stringSerializer, stringSerializer, streamPartitioner);
+=======
+        collector.send("topic1", "3", "0", null, null, stringSerializer, stringSerializer, streamPartitioner);
+>>>>>>> origin/0.10.2
         collector.close();
     }
 

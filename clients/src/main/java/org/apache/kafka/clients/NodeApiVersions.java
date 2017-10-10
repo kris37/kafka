@@ -28,17 +28,29 @@ import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
  * An internal class which represents the API versions supported by a particular node.
  */
 public class NodeApiVersions {
+<<<<<<< HEAD
     // A map of the usable versions of each API, keyed by the ApiKeys instance
     private final Map<ApiKeys, UsableVersion> usableVersions = new EnumMap<>(ApiKeys.class);
 
     // List of APIs which the broker supports, but which are unknown to the client
     private final List<ApiVersion> unknownApis = new ArrayList<>();
+=======
+    private static final short NODE_TOO_OLD = (short) -1;
+    private static final short NODE_TOO_NEW = (short) -2;
+    private final Collection<ApiVersion> nodeApiVersions;
+
+    /**
+     * An array of the usable versions of each API, indexed by the ApiKeys ID.
+     */
+    private final Map<ApiKeys, Short> usableVersions = new EnumMap<>(ApiKeys.class);
+>>>>>>> origin/0.10.2
 
     /**
      * Create a NodeApiVersions object with the current ApiVersions.
@@ -67,13 +79,19 @@ public class NodeApiVersions {
                 }
             }
             if (!exists) {
+<<<<<<< HEAD
                 apiVersions.add(new ApiVersion(apiKey));
+=======
+                apiVersions.add(new ApiVersion(apiKey.id, ProtoUtils.oldestVersion(apiKey.id),
+                    ProtoUtils.latestVersion(apiKey.id)));
+>>>>>>> origin/0.10.2
             }
         }
         return new NodeApiVersions(apiVersions);
     }
 
     public NodeApiVersions(Collection<ApiVersion> nodeApiVersions) {
+<<<<<<< HEAD
         for (ApiVersion nodeApiVersion : nodeApiVersions) {
             if (ApiKeys.hasId(nodeApiVersion.apiKey)) {
                 ApiKeys nodeApiKey = ApiKeys.forId(nodeApiVersion.apiKey);
@@ -81,6 +99,21 @@ public class NodeApiVersions {
             } else {
                 // Newer brokers may support ApiKeys we don't know about
                 unknownApis.add(nodeApiVersion);
+=======
+        this.nodeApiVersions = nodeApiVersions;
+        for (ApiVersion nodeApiVersion : nodeApiVersions) {
+            int nodeApiKey = nodeApiVersion.apiKey;
+            // Newer brokers may support ApiKeys we don't know about, ignore them
+            if (ApiKeys.hasId(nodeApiKey)) {
+                short v = Utils.min(ProtoUtils.latestVersion(nodeApiKey), nodeApiVersion.maxVersion);
+                if (v < nodeApiVersion.minVersion) {
+                    usableVersions.put(ApiKeys.forId(nodeApiKey), NODE_TOO_NEW);
+                } else if (v < ProtoUtils.oldestVersion(nodeApiKey)) {
+                    usableVersions.put(ApiKeys.forId(nodeApiKey), NODE_TOO_OLD);
+                } else {
+                    usableVersions.put(ApiKeys.forId(nodeApiKey), v);
+                }
+>>>>>>> origin/0.10.2
             }
         }
     }
@@ -89,6 +122,7 @@ public class NodeApiVersions {
      * Return the most recent version supported by both the node and the local software.
      */
     public short usableVersion(ApiKeys apiKey) {
+<<<<<<< HEAD
         return usableVersion(apiKey, null);
     }
 
@@ -107,11 +141,28 @@ public class NodeApiVersions {
             usableVersion.ensureUsable(desiredVersion);
             return desiredVersion;
         }
+=======
+        Short usableVersion = usableVersions.get(apiKey);
+        if (usableVersion == null)
+            throw new UnsupportedVersionException("The broker does not support " + apiKey);
+        else if (usableVersion == NODE_TOO_OLD)
+            throw new UnsupportedVersionException("The broker is too old to support " + apiKey +
+                " version " + ProtoUtils.oldestVersion(apiKey.id));
+        else if (usableVersion == NODE_TOO_NEW)
+            throw new UnsupportedVersionException("The broker is too new to support " + apiKey +
+                " version " + ProtoUtils.latestVersion(apiKey.id));
+        else
+            return usableVersion;
+>>>>>>> origin/0.10.2
     }
 
     /**
      * Convert the object to a string with no linebreaks.<p/>
+<<<<<<< HEAD
      * <p>
+=======
+     *
+>>>>>>> origin/0.10.2
      * This toString method is relatively expensive, so avoid calling it unless debug logging is turned on.
      */
     @Override
@@ -129,9 +180,13 @@ public class NodeApiVersions {
         // a TreeMap before printing it out to ensure that we always print in
         // ascending order.
         TreeMap<Short, String> apiKeysText = new TreeMap<>();
+<<<<<<< HEAD
         for (UsableVersion usableVersion : this.usableVersions.values())
             apiKeysText.put(usableVersion.apiVersion.apiKey, apiVersionToText(usableVersion.apiVersion));
         for (ApiVersion apiVersion : unknownApis)
+=======
+        for (ApiVersion apiVersion : this.nodeApiVersions)
+>>>>>>> origin/0.10.2
             apiKeysText.put(apiVersion.apiKey, apiVersionToText(apiVersion));
 
         // Also handle the case where some apiKey types are not specified at all in the given ApiVersions,
@@ -173,6 +228,7 @@ public class NodeApiVersions {
         }
 
         if (apiKey != null) {
+<<<<<<< HEAD
             UsableVersion usableVersion = usableVersions.get(apiKey);
             if (usableVersion.isTooOld())
                 bld.append(" [unusable: node too old]");
@@ -216,6 +272,15 @@ public class NodeApiVersions {
             } else {
                 this.value = v;
             }
+=======
+            Short usableVersion = usableVersions.get(apiKey);
+            if (usableVersion == NODE_TOO_OLD)
+                bld.append(" [unusable: node too old]");
+            else if (usableVersion == NODE_TOO_NEW)
+                bld.append(" [unusable: node too new]");
+            else
+                bld.append(" [usable: ").append(usableVersion).append("]");
+>>>>>>> origin/0.10.2
         }
 
         private boolean isTooOld() {
@@ -244,4 +309,15 @@ public class NodeApiVersions {
 
     }
 
+<<<<<<< HEAD
+=======
+    public ApiVersion apiVersion(ApiKeys apiKey) {
+        for (ApiVersion nodeApiVersion : nodeApiVersions) {
+            if (nodeApiVersion.apiKey == apiKey.id) {
+                return nodeApiVersion;
+            }
+        }
+        throw new NoSuchElementException();
+    }
+>>>>>>> origin/0.10.2
 }

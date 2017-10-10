@@ -34,7 +34,11 @@ import java.util.List;
  * @param <K>
  * @param <V>
  */
+<<<<<<< HEAD
 public class MeteredKeyValueStore<K, V> extends WrappedStateStore.AbstractStateStore implements KeyValueStore<K, V> {
+=======
+public class MeteredKeyValueStore<K, V> extends WrappedStateStore.AbstractWrappedStateStore implements KeyValueStore<K, V> {
+>>>>>>> origin/0.10.2
 
     private final KeyValueStore<K, V> inner;
     private final String metricScope;
@@ -131,11 +135,14 @@ public class MeteredKeyValueStore<K, V> extends WrappedStateStore.AbstractStateS
     }
 
     @Override
+<<<<<<< HEAD
     public long approximateNumEntries() {
         return inner.approximateNumEntries();
     }
 
     @Override
+=======
+>>>>>>> origin/0.10.2
     public V get(K key) {
         this.key = key;
         metrics.measureLatencyNs(time, getDelegate, this.getTime);
@@ -181,6 +188,14 @@ public class MeteredKeyValueStore<K, V> extends WrappedStateStore.AbstractStateS
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    public long approximateNumEntries() {
+        return this.inner.approximateNumEntries();
+    }
+
+    @Override
+>>>>>>> origin/0.10.2
     public void flush() {
         metrics.measureLatencyNs(time, flushDelegate, this.flushTime);
     }

@@ -20,9 +20,15 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.streams.processor.StateStore;
 import org.apache.kafka.streams.processor.internals.StreamThread;
+<<<<<<< HEAD
 
 import java.util.Map;
 
+=======
+
+import java.util.Map;
+
+>>>>>>> origin/0.10.2
 /**
  * {@code KafkaClientSupplier} can be used to provide custom Kafka clients to a {@link KafkaStreams} instance.
  *

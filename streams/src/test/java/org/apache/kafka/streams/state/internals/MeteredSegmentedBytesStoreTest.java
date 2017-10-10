@@ -94,6 +94,7 @@ public class MeteredSegmentedBytesStoreTest {
 
         };
 
+<<<<<<< HEAD
         context = new MockProcessorContext(
             TestUtils.tempDirectory(),
             Serdes.String(),
@@ -101,6 +102,13 @@ public class MeteredSegmentedBytesStoreTest {
             new NoOpRecordCollector(),
             new ThreadCache("testCache", 0, streamsMetrics)) {
 
+=======
+        final MockProcessorContext context = new MockProcessorContext(TestUtils.tempDirectory(),
+                                                                      Serdes.String(),
+                                                                      Serdes.Long(),
+                                                                      new NoOpRecordCollector(),
+                                                                      new ThreadCache("testCache", 0, streamsMetrics)) {
+>>>>>>> origin/0.10.2
             @Override
             public StreamsMetrics metrics() {
                 return streamsMetrics;

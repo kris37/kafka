@@ -17,8 +17,12 @@
 package org.apache.kafka.common.record;
 
 import org.apache.kafka.common.TopicPartition;
+<<<<<<< HEAD
 import org.apache.kafka.common.utils.ByteBufferOutputStream;
 import org.apache.kafka.common.utils.CloseableIterator;
+=======
+import org.apache.kafka.common.record.ByteBufferLogInputStream.ByteBufferLogEntry;
+>>>>>>> origin/0.10.2
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +42,11 @@ import java.util.Objects;
  */
 public class MemoryRecords extends AbstractRecords {
     private static final Logger log = LoggerFactory.getLogger(MemoryRecords.class);
+<<<<<<< HEAD
     public static final MemoryRecords EMPTY = MemoryRecords.readableRecords(ByteBuffer.allocate(0));
+=======
+    public final static MemoryRecords EMPTY = MemoryRecords.readableRecords(ByteBuffer.allocate(0));
+>>>>>>> origin/0.10.2
 
     private final ByteBuffer buffer;
 
@@ -130,6 +138,7 @@ public class MemoryRecords extends AbstractRecords {
      *                                    performance impact.
      * @return A FilterResult with a summary of the output (for metrics) and potentially an overflow buffer
      */
+<<<<<<< HEAD
     public FilterResult filterTo(TopicPartition partition, RecordFilter filter, ByteBuffer destinationBuffer,
                                  int maxRecordBatchSize, BufferSupplier decompressionBufferSupplier) {
         return filterTo(partition, batches(), filter, destinationBuffer, maxRecordBatchSize, decompressionBufferSupplier);
@@ -139,6 +148,19 @@ public class MemoryRecords extends AbstractRecords {
                                          RecordFilter filter, ByteBuffer destinationBuffer, int maxRecordBatchSize,
                                          BufferSupplier decompressionBufferSupplier) {
         long maxTimestamp = RecordBatch.NO_TIMESTAMP;
+=======
+    public FilterResult filterTo(TopicPartition partition, LogEntryFilter filter, ByteBuffer destinationBuffer,
+                                 int maxRecordSize) {
+        return filterTo(partition, shallowEntries(), filter, destinationBuffer, maxRecordSize);
+    }
+
+    private static FilterResult filterTo(TopicPartition partition,
+                                         Iterable<ByteBufferLogEntry> fromShallowEntries,
+                                         LogEntryFilter filter,
+                                         ByteBuffer destinationBuffer,
+                                         int maxRecordSize) {
+        long maxTimestamp = Record.NO_TIMESTAMP;
+>>>>>>> origin/0.10.2
         long maxOffset = -1L;
         long shallowOffsetOfMaxTimestamp = -1L;
         int messagesRead = 0;
@@ -148,8 +170,13 @@ public class MemoryRecords extends AbstractRecords {
 
         ByteBufferOutputStream bufferOutputStream = new ByteBufferOutputStream(destinationBuffer);
 
+<<<<<<< HEAD
         for (MutableRecordBatch batch : batches) {
             bytesRead += batch.sizeInBytes();
+=======
+        for (ByteBufferLogEntry shallowEntry : fromShallowEntries) {
+            bytesRead += shallowEntry.sizeInBytes();
+>>>>>>> origin/0.10.2
 
             if (filter.shouldDiscard(batch))
                 continue;
@@ -184,6 +211,7 @@ public class MemoryRecords extends AbstractRecords {
                 }
             }
 
+<<<<<<< HEAD
             if (writeOriginalBatch) {
                 batch.writeTo(bufferOutputStream);
                 messagesRetained += retainedRecords.size();
@@ -205,6 +233,40 @@ public class MemoryRecords extends AbstractRecords {
                                     "(new size is {}). Consumers with version earlier than 0.10.1.0 may need to " +
                                     "increase their fetch sizes.",
                             partition, batch.lastOffset(), maxRecordBatchSize, filteredBatchSize);
+=======
+            if (writeOriginalEntry) {
+                // There are no messages compacted out and no message format conversion, write the original message set back
+                bufferOutputStream.write(shallowEntry.buffer());
+                messagesRetained += retainedEntries.size();
+                bytesRetained += shallowEntry.sizeInBytes();
+
+                if (shallowRecord.timestamp() > maxTimestamp) {
+                    maxTimestamp = shallowRecord.timestamp();
+                    shallowOffsetOfMaxTimestamp = shallowEntry.offset();
+                }
+            } else if (!retainedEntries.isEmpty()) {
+                LogEntry firstEntry = retainedEntries.iterator().next();
+                long firstOffset = firstEntry.offset();
+                byte magic = firstEntry.record().magic();
+
+                MemoryRecordsBuilder builder = new MemoryRecordsBuilder(bufferOutputStream, magic,
+                        shallowRecord.compressionType(), shallowRecord.timestampType(),
+                        firstOffset, shallowRecord.timestamp(), bufferOutputStream.buffer().remaining());
+                for (LogEntry entry : retainedEntries)
+                    builder.appendWithOffset(entry.offset(), entry.record());
+
+                MemoryRecords records = builder.build();
+                int filteredSizeInBytes = records.sizeInBytes();
+
+                messagesRetained += retainedEntries.size();
+                bytesRetained += records.sizeInBytes();
+>>>>>>> origin/0.10.2
+
+                if (filteredSizeInBytes > shallowEntry.sizeInBytes() && filteredSizeInBytes > maxRecordSize)
+                    log.warn("Record batch from {} with first offset {} exceeded max record size {} after cleaning " +
+                                    "(new size is {}). Consumers with version earlier than 0.10.1.0 may need to " +
+                                    "increase their fetch sizes.",
+                            partition, firstOffset, maxRecordSize, filteredSizeInBytes);
 
                 MemoryRecordsBuilder.RecordsInfo info = builder.info();
                 if (info.maxTimestamp > maxTimestamp) {
@@ -218,11 +280,16 @@ public class MemoryRecords extends AbstractRecords {
             ByteBuffer outputBuffer = bufferOutputStream.buffer();
             if (outputBuffer != destinationBuffer)
                 return new FilterResult(outputBuffer, messagesRead, bytesRead, messagesRetained, bytesRetained,
+<<<<<<< HEAD
                         maxOffset, maxTimestamp, shallowOffsetOfMaxTimestamp);
+=======
+                    maxOffset, maxTimestamp, shallowOffsetOfMaxTimestamp);
+>>>>>>> origin/0.10.2
         }
 
         return new FilterResult(destinationBuffer, messagesRead, bytesRead, messagesRetained, bytesRetained,
                 maxOffset, maxTimestamp, shallowOffsetOfMaxTimestamp);
+<<<<<<< HEAD
     }
 
     private static MemoryRecordsBuilder buildRetainedRecordsInto(RecordBatch originalBatch,
@@ -250,6 +317,8 @@ public class MemoryRecords extends AbstractRecords {
             builder.overrideLastOffset(originalBatch.lastOffset());
 
         return builder;
+=======
+>>>>>>> origin/0.10.2
     }
 
     /**
@@ -260,13 +329,50 @@ public class MemoryRecords extends AbstractRecords {
     }
 
     @Override
+<<<<<<< HEAD
     public Iterable<MutableRecordBatch> batches() {
         return batches;
+=======
+    public Iterable<ByteBufferLogEntry> shallowEntries() {
+        return shallowEntries;
+    }
+
+    private Iterator<ByteBufferLogEntry> shallowIterator() {
+        return RecordsIterator.shallowIterator(new ByteBufferLogInputStream(buffer.duplicate(), Integer.MAX_VALUE));
+    }
+
+    @Override
+    public Iterable<LogEntry> deepEntries(BufferSupplier bufferSupplier) {
+        return deepEntries(false, bufferSupplier);
+    }
+
+    @Override
+    public Iterable<LogEntry> deepEntries() {
+        return deepEntries(false, BufferSupplier.NO_CACHING);
+    }
+
+    public Iterable<LogEntry> deepEntries(final boolean ensureMatchingMagic, final BufferSupplier bufferSupplier) {
+        return new Iterable<LogEntry>() {
+            @Override
+            public Iterator<LogEntry> iterator() {
+                return deepIterator(ensureMatchingMagic, Integer.MAX_VALUE, bufferSupplier);
+            }
+        };
+    }
+
+    private Iterator<LogEntry> deepIterator(boolean ensureMatchingMagic, int maxMessageSize, BufferSupplier bufferSupplier) {
+        return new RecordsIterator(new ByteBufferLogInputStream(buffer.duplicate(), maxMessageSize), false,
+                ensureMatchingMagic, maxMessageSize, bufferSupplier);
+>>>>>>> origin/0.10.2
     }
 
     @Override
     public String toString() {
+<<<<<<< HEAD
         Iterator<Record> iter = records().iterator();
+=======
+        Iterator<LogEntry> iter = deepEntries(BufferSupplier.NO_CACHING).iterator();
+>>>>>>> origin/0.10.2
         StringBuilder builder = new StringBuilder();
         builder.append('[');
         while (iter.hasNext()) {

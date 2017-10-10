@@ -249,6 +249,7 @@ public class MockProducer<K, V> implements Producer<K, V> {
             partition = partition(record, this.cluster);
         TopicPartition topicPartition = new TopicPartition(record.topic(), partition);
         ProduceRequestResult result = new ProduceRequestResult(topicPartition);
+<<<<<<< HEAD
         FutureRecordMetadata future = new FutureRecordMetadata(result, 0, RecordBatch.NO_TIMESTAMP, 0L, 0, 0);
         long offset = nextOffset(topicPartition);
         Completion completion = new Completion(offset, new RecordMetadata(topicPartition, 0, offset,
@@ -259,6 +260,14 @@ public class MockProducer<K, V> implements Producer<K, V> {
         else
             this.uncommittedSends.add(record);
 
+=======
+        FutureRecordMetadata future = new FutureRecordMetadata(result, 0, Record.NO_TIMESTAMP, 0, 0, 0);
+        long offset = nextOffset(topicPartition);
+        Completion completion = new Completion(offset,
+                                               new RecordMetadata(topicPartition, 0, offset, Record.NO_TIMESTAMP, 0, 0, 0),
+                                               result, callback);
+        this.sent.add(record);
+>>>>>>> origin/0.10.2
         if (autoComplete)
             completion.complete(null);
         else
@@ -442,7 +451,11 @@ public class MockProducer<K, V> implements Producer<K, V> {
         }
 
         public void complete(RuntimeException e) {
+<<<<<<< HEAD
             result.set(e == null ? offset : -1L, RecordBatch.NO_TIMESTAMP, e);
+=======
+            result.set(e == null ? offset : -1L, Record.NO_TIMESTAMP, e);
+>>>>>>> origin/0.10.2
             if (callback != null) {
                 if (e == null)
                     callback.onCompletion(metadata, null);

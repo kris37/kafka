@@ -65,6 +65,10 @@ public class MockClient implements KafkaClient {
     private final Time time;
     private final Metadata metadata;
     private Set<String> unavailableTopics;
+<<<<<<< HEAD
+=======
+    private int correlation = 0;
+>>>>>>> origin/0.10.2
     private Node node = null;
     private final Set<String> ready = new HashSet<>();
     private final Map<Node, Long> blackedOut = new HashMap<>();
@@ -148,10 +152,16 @@ public class MockClient implements KafkaClient {
             FutureResponse futureResp = iterator.next();
             if (futureResp.node != null && !request.destination().equals(futureResp.node.idString()))
                 continue;
+<<<<<<< HEAD
 
             AbstractRequest.Builder<?> builder = request.requestBuilder();
             short version = nodeApiVersions.usableVersion(request.apiKey(), builder.desiredVersion());
             AbstractRequest abstractRequest = request.requestBuilder().build(version);
+=======
+            request.requestBuilder().setVersion(nodeApiVersions.usableVersion(
+                    request.requestBuilder().apiKey()));
+            AbstractRequest abstractRequest = request.requestBuilder().build();
+>>>>>>> origin/0.10.2
             if (!futureResp.requestMatcher.matches(abstractRequest))
                 throw new IllegalStateException("Request matcher did not match next-in-line request " + abstractRequest);
             ClientResponse resp = new ClientResponse(request.makeHeader(version), request.callback(), request.destination(),

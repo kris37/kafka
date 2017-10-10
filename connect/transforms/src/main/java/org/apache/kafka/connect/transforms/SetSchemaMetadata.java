@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -8,21 +9,42 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
+=======
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+>>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+<<<<<<< HEAD
  */
+=======
+ **/
+
+>>>>>>> origin/0.10.2
 package org.apache.kafka.connect.transforms;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.ConnectRecord;
 import org.apache.kafka.connect.data.ConnectSchema;
+<<<<<<< HEAD
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
+=======
+import org.apache.kafka.connect.data.Schema;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
 import java.util.Map;
@@ -103,8 +125,12 @@ public abstract class SetSchemaMetadata<R extends ConnectRecord<R>> implements T
 
         @Override
         protected R newRecord(R record, Schema updatedSchema) {
+<<<<<<< HEAD
             Object updatedKey = updateSchemaIn(record.key(), updatedSchema);
             return record.newRecord(record.topic(), record.kafkaPartition(), updatedSchema, updatedKey, record.valueSchema(), record.value(), record.timestamp());
+=======
+            return record.newRecord(record.topic(), record.kafkaPartition(), updatedSchema, record.key(), record.valueSchema(), record.value(), record.timestamp());
+>>>>>>> origin/0.10.2
         }
     }
 
@@ -119,6 +145,7 @@ public abstract class SetSchemaMetadata<R extends ConnectRecord<R>> implements T
 
         @Override
         protected R newRecord(R record, Schema updatedSchema) {
+<<<<<<< HEAD
             Object updatedValue = updateSchemaIn(record.value(), updatedSchema);
             return record.newRecord(record.topic(), record.kafkaPartition(), record.keySchema(), record.key(), updatedSchema, updatedValue, record.timestamp());
         }
@@ -149,4 +176,10 @@ public abstract class SetSchemaMetadata<R extends ConnectRecord<R>> implements T
         }
         return keyOrValue;
     }
+=======
+            return record.newRecord(record.topic(), record.kafkaPartition(), record.keySchema(), record.key(), updatedSchema, record.value(), record.timestamp());
+        }
+    }
+
+>>>>>>> origin/0.10.2
 }

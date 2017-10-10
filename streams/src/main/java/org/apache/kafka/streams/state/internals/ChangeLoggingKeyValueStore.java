@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -8,6 +9,18 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
+=======
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+>>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +42,20 @@ import org.apache.kafka.streams.state.StateSerdes;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 class ChangeLoggingKeyValueStore<K, V> extends WrappedStateStore.AbstractStateStore implements KeyValueStore<K, V> {
+=======
+class ChangeLoggingKeyValueStore<K, V> extends WrappedStateStore.AbstractWrappedStateStore implements KeyValueStore<K, V> {
+>>>>>>> origin/0.10.2
     private final ChangeLoggingKeyValueBytesStore innerBytes;
     private final Serde keySerde;
     private final Serde valueSerde;
     private StateSerdes<K, V> serdes;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/0.10.2
     ChangeLoggingKeyValueStore(final KeyValueStore<Bytes, byte[]> bytesStore,
                                final Serde keySerde,
                                final Serde valueSerde) {
@@ -56,6 +76,7 @@ class ChangeLoggingKeyValueStore<K, V> extends WrappedStateStore.AbstractStateSt
     public void init(final ProcessorContext context, final StateStore root) {
         innerBytes.init(context, root);
 
+<<<<<<< HEAD
         serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), innerBytes.name()),
                                    keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
                                    valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
@@ -64,6 +85,11 @@ class ChangeLoggingKeyValueStore<K, V> extends WrappedStateStore.AbstractStateSt
     @Override
     public long approximateNumEntries() {
         return innerBytes.approximateNumEntries();
+=======
+        this.serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), innerBytes.name()),
+                                        keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
+                                        valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
+>>>>>>> origin/0.10.2
     }
 
     @Override
@@ -113,11 +139,24 @@ class ChangeLoggingKeyValueStore<K, V> extends WrappedStateStore.AbstractStateSt
     public KeyValueIterator<K, V> range(final K from, final K to) {
         return new SerializedKeyValueIterator<>(innerBytes.range(Bytes.wrap(serdes.rawKey(from)),
                                                                  Bytes.wrap(serdes.rawKey(to))),
+<<<<<<< HEAD
                                                                  serdes);
+=======
+                                                serdes);
+>>>>>>> origin/0.10.2
     }
 
     @Override
     public KeyValueIterator<K, V> all() {
         return new SerializedKeyValueIterator<>(innerBytes.all(), serdes);
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public long approximateNumEntries() {
+        return innerBytes.approximateNumEntries();
+    }
+
+>>>>>>> origin/0.10.2
 }

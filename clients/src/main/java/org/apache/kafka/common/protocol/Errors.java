@@ -278,6 +278,7 @@ public enum Errors {
             }
         }),
     INVALID_SESSION_TIMEOUT(26,
+<<<<<<< HEAD
             "The session timeout is not within the range allowed by the broker " +
             "(as configured by group.min.session.timeout.ms and group.max.session.timeout.ms).",
         new ApiExceptionBuilder() {
@@ -500,6 +501,46 @@ public enum Errors {
     private interface ApiExceptionBuilder {
         ApiException build(String message);
     }
+=======
+            new InvalidSessionTimeoutException("The session timeout is not within the range allowed by the broker " +
+                    "(as configured by group.min.session.timeout.ms and group.max.session.timeout.ms).")),
+    REBALANCE_IN_PROGRESS(27,
+            new RebalanceInProgressException("The group is rebalancing, so a rejoin is needed.")),
+    INVALID_COMMIT_OFFSET_SIZE(28,
+            new InvalidCommitOffsetSizeException("The committing offset data size is not valid")),
+    TOPIC_AUTHORIZATION_FAILED(29,
+            new TopicAuthorizationException("Topic authorization failed.")),
+    GROUP_AUTHORIZATION_FAILED(30,
+            new GroupAuthorizationException("Group authorization failed.")),
+    CLUSTER_AUTHORIZATION_FAILED(31,
+            new ClusterAuthorizationException("Cluster authorization failed.")),
+    INVALID_TIMESTAMP(32,
+            new InvalidTimestampException("The timestamp of the message is out of acceptable range.")),
+    UNSUPPORTED_SASL_MECHANISM(33,
+            new UnsupportedSaslMechanismException("The broker does not support the requested SASL mechanism.")),
+    ILLEGAL_SASL_STATE(34,
+            new IllegalSaslStateException("Request is not valid given the current SASL state.")),
+    UNSUPPORTED_VERSION(35,
+            new UnsupportedVersionException("The version of API is not supported.")),
+    TOPIC_ALREADY_EXISTS(36,
+            new TopicExistsException("Topic with this name already exists.")),
+    INVALID_PARTITIONS(37,
+            new InvalidPartitionsException("Number of partitions is invalid.")),
+    INVALID_REPLICATION_FACTOR(38,
+            new InvalidReplicationFactorException("Replication-factor is invalid.")),
+    INVALID_REPLICA_ASSIGNMENT(39,
+            new InvalidReplicaAssignmentException("Replica assignment is invalid.")),
+    INVALID_CONFIG(40,
+            new InvalidConfigurationException("Configuration is invalid.")),
+    NOT_CONTROLLER(41,
+        new NotControllerException("This is not the correct controller for this cluster.")),
+    INVALID_REQUEST(42,
+        new InvalidRequestException("This most likely occurs because of a request being malformed by the client library or" +
+            " the message was sent to an incompatible broker. See the broker logs for more details.")),
+    UNSUPPORTED_FOR_MESSAGE_FORMAT(43,
+        new UnsupportedForMessageFormatException("The message format version on the broker does not support the request.")),
+    POLICY_VIOLATION(44, new PolicyViolationException("Request parameters do not satisfy the configured policy."));
+>>>>>>> origin/0.10.2
 
     private static final Logger log = LoggerFactory.getLogger(Errors.class);
 

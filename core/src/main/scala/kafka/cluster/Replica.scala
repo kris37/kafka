@@ -183,10 +183,14 @@ class Replica(val brokerId: Int,
     replicaString.append("; Partition: " + partition.partitionId)
     replicaString.append("; isLocal: " + isLocal)
     replicaString.append("; lastCaughtUpTimeMs: " + lastCaughtUpTimeMs)
+<<<<<<< HEAD
     if (isLocal) {
       replicaString.append("; Highwatermark: " + highWatermark)
       replicaString.append("; LastStableOffset: " + lastStableOffset)
     }
+=======
+    if (isLocal) replicaString.append("; Highwatermark: " + highWatermark)
+>>>>>>> origin/0.10.2
     replicaString.toString
   }
 }

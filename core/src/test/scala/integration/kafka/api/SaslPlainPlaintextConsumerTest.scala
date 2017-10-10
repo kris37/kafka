@@ -32,6 +32,7 @@ class SaslPlainPlaintextConsumerTest extends BaseConsumerTest with SaslSetup {
   override protected lazy val trustStoreFile = Some(File.createTempFile("truststore", ".jks"))
   override protected val serverSaslProperties = Some(kafkaServerSaslProperties(kafkaServerSaslMechanisms, kafkaClientSaslMechanism))
   override protected val clientSaslProperties = Some(kafkaClientSaslProperties(kafkaClientSaslMechanism))
+<<<<<<< HEAD
 
   @Before
   override def setUp(): Unit = {
@@ -53,4 +54,6 @@ class SaslPlainPlaintextConsumerTest extends BaseConsumerTest with SaslSetup {
   def testZkAclsDisabled() {
     TestUtils.verifyUnsecureZkAcls(zkUtils)
   }
+=======
+>>>>>>> origin/0.10.2
 }

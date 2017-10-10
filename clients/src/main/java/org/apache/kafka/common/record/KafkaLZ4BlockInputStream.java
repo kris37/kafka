@@ -128,9 +128,15 @@ public final class KafkaLZ4BlockInputStream extends InputStream {
             in.position(in.position() + 1);
             return;
         }
+<<<<<<< HEAD
 
         int len = in.position() - in.reset().position();
 
+=======
+
+        int len = in.position() - in.reset().position();
+
+>>>>>>> origin/0.10.2
         int hash = in.hasArray() ?
                        // workaround for https://github.com/lz4/lz4-java/pull/65
                        CHECKSUM.hash(in.array(), in.arrayOffset() + in.position(), len, 0) :

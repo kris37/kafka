@@ -30,7 +30,11 @@ class StreamsSimpleBenchmarkTest(Test):
 
     def __init__(self, test_context):
         super(StreamsSimpleBenchmarkTest, self).__init__(test_context)
+<<<<<<< HEAD
         self.num_records = 20000000L
+=======
+        self.num_records = 1000000L
+>>>>>>> origin/0.10.2
         self.replication = 1
 
 

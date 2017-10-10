@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -5,6 +6,15 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
+=======
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+>>>>>>> origin/0.10.2
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,6 +26,11 @@
  */
 package org.apache.kafka.tools;
 
+<<<<<<< HEAD
+=======
+import static net.sourceforge.argparse4j.impl.Arguments.store;
+
+>>>>>>> origin/0.10.2
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -37,24 +52,39 @@ import org.apache.kafka.common.errors.RecordTooLargeException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.Deserializer;
+<<<<<<< HEAD
 import org.apache.kafka.common.utils.Exit;
 import org.apache.kafka.common.utils.Time;
+=======
+import org.apache.kafka.common.utils.Time;
+import org.apache.kafka.common.utils.Utils;
+>>>>>>> origin/0.10.2
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+=======
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.HashMap;
+>>>>>>> origin/0.10.2
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
+<<<<<<< HEAD
 import static net.sourceforge.argparse4j.impl.Arguments.store;
 
+=======
+>>>>>>> origin/0.10.2
 /**
  * ClientCompatibilityTest is invoked by the ducktape test client_compatibility_features_test.py to validate
  * client behavior when various broker versions are in use.  It runs various client operations and tests whether they
@@ -127,10 +157,17 @@ public class ClientCompatibilityTest {
         } catch (ArgumentParserException e) {
             if (args.length == 0) {
                 parser.printHelp();
+<<<<<<< HEAD
                 Exit.exit(0);
             } else {
                 parser.handleError(e);
                 Exit.exit(1);
+=======
+                System.exit(0);
+            } else {
+                parser.handleError(e);
+                System.exit(1);
+>>>>>>> origin/0.10.2
             }
         }
         TestConfig testConfig = new TestConfig(res);
@@ -138,12 +175,21 @@ public class ClientCompatibilityTest {
         try {
             test.run();
         } catch (Throwable t) {
+<<<<<<< HEAD
             System.out.printf("FAILED: Caught exception %s%n%n", t.getMessage());
             t.printStackTrace();
             Exit.exit(1);
         }
         System.out.println("SUCCESS.");
         Exit.exit(0);
+=======
+            System.out.printf("FAILED: Caught exception %s\n\n", t.getMessage());
+            t.printStackTrace();
+            System.exit(1);
+        }
+        System.out.println("SUCCESS.");
+        System.exit(0);
+>>>>>>> origin/0.10.2
     }
 
     private static String toHexString(byte[] buf) {
@@ -207,7 +253,11 @@ public class ClientCompatibilityTest {
 
         @Override
         public String toString() {
+<<<<<<< HEAD
             return result.toString();
+=======
+            return Utils.mkString(result);
+>>>>>>> origin/0.10.2
         }
     }
 
@@ -286,15 +336,24 @@ public class ClientCompatibilityTest {
         consumer.assign(topicPartitions);
         consumer.seekToBeginning(topicPartitions);
         final Iterator<byte[]> iter = new Iterator<byte[]>() {
+<<<<<<< HEAD
             private static final int TIMEOUT_MS = 10000;
+=======
+            private final int timeoutMs = 10000;
+>>>>>>> origin/0.10.2
             private Iterator<ConsumerRecord<byte[], byte[]>> recordIter = null;
             private byte[] next = null;
 
             private byte[] fetchNext() {
                 while (true) {
                     long curTime = Time.SYSTEM.milliseconds();
+<<<<<<< HEAD
                     if (curTime - prodTimeMs > TIMEOUT_MS)
                         throw new RuntimeException("Timed out after " + TIMEOUT_MS + " ms.");
+=======
+                    if (curTime - prodTimeMs > timeoutMs)
+                        throw new RuntimeException("Timed out after " + timeoutMs + " ms.");
+>>>>>>> origin/0.10.2
                     if (recordIter == null) {
                         ConsumerRecords<byte[], byte[]> records = consumer.poll(100);
                         recordIter = records.iterator();
@@ -345,7 +404,11 @@ public class ClientCompatibilityTest {
             } catch (RuntimeException e) {
                 System.out.println("The second message in this topic was not ours. Please use a new " +
                     "topic when running this program.");
+<<<<<<< HEAD
                 Exit.exit(1);
+=======
+                System.exit(1);
+>>>>>>> origin/0.10.2
             }
         } catch (RecordTooLargeException e) {
             log.debug("Got RecordTooLargeException", e);

@@ -192,7 +192,11 @@ public interface KStream<K, V> {
      * and emit a record {@code <word:1>} for each word.
      * <pre>{@code
      * KStream<byte[], String> inputStream = builder.stream("topic");
+<<<<<<< HEAD
      * KStream<String, Integer> outputStream = inputStream.flatMap(new KeyValueMapper<byte[], String, Iterable<KeyValue<String, Integer>>> {
+=======
+     * KStream<Integer, String> outputStream = inputStream.flatMap(new KeyValueMapper<byte[], String, Iterable<KeyValue<String, Integer>>> {
+>>>>>>> origin/0.10.2
      *     Iterable<KeyValue<String, Integer>> apply(byte[] key, String value) {
      *         String[] tokens = value.split(" ");
      *         List<KeyValue<String, Integer>> result = new ArrayList<>(tokens.length);
@@ -238,7 +242,11 @@ public interface KStream<K, V> {
      * The example below splits input records {@code <null:String>} containing sentences as values into their words.
      * <pre>{@code
      * KStream<byte[], String> inputStream = builder.stream("topic");
+<<<<<<< HEAD
      * KStream<byte[], String> outputStream = inputStream.flatMapValues(new ValueMapper<String, Iterable<String>> {
+=======
+     * KStream<Integer, String> outputStream = inputStream.flatMap(new ValueMapper<String, Iterable<String>> {
+>>>>>>> origin/0.10.2
      *     Iterable<String> apply(String value) {
      *         return Arrays.asList(value.split(" "));
      *     }
@@ -406,6 +414,7 @@ public interface KStream<K, V> {
     void foreach(final ForeachAction<? super K, ? super V> action);
 
     /**
+<<<<<<< HEAD
      * Perform an action on each record of {@code KStream}.
      * This is a stateless record-by-record operation (cf. {@link #process(ProcessorSupplier, String...)}).
      * <p>
@@ -420,6 +429,8 @@ public interface KStream<K, V> {
     KStream<K, V> peek(final ForeachAction<? super K, ? super V> action);
 
     /**
+=======
+>>>>>>> origin/0.10.2
      * Creates an array of {@code KStream} from this stream by branching the records in the original stream based on
      * the supplied predicates.
      * Each record is evaluated against the supplied predicates, and predicates are evaluated in order.
@@ -1568,7 +1579,11 @@ public interface KStream<K, V> {
      * In contrast, processing {@link KTable} input records will only update the internal {@link KTable} state and
      * will not produce any result records.
      * <p>
+<<<<<<< HEAD
      * For each {@code KStream} record whether or not it finds a corresponding record in {@link KTable} the provided
+=======
+     * For each {@code KStream} record weather or not it finds a corresponding record in {@link KTable} the provided
+>>>>>>> origin/0.10.2
      * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
      * If no {@link KTable} record was found during lookup, a {@code null} value will be provided to {@link ValueJoiner}.
      * The key of the result record is the same as for both joining input records.
@@ -1644,7 +1659,11 @@ public interface KStream<K, V> {
      * In contrast, processing {@link KTable} input records will only update the internal {@link KTable} state and
      * will not produce any result records.
      * <p>
+<<<<<<< HEAD
      * For each {@code KStream} record whether or not it finds a corresponding record in {@link KTable} the provided
+=======
+     * For each {@code KStream} record weather or not it finds a corresponding record in {@link KTable} the provided
+>>>>>>> origin/0.10.2
      * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
      * If no {@link KTable} record was found during lookup, a {@code null} value will be provided to {@link ValueJoiner}.
      * The key of the result record is the same as for both joining input records.

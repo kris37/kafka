@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*
+=======
+/**
+>>>>>>> origin/0.10.2
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,6 +28,7 @@ import java.util.NoSuchElementException;
 class FilteredCacheIterator implements PeekingKeyValueIterator<Bytes, LRUCacheEntry> {
     private final PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
     private final HasNextCondition hasNextCondition;
+<<<<<<< HEAD
     private final PeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
     FilteredCacheIterator(final PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
@@ -66,6 +71,13 @@ class FilteredCacheIterator implements PeekingKeyValueIterator<Bytes, LRUCacheEn
                 cacheIterator.remove();
             }
         };
+=======
+
+    FilteredCacheIterator(final PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+                          final HasNextCondition hasNextCondition) {
+        this.cacheIterator = cacheIterator;
+        this.hasNextCondition = hasNextCondition;
+>>>>>>> origin/0.10.2
     }
 
     @Override
@@ -83,7 +95,11 @@ class FilteredCacheIterator implements PeekingKeyValueIterator<Bytes, LRUCacheEn
 
     @Override
     public boolean hasNext() {
+<<<<<<< HEAD
         return hasNextCondition.hasNext(wrappedIterator);
+=======
+        return hasNextCondition.hasNext(cacheIterator);
+>>>>>>> origin/0.10.2
     }
 
     @Override

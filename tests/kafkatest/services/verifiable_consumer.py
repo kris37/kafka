@@ -21,7 +21,10 @@ from ducktape.services.background_thread import BackgroundThreadService
 
 from kafkatest.directory_layout.kafka_path import KafkaPathResolverMixin
 from kafkatest.services.kafka import TopicPartition
+<<<<<<< HEAD
 from kafkatest.services.verifiable_client import VerifiableClientMixin
+=======
+>>>>>>> origin/0.10.2
 from kafkatest.version import DEV_BRANCH
 
 
@@ -66,7 +69,10 @@ class ConsumerEventHandler(object):
                 assert tp in self.assignment, \
                     "Committed offsets for partition %s not assigned (current assignment: %s)" % \
                     (str(tp), str(self.assignment))
+<<<<<<< HEAD
                 assert tp in self.position, "No previous position for %s: %s" % (str(tp), event)
+=======
+>>>>>>> origin/0.10.2
                 assert self.position[tp] >= offset, \
                     "The committed offset %d was greater than the current position %d for partition %s" % \
                     (offset, self.position[t], str(tp))
@@ -242,8 +248,13 @@ class VerifiableConsumer(KafkaPathResolverMixin, VerifiableClientMixin, Backgrou
             # the consumer cannot generally guarantee that the position increases monotonically
             # without gaps in the face of hard failures, so we only log a warning when this happens
             if tp in self.global_position and self.global_position[tp] != consumed_partition["minOffset"]:
+<<<<<<< HEAD
                 self.logger.warn("%s: Expected next consumed offset of %d for partition %s, but instead saw %d" %
                                  (str(node.account), self.global_position[tp], str(tp), consumed_partition["minOffset"]))
+=======
+                self.logger.warn("Expected next consumed offset of %d for partition %s, but instead saw %d" %
+                                 (self.global_position[tp], str(tp), consumed_partition["minOffset"]))
+>>>>>>> origin/0.10.2
 
             self.global_position[tp] = consumed_partition["maxOffset"] + 1
 

@@ -90,7 +90,11 @@ public class WorkerCoordinatorTest {
     public void setup() {
         this.time = new MockTime();
         this.client = new MockClient(time);
+<<<<<<< HEAD
         this.metadata = new Metadata(0, Long.MAX_VALUE, true);
+=======
+        this.metadata = new Metadata(0, Long.MAX_VALUE);
+>>>>>>> origin/0.10.2
         this.metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
         this.consumerClient = new ConsumerNetworkClient(client, metadata, time, 100, 1000);
         this.metrics = new Metrics(time);

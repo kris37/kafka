@@ -386,6 +386,7 @@ class LogManager(val logDirs: Array[File],
   /**
    * Checkpoint log start offset for all logs in provided directory.
    */
+<<<<<<< HEAD
   private def checkpointLogStartOffsetsInDir(dir: File): Unit = {
     val logs = this.logsByDir.get(dir.toString)
     if (logs.isDefined) {
@@ -393,6 +394,9 @@ class LogManager(val logDirs: Array[File],
         logs.get.filter{case (tp, log) => log.logStartOffset > log.logSegments.head.baseOffset}.mapValues(_.logStartOffset))
     }
   }
+=======
+  def getLog(topicPartition: TopicPartition): Option[Log] = Option(logs.get(topicPartition))
+>>>>>>> origin/0.10.2
 
   /**
    * Get the log if it exists, otherwise return None
@@ -409,6 +413,7 @@ class LogManager(val logDirs: Array[File],
       getLog(topicPartition).getOrElse {
         val dataDir = nextLogDir()
         val dir = new File(dataDir, topicPartition.topic + "-" + topicPartition.partition)
+<<<<<<< HEAD
         Files.createDirectories(dir.toPath)
 
         val log = new Log(
@@ -420,6 +425,10 @@ class LogManager(val logDirs: Array[File],
           scheduler = scheduler,
           time = time,
           brokerTopicStats = brokerTopicStats)
+=======
+        dir.mkdirs()
+        val log = new Log(dir, config, recoveryPoint = 0L, scheduler, time)
+>>>>>>> origin/0.10.2
         logs.put(topicPartition, log)
         info("Created log for partition [%s,%d] in %s with properties {%s}."
           .format(topicPartition.topic,
@@ -464,7 +473,11 @@ class LogManager(val logDirs: Array[File],
     */
   def asyncDelete(topicPartition: TopicPartition) = {
     val removedLog: Log = logCreationOrDeletionLock synchronized {
+<<<<<<< HEAD
       logs.remove(topicPartition)
+=======
+        logs.remove(topicPartition)
+>>>>>>> origin/0.10.2
     }
     if (removedLog != null) {
       //We need to wait until there is no more cleaning task on the log to be deleted before actually deleting it.

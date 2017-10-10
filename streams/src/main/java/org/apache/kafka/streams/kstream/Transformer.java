@@ -16,7 +16,13 @@
  */
 package org.apache.kafka.streams.kstream;
 
+<<<<<<< HEAD
 import org.apache.kafka.streams.KeyValue;
+=======
+import org.apache.kafka.common.annotation.InterfaceStability;
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.errors.StreamsException;
+>>>>>>> origin/0.10.2
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.processor.StateStore;
 import org.apache.kafka.streams.processor.TimestampExtractor;
@@ -44,6 +50,7 @@ import org.apache.kafka.streams.processor.TimestampExtractor;
  * @see KStream#map(KeyValueMapper)
  * @see KStream#flatMap(KeyValueMapper)
  */
+@InterfaceStability.Unstable
 public interface Transformer<K, V, R> {
 
     /**
@@ -93,7 +100,11 @@ public interface Transformer<K, V, R> {
      * and not based on wall-clock time.
      *
      * @param timestamp the stream time when {@code punctuate} is being called
+<<<<<<< HEAD
      * @return new {@link KeyValue} pair to be forwarded to down stream&mdash;if {@code null} will not be forwarded
+=======
+     * @return must return {@code null}&mdash;otherwise, a {@link StreamsException exception} will be thrown
+>>>>>>> origin/0.10.2
      */
     R punctuate(final long timestamp);
 

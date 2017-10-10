@@ -106,4 +106,11 @@ public class ConnectorPluginsResource {
             ? pluginName.substring(0, pluginName.length() - ALIAS_SUFFIX.length())
             : pluginName;
     }
+
+    private String normalizedPluginName(String pluginName) {
+        // Works for both full and simple class names. In the latter case, it generates the alias.
+        return pluginName.endsWith(ALIAS_SUFFIX) && pluginName.length() > ALIAS_SUFFIX.length()
+            ? pluginName.substring(0, pluginName.length() - ALIAS_SUFFIX.length())
+            : pluginName;
+    }
 }

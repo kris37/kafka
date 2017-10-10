@@ -42,10 +42,15 @@ import org.apache.kafka.common.internals.Topic.{GROUP_METADATA_TOPIC_NAME, TRANS
 import org.apache.kafka.common.metrics.Metrics
 import org.apache.kafka.common.network.ListenerName
 import org.apache.kafka.common.protocol.{ApiKeys, Errors, Protocol}
+<<<<<<< HEAD
 import org.apache.kafka.common.record.{ControlRecordType, EndTransactionMarker, MemoryRecords, RecordBatch}
 import org.apache.kafka.common.requests.CreateAclsResponse.AclCreationResponse
 import org.apache.kafka.common.requests.DeleteAclsResponse.{AclDeletionResult, AclFilterResponse}
 import org.apache.kafka.common.requests.{Resource => RResource, ResourceType => RResourceType, _}
+=======
+import org.apache.kafka.common.record.{MemoryRecords, Record}
+import org.apache.kafka.common.requests._
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.requests.ProduceResponse.PartitionResponse
 import org.apache.kafka.common.utils.{Time, Utils}
 import org.apache.kafka.common.{Node, TopicPartition}
@@ -215,6 +220,7 @@ class KafkaApis(val requestChannel: RequestChannel,
     val correlationId = request.header.correlationId
     val updateMetadataRequest = request.body[UpdateMetadataRequest]
 
+<<<<<<< HEAD
     if (authorize(request.session, ClusterAction, Resource.ClusterResource)) {
       val deletedPartitions = replicaManager.maybeUpdateMetadataCache(correlationId, updateMetadataRequest)
       if (deletedPartitions.nonEmpty)
@@ -223,6 +229,18 @@ class KafkaApis(val requestChannel: RequestChannel,
       if (adminManager.hasDelayedTopicOperations) {
         updateMetadataRequest.partitionStates.keySet.asScala.map(_.topic).foreach { topic =>
         adminManager.tryCompleteDelayedTopicOperations(topic)
+=======
+    val updateMetadataResponse =
+      if (authorize(request.session, ClusterAction, Resource.ClusterResource)) {
+        val deletedPartitions = replicaManager.maybeUpdateMetadataCache(correlationId, updateMetadataRequest, metadataCache)
+        if (deletedPartitions.nonEmpty)
+          coordinator.handleDeletedPartitions(deletedPartitions)
+
+        if (adminManager.hasDelayedTopicOperations) {
+          updateMetadataRequest.partitionStates.keySet.asScala.map(_.topic).foreach { topic =>
+            adminManager.tryCompleteDelayedTopicOperations(topic)
+          }
+>>>>>>> origin/0.10.2
         }
       }
       sendResponseExemptThrottle(RequestChannel.Response(request, new UpdateMetadataResponse(Errors.NONE)))
@@ -373,10 +391,17 @@ class KafkaApis(val requestChannel: RequestChannel,
     val produceRequest = request.body[ProduceRequest]
     val numBytesAppended = request.header.toStruct.sizeOf + request.bodyAndSize.size
 
+<<<<<<< HEAD
     def sendErrorResponse(error: Errors): Unit = {
       sendResponseMaybeThrottle(request, requestThrottleMs =>
         produceRequest.getErrorResponse(requestThrottleMs, error.exception))
     }
+=======
+    val (existingAndAuthorizedForDescribeTopics, nonExistingOrUnauthorizedForDescribeTopics) =
+      produceRequest.partitionRecordsOrFail.asScala.partition { case (tp, _) =>
+        authorize(request.session, Describe, new Resource(auth.Topic, tp.topic)) && metadataCache.contains(tp.topic)
+      }
+>>>>>>> origin/0.10.2
 
     if (produceRequest.isTransactional) {
       if (!authorize(request.session, Write, new Resource(TransactionalId, produceRequest.transactionalId))) {
@@ -396,7 +421,11 @@ class KafkaApis(val requestChannel: RequestChannel,
       }
 
     val (authorizedRequestInfo, unauthorizedForWriteRequestInfo) = existingAndAuthorizedForDescribeTopics.partition {
+<<<<<<< HEAD
       case (tp, _) => authorize(request.session, Write, new Resource(Topic, tp.topic))
+=======
+      case (tp, _) => authorize(request.session, Write, new Resource(auth.Topic, tp.topic))
+>>>>>>> origin/0.10.2
     }
 
     // the callback for sending a produce response
@@ -460,12 +489,20 @@ class KafkaApis(val requestChannel: RequestChannel,
 
       // call the replica manager to append messages to the replicas
       replicaManager.appendRecords(
+<<<<<<< HEAD
         timeout = produceRequest.timeout.toLong,
         requiredAcks = produceRequest.acks,
         internalTopicsAllowed = internalTopicsAllowed,
         isFromClient = true,
         entriesPerPartition = authorizedRequestInfo,
         responseCallback = sendResponseCallback)
+=======
+        produceRequest.timeout.toLong,
+        produceRequest.acks,
+        internalTopicsAllowed,
+        authorizedRequestInfo,
+        sendResponseCallback)
+>>>>>>> origin/0.10.2
 
       // if the request is put into the purgatory, it will have a held reference and hence cannot be garbage collected;
       // hence we clear its data here inorder to let GC re-claim its memory since it is already appended to log
@@ -518,6 +555,7 @@ class KafkaApis(val requestChannel: RequestChannel,
             None
         }
 
+<<<<<<< HEAD
         downConvertMagic.map { magic =>
           trace(s"Down converting records from partition $tp to message format version $magic for fetch request from $clientId")
           val converted = data.records.downConvert(magic, fetchRequest.fetchData.get(tp).fetchOffset)
@@ -535,6 +573,23 @@ class KafkaApis(val requestChannel: RequestChannel,
           val abortedTransactions = data.abortedTransactions.map(_.asJava).orNull
           tp -> new FetchResponse.PartitionData(data.error, data.hw, FetchResponse.INVALID_LAST_STABLE_OFFSET,
             data.logStartOffset, abortedTransactions, data.records)
+=======
+          // We only do down-conversion when:
+          // 1. The message format version configured for the topic is using magic value > 0, and
+          // 2. The message set contains message whose magic > 0
+          // This is to reduce the message format conversion as much as possible. The conversion will only occur
+          // when new message format is used for the topic and we see an old request.
+          // Please note that if the message format is changed from a higher version back to lower version this
+          // test might break because some messages in new message format can be delivered to consumers before 0.10.0.0
+          // without format down conversion.
+          val convertedData = if (versionId <= 1 && replicaManager.getMagic(tp).exists(_ > Record.MAGIC_VALUE_V0) &&
+            !data.records.hasMatchingShallowMagic(Record.MAGIC_VALUE_V0)) {
+            trace(s"Down converting message to V0 for fetch request from $clientId")
+            FetchPartitionData(data.error, data.hw, data.records.toMessageFormat(Record.MAGIC_VALUE_V0))
+          } else data
+
+          tp -> new FetchResponse.PartitionData(convertedData.error.code, convertedData.hw, convertedData.records)
+>>>>>>> origin/0.10.2
         }
       }
 
@@ -998,6 +1053,7 @@ class KafkaApis(val requestChannel: RequestChannel,
    */
   def handleOffsetFetchRequest(request: RequestChannel.Request) {
     val header = request.header
+<<<<<<< HEAD
     val offsetFetchRequest = request.body[OffsetFetchRequest]
 
     def authorizeTopicDescribe(partition: TopicPartition) =
@@ -1060,6 +1116,68 @@ class KafkaApis(val requestChannel: RequestChannel,
                 val unauthorizedPartitionData = unauthorizedPartitions.map(_ -> OffsetFetchResponse.UNKNOWN_PARTITION).toMap
                 new OffsetFetchResponse(requestThrottleMs, Errors.NONE, (authorizedPartitionData ++ unauthorizedPartitionData).asJava)
               }
+=======
+    val offsetFetchRequest = request.body.asInstanceOf[OffsetFetchRequest]
+
+    def authorizeTopicDescribe(partition: TopicPartition) =
+      authorize(request.session, Describe, new Resource(auth.Topic, partition.topic))
+
+    val offsetFetchResponse =
+      // reject the request if not authorized to the group
+      if (!authorize(request.session, Read, new Resource(Group, offsetFetchRequest.groupId)))
+        offsetFetchRequest.getErrorResponse(Errors.GROUP_AUTHORIZATION_FAILED)
+      else {
+        if (header.apiVersion == 0) {
+          val (authorizedPartitions, unauthorizedPartitions) = offsetFetchRequest.partitions.asScala
+            .partition(authorizeTopicDescribe)
+
+          // version 0 reads offsets from ZK
+          val authorizedPartitionData = authorizedPartitions.map { topicPartition =>
+            val topicDirs = new ZKGroupTopicDirs(offsetFetchRequest.groupId, topicPartition.topic)
+            try {
+              if (!metadataCache.contains(topicPartition.topic))
+                (topicPartition, OffsetFetchResponse.UNKNOWN_PARTITION)
+              else {
+                val payloadOpt = zkUtils.readDataMaybeNull(s"${topicDirs.consumerOffsetDir}/${topicPartition.partition}")._1
+                payloadOpt match {
+                  case Some(payload) =>
+                    (topicPartition, new OffsetFetchResponse.PartitionData(
+                        payload.toLong, OffsetFetchResponse.NO_METADATA, Errors.NONE))
+                  case None =>
+                    (topicPartition, OffsetFetchResponse.UNKNOWN_PARTITION)
+                }
+              }
+            } catch {
+              case e: Throwable =>
+                (topicPartition, new OffsetFetchResponse.PartitionData(
+                    OffsetFetchResponse.INVALID_OFFSET, OffsetFetchResponse.NO_METADATA, Errors.forException(e)))
+            }
+          }.toMap
+
+          val unauthorizedPartitionData = unauthorizedPartitions.map(_ -> OffsetFetchResponse.UNKNOWN_PARTITION).toMap
+          new OffsetFetchResponse(Errors.NONE, (authorizedPartitionData ++ unauthorizedPartitionData).asJava, header.apiVersion)
+        } else {
+          // versions 1 and above read offsets from Kafka
+          if (offsetFetchRequest.isAllPartitions) {
+            val (error, allPartitionData) = coordinator.handleFetchOffsets(offsetFetchRequest.groupId)
+            if (error != Errors.NONE)
+              offsetFetchRequest.getErrorResponse(error)
+            else {
+              // clients are not allowed to see offsets for topics that are not authorized for Describe
+              val authorizedPartitionData = allPartitionData.filter { case (topicPartition, _) => authorizeTopicDescribe(topicPartition) }
+              new OffsetFetchResponse(Errors.NONE, authorizedPartitionData.asJava, header.apiVersion)
+            }
+          } else {
+            val (authorizedPartitions, unauthorizedPartitions) = offsetFetchRequest.partitions.asScala
+              .partition(authorizeTopicDescribe)
+            val (error, authorizedPartitionData) = coordinator.handleFetchOffsets(offsetFetchRequest.groupId,
+              Some(authorizedPartitions))
+            if (error != Errors.NONE)
+              offsetFetchRequest.getErrorResponse(error)
+            else {
+              val unauthorizedPartitionData = unauthorizedPartitions.map(_ -> OffsetFetchResponse.UNKNOWN_PARTITION).toMap
+              new OffsetFetchResponse(Errors.NONE, (authorizedPartitionData ++ unauthorizedPartitionData).asJava, header.apiVersion)
+>>>>>>> origin/0.10.2
             }
           }
         }

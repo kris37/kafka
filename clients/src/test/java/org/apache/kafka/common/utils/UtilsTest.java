@@ -16,17 +16,26 @@
  */
 package org.apache.kafka.common.utils;
 
+<<<<<<< HEAD
 import org.apache.kafka.test.TestUtils;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Test;
 
+=======
+import java.io.EOFException;
+import java.nio.channels.FileChannel;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Collections;
+>>>>>>> origin/0.10.2
 import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+<<<<<<< HEAD
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -39,6 +48,19 @@ import static org.apache.kafka.common.utils.Utils.formatAddress;
 import static org.apache.kafka.common.utils.Utils.getHost;
 import static org.apache.kafka.common.utils.Utils.getPort;
 import static org.junit.Assert.assertArrayEquals;
+=======
+import java.util.Random;
+
+import org.apache.kafka.test.TestUtils;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
+import org.junit.Test;
+
+
+import static org.apache.kafka.common.utils.Utils.formatAddress;
+import static org.apache.kafka.common.utils.Utils.getHost;
+import static org.apache.kafka.common.utils.Utils.getPort;
+>>>>>>> origin/0.10.2
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

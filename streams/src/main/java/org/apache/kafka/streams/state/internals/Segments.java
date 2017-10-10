@@ -84,6 +84,10 @@ class Segments {
             Segment previousSegment = segments.putIfAbsent(key, newSegment);
             if (previousSegment == null) {
                 newSegment.openDB(context);
+<<<<<<< HEAD
+=======
+                segments.put(key, newSegment);
+>>>>>>> origin/0.10.2
                 maxSegmentId = segmentId > maxSegmentId ? segmentId : maxSegmentId;
                 if (minSegmentId == Long.MAX_VALUE) {
                     minSegmentId = maxSegmentId;

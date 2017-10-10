@@ -23,9 +23,13 @@ import kafka.common.TopicAlreadyMarkedForDeletionException
 import kafka.log.LogConfig
 import kafka.metrics.KafkaMetricsGroup
 import kafka.utils._
+<<<<<<< HEAD
 import org.apache.kafka.common.config.{AbstractConfig, ConfigDef, ConfigException, ConfigResource}
 import org.apache.kafka.common.errors.{ApiException, InvalidRequestException, PolicyViolationException}
 import org.apache.kafka.common.internals.Topic
+=======
+import org.apache.kafka.common.errors.{ApiException, InvalidRequestException, PolicyViolationException}
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.metrics.Metrics
 import org.apache.kafka.common.protocol.Errors
 import org.apache.kafka.common.requests.CreateTopicsRequest._
@@ -119,15 +123,26 @@ class AdminManager(val config: KafkaConfig,
             else
               AdminUtils.createOrUpdateTopicPartitionAssignmentPathInZK(zkUtils, topic, assignments, configs, update = false)
         }
+<<<<<<< HEAD
         CreateTopicMetadata(topic, assignments, new ApiError(Errors.NONE, null))
+=======
+        CreateTopicMetadata(topic, assignments, new CreateTopicsResponse.Error(Errors.NONE, null))
+>>>>>>> origin/0.10.2
       } catch {
         // Log client errors at a lower level than unexpected exceptions
         case e@ (_: PolicyViolationException | _: ApiException) =>
           info(s"Error processing create topic request for topic $topic with arguments $arguments", e)
+<<<<<<< HEAD
           CreateTopicMetadata(topic, Map(), ApiError.fromThrowable(e))
         case e: Throwable =>
           error(s"Error processing create topic request for topic $topic with arguments $arguments", e)
           CreateTopicMetadata(topic, Map(), ApiError.fromThrowable(e))
+=======
+          CreateTopicMetadata(topic, Map(), new CreateTopicsResponse.Error(Errors.forException(e), e.getMessage))
+        case e: Throwable =>
+          error(s"Error processing create topic request for topic $topic with arguments $arguments", e)
+          CreateTopicMetadata(topic, Map(), new CreateTopicsResponse.Error(Errors.forException(e), e.getMessage))
+>>>>>>> origin/0.10.2
       }
     }
 
@@ -304,6 +319,9 @@ class AdminManager(val config: KafkaConfig,
   def shutdown() {
     topicPurgatory.shutdown()
     CoreUtils.swallow(createTopicPolicy.foreach(_.close()))
+<<<<<<< HEAD
     CoreUtils.swallow(alterConfigPolicy.foreach(_.close()))
+=======
+>>>>>>> origin/0.10.2
   }
 }

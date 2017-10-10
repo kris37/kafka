@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public abstract class HoistField<R extends ConnectRecord<R>> implements Transformation<R> {
+<<<<<<< HEAD:connect/transforms/src/main/java/org/apache/kafka/connect/transforms/HoistField.java
 
     public static final String OVERVIEW_DOC =
             "Wrap data using the specified field name in a Struct when schema present, or a Map in the case of schemaless data."
@@ -38,6 +39,16 @@ public abstract class HoistField<R extends ConnectRecord<R>> implements Transfor
 
     private static final String FIELD_CONFIG = "field";
 
+=======
+
+    public static final String OVERVIEW_DOC =
+            "Wrap data using the specified field name in a Struct when schema present, or a Map in the case of schemaless data."
+                    + "<p/>Use the concrete transformation type designed for the record key (<code>" + Key.class.getName() + "</code>) "
+                    + "or value (<code>" + Value.class.getName() + "</code>).";
+
+    private static final String FIELD_CONFIG = "field";
+
+>>>>>>> origin/0.10.2:connect/transforms/src/main/java/org/apache/kafka/connect/transforms/HoistField.java
     public static final ConfigDef CONFIG_DEF = new ConfigDef()
             .define(FIELD_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE, ConfigDef.Importance.MEDIUM,
                     "Field name for the single field that will be created in the resulting Struct or Map.");

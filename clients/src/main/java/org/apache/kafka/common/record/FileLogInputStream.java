@@ -18,9 +18,12 @@ package org.apache.kafka.common.record;
 
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.CorruptRecordException;
+<<<<<<< HEAD
 import org.apache.kafka.common.record.AbstractLegacyRecordBatch.LegacyFileChannelRecordBatch;
 import org.apache.kafka.common.record.DefaultRecordBatch.DefaultFileChannelRecordBatch;
 import org.apache.kafka.common.utils.CloseableIterator;
+=======
+>>>>>>> origin/0.10.2
 import org.apache.kafka.common.utils.Utils;
 
 import java.io.IOException;
@@ -172,10 +175,17 @@ public class FileLogInputStream implements LogInputStream<FileLogInputStream.Fil
         @Override
         public void writeTo(ByteBuffer buffer) {
             try {
+<<<<<<< HEAD
                 int limit = buffer.limit();
                 buffer.limit(buffer.position() + sizeInBytes());
                 Utils.readFully(channel, buffer, position);
                 buffer.limit(limit);
+=======
+                byte[] magic = new byte[1];
+                ByteBuffer buf = ByteBuffer.wrap(magic);
+                Utils.readFullyOrFail(channel, buf, position + Records.LOG_OVERHEAD + Record.MAGIC_OFFSET, "magic byte");
+                return magic[0];
+>>>>>>> origin/0.10.2
             } catch (IOException e) {
                 throw new KafkaException("Failed to read record batch at position " + position + " from file channel " +
                         channel, e);
@@ -184,7 +194,12 @@ public class FileLogInputStream implements LogInputStream<FileLogInputStream.Fil
 
         protected abstract RecordBatch toMemoryRecordBatch(ByteBuffer buffer);
 
+<<<<<<< HEAD
         protected abstract int headerSize();
+=======
+            ByteBuffer recordBuffer = ByteBuffer.allocate(recordSize);
+            Utils.readFullyOrFail(channel, recordBuffer, position + Records.LOG_OVERHEAD, "full record");
+>>>>>>> origin/0.10.2
 
         protected RecordBatch loadFullBatch() {
             if (fullBatch == null) {

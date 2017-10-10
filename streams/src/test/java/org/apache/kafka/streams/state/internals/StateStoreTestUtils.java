@@ -29,10 +29,14 @@ import java.util.Collections;
 @SuppressWarnings("unchecked")
 public class StateStoreTestUtils {
 
+<<<<<<< HEAD
     public static <K, V> KeyValueStore<K, V> newKeyValueStore(final String name,
                                                               final String applicationId,
                                                               final Class<K> keyType,
                                                               final Class<V> valueType) {
+=======
+    public static <K, V> KeyValueStore<K, V> newKeyValueStore(String name, String applicationId, Class<K> keyType, Class<V> valueType) {
+>>>>>>> origin/0.10.2
         final InMemoryKeyValueStoreSupplier<K, V> supplier = new InMemoryKeyValueStoreSupplier<>(name,
                                                                                                  null,
                                                                                                  null,

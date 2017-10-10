@@ -98,8 +98,28 @@ public class SenderTest {
 
     @Before
     public void setup() {
+<<<<<<< HEAD
         client.setNode(cluster.nodes().get(0));
         setupWithTransactionState(null);
+=======
+        Map<String, String> metricTags = new LinkedHashMap<>();
+        metricTags.put("client-id", CLIENT_ID);
+        MetricConfig metricConfig = new MetricConfig().tags(metricTags);
+        metrics = new Metrics(metricConfig, time);
+        accumulator = new RecordAccumulator(batchSize, 1024 * 1024, CompressionType.NONE, 0L, 0L, metrics, time);
+        sender = new Sender(client,
+                            metadata,
+                            this.accumulator,
+                            true,
+                            MAX_REQUEST_SIZE,
+                            ACKS_ALL,
+                            MAX_RETRIES,
+                            metrics,
+                            time,
+                            REQUEST_TIMEOUT);
+
+        metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
+>>>>>>> origin/0.10.2
     }
 
     @After
@@ -359,7 +379,11 @@ public class SenderTest {
 
         Future<RecordMetadata> future = accumulator.append(tp0, time.milliseconds(), "key".getBytes(), "value".getBytes(), null, null, MAX_BLOCK_TIMEOUT).future;
         sender.run(time.milliseconds());
+<<<<<<< HEAD
         assertTrue("Topic not added to metadata", metadata.containsTopic(tp0.topic()));
+=======
+        assertTrue("Topic not added to metadata", metadata.containsTopic(tp.topic()));
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
         sender.run(time.milliseconds());  // send produce request
         client.respond(produceResponse(tp0, offset++, Errors.NONE, 0));
@@ -372,10 +396,17 @@ public class SenderTest {
         assertTrue("Topic not retained in metadata list", metadata.containsTopic(tp0.topic()));
         time.sleep(Metadata.TOPIC_EXPIRY_MS);
         metadata.update(Cluster.empty(), Collections.<String>emptySet(), time.milliseconds());
+<<<<<<< HEAD
         assertFalse("Unused topic has not been expired", metadata.containsTopic(tp0.topic()));
         future = accumulator.append(tp0, time.milliseconds(), "key".getBytes(), "value".getBytes(), null, null, MAX_BLOCK_TIMEOUT).future;
         sender.run(time.milliseconds());
         assertTrue("Topic not added to metadata", metadata.containsTopic(tp0.topic()));
+=======
+        assertFalse("Unused topic has not been expired", metadata.containsTopic(tp.topic()));
+        future = accumulator.append(tp, time.milliseconds(), "key".getBytes(), "value".getBytes(), null, MAX_BLOCK_TIMEOUT).future;
+        sender.run(time.milliseconds());
+        assertTrue("Topic not added to metadata", metadata.containsTopic(tp.topic()));
+>>>>>>> origin/0.10.2
         metadata.update(cluster, Collections.<String>emptySet(), time.milliseconds());
         sender.run(time.milliseconds());  // send produce request
         client.respond(produceResponse(tp0, offset++, Errors.NONE, 0));
@@ -696,8 +727,14 @@ public class SenderTest {
         }
     }
 
+<<<<<<< HEAD
     private ProduceResponse produceResponse(TopicPartition tp, long offset, Errors error, int throttleTimeMs) {
         ProduceResponse.PartitionResponse resp = new ProduceResponse.PartitionResponse(error, offset, RecordBatch.NO_TIMESTAMP);
+=======
+    private ProduceResponse produceResponse(TopicPartition tp, long offset, int error, int throttleTimeMs) {
+        ProduceResponse.PartitionResponse resp = new ProduceResponse.PartitionResponse(Errors.forCode((short) error),
+                offset, Record.NO_TIMESTAMP);
+>>>>>>> origin/0.10.2
         Map<TopicPartition, ProduceResponse.PartitionResponse> partResp = Collections.singletonMap(tp, resp);
         return new ProduceResponse(partResp, throttleTimeMs);
     }

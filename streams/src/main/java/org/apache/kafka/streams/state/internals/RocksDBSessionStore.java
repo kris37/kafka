@@ -33,7 +33,13 @@ class RocksDBSessionStore<K, AGG> extends WrappedStateStore.AbstractStateStore i
 
     private final Serde<K> keySerde;
     private final Serde<AGG> aggSerde;
+<<<<<<< HEAD
     protected final SegmentedBytesStore bytesStore;
+=======
+    private final SegmentedBytesStore bytesStore;
+    private StateSerdes<K, AGG> serdes;
+    protected String topic;
+>>>>>>> origin/0.10.2
 
     protected StateSerdes<K, AGG> serdes;
     protected String topic;
@@ -55,6 +61,7 @@ class RocksDBSessionStore<K, AGG> extends WrappedStateStore.AbstractStateStore i
             bytesStore.remove(SessionKeySerde.bytesToBinary(key));
         }
 
+<<<<<<< HEAD
         @Override
         public void put(final Windowed<Bytes> sessionKey, final byte[] aggregate) {
             bytesStore.put(SessionKeySerde.bytesToBinary(sessionKey), aggregate);
@@ -63,6 +70,16 @@ class RocksDBSessionStore<K, AGG> extends WrappedStateStore.AbstractStateStore i
 
     static RocksDBSessionStore<Bytes, byte[]> bytesStore(final SegmentedBytesStore inner) {
         return new RocksDBSessionBytesStore(inner);
+=======
+    @Override
+    public void remove(final Windowed<K> key) {
+        bytesStore.remove(SessionKeySerde.toBinary(key, serdes.keySerializer(), topic));
+    }
+
+    @Override
+    public void put(final Windowed<K> sessionKey, final AGG aggregate) {
+        bytesStore.put(SessionKeySerde.toBinary(sessionKey, serdes.keySerializer(), topic), serdes.rawValue(aggregate));
+>>>>>>> origin/0.10.2
     }
 
     RocksDBSessionStore(final SegmentedBytesStore bytesStore,
@@ -79,11 +96,17 @@ class RocksDBSessionStore<K, AGG> extends WrappedStateStore.AbstractStateStore i
     public void init(final ProcessorContext context, final StateStore root) {
         final String storeName = bytesStore.name();
         topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), storeName);
+<<<<<<< HEAD
 
         serdes = new StateSerdes<>(
             topic,
             keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
             aggSerde == null ? (Serde<AGG>) context.valueSerde() : aggSerde);
+=======
+        this.serdes = new StateSerdes<>(topic,
+                                        keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
+                                        aggSerde == null ? (Serde<AGG>) context.valueSerde() : aggSerde);
+>>>>>>> origin/0.10.2
 
         bytesStore.init(context, root);
     }
@@ -117,8 +140,47 @@ class RocksDBSessionStore<K, AGG> extends WrappedStateStore.AbstractStateStore i
         bytesStore.remove(SessionKeySerde.toBinary(key, serdes.keySerializer(), topic));
     }
 
+<<<<<<< HEAD
     @Override
     public void put(final Windowed<K> sessionKey, final AGG aggregate) {
         bytesStore.put(SessionKeySerde.toBinary(sessionKey, serdes.keySerializer(), topic), serdes.rawValue(aggregate));
+=======
+    private static class SessionStoreIterator<K, AGG> implements KeyValueIterator<Windowed<K>, AGG> {
+
+        private final KeyValueIterator<Bytes, byte[]> bytesIterator;
+        private final StateSerdes<K, AGG> serdes;
+
+        SessionStoreIterator(final KeyValueIterator<Bytes, byte[]> bytesIterator, final StateSerdes<K, AGG> serdes) {
+            this.bytesIterator = bytesIterator;
+            this.serdes = serdes;
+        }
+
+        @Override
+        public void close() {
+            bytesIterator.close();
+        }
+
+        @Override
+        public Windowed<K> peekNextKey() {
+            final Bytes bytes = bytesIterator.peekNextKey();
+            return SessionKeySerde.from(bytes.get(), serdes.keyDeserializer(), serdes.topic());
+        }
+
+        @Override
+        public boolean hasNext() {
+            return bytesIterator.hasNext();
+        }
+
+        @Override
+        public KeyValue<Windowed<K>, AGG> next() {
+            final KeyValue<Bytes, byte[]> next = bytesIterator.next();
+            return KeyValue.pair(SessionKeySerde.from(next.key.get(), serdes.keyDeserializer(), serdes.topic()), serdes.valueFrom(next.value));
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove not supported by SessionStoreIterator");
+        }
+>>>>>>> origin/0.10.2
     }
 }
