@@ -46,11 +46,8 @@ import org.rocksdb.WriteBatch;
 import org.rocksdb.WriteOptions;
 
 import java.io.File;
-<<<<<<< HEAD
 import java.io.IOException;
 import java.nio.file.Files;
-=======
->>>>>>> origin/0.10.2
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -178,10 +175,6 @@ public class RocksDBStore<K, V> implements KeyValueStore<K, V> {
         // value getter should always read directly from rocksDB
         // since it is only for values that are already flushed
         context.register(root, false, new StateRestoreCallback() {
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/0.10.2
             @Override
             public void restore(byte[] key, byte[] value) {
                 putInternal(key, value);

@@ -22,15 +22,10 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 
 import java.util.NoSuchElementException;
 
-<<<<<<< HEAD
 /**
  * Optimized {@link KeyValueIterator} used when the same element could be peeked multiple times.
  */
 class DelegatingPeekingKeyValueIterator<K, V> implements KeyValueIterator<K, V>, PeekingKeyValueIterator<K, V> {
-=======
-public class DelegatingPeekingKeyValueIterator<K, V> implements KeyValueIterator<K, V>, PeekingKeyValueIterator<K, V> {
-    private final String storeName;
->>>>>>> origin/0.10.2
     private final KeyValueIterator<K, V> underlying;
     private final String storeName;
     private KeyValue<K, V> next;
@@ -86,14 +81,6 @@ public class DelegatingPeekingKeyValueIterator<K, V> implements KeyValueIterator
     @Override
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported in " + getClass().getName());
-    }
-
-    @Override
-    public KeyValue<K, V> peekNext() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
-        return next;
     }
 
     @Override

@@ -21,22 +21,14 @@ import kafka.utils.{JaasTestUtils, TestUtils}
 
 import scala.collection.JavaConverters._
 
-<<<<<<< HEAD
 class SaslMultiMechanismConsumerTest extends BaseConsumerTest with SaslSetup {
   private val kafkaClientSaslMechanism = "PLAIN"
   private val kafkaServerSaslMechanisms = List("GSSAPI", "PLAIN")
-=======
-class SaslMultiMechanismConsumerTest extends BaseConsumerTest with SaslTestHarness {
-  override protected val zkSaslEnabled = true
-  override protected val kafkaClientSaslMechanism = "PLAIN"
-  override protected val kafkaServerSaslMechanisms = List("GSSAPI", "PLAIN")
->>>>>>> origin/0.10.2
   this.serverConfig.setProperty(KafkaConfig.ZkEnableSecureAclsProp, "true")
   override protected def securityProtocol = SecurityProtocol.SASL_SSL
   override protected lazy val trustStoreFile = Some(File.createTempFile("truststore", ".jks"))
   override protected val serverSaslProperties = Some(kafkaServerSaslProperties(kafkaServerSaslMechanisms, kafkaClientSaslMechanism))
   override protected val clientSaslProperties = Some(kafkaClientSaslProperties(kafkaClientSaslMechanism))
-<<<<<<< HEAD
 
   @Before
   override def setUp(): Unit = {
@@ -50,8 +42,6 @@ class SaslMultiMechanismConsumerTest extends BaseConsumerTest with SaslTestHarne
     super.tearDown()
     closeSasl()
   }
-=======
->>>>>>> origin/0.10.2
 
   @Test
   def testMultipleBrokerMechanisms() {

@@ -48,10 +48,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.apache.kafka.streams.state.ReadOnlyWindowStore;
 import org.apache.kafka.streams.state.StreamsMetadata;
 import org.apache.kafka.streams.state.WindowStoreIterator;
-<<<<<<< HEAD
 import org.apache.kafka.test.IntegrationTest;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.test.MockKeyValueMapper;
 import org.apache.kafka.test.TestCondition;
 import org.apache.kafka.test.TestUtils;
@@ -79,10 +76,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-<<<<<<< HEAD
 import static org.junit.Assert.assertNull;
-=======
->>>>>>> origin/0.10.2
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -93,11 +87,7 @@ public class QueryableStateIntegrationTest {
     @ClassRule
     public static final EmbeddedKafkaCluster CLUSTER =
         new EmbeddedKafkaCluster(NUM_BROKERS);
-<<<<<<< HEAD
     private static final int STREAM_THREE_PARTITIONS = 4;
-=======
-    public static final int STREAM_THREE_PARTITIONS = 4;
->>>>>>> origin/0.10.2
     private final MockTime mockTime = CLUSTER.time;
     private String streamOne = "stream-one";
     private String streamTwo = "stream-two";
@@ -118,11 +108,7 @@ public class QueryableStateIntegrationTest {
     private Comparator<KeyValue<String, Long>> stringLongComparator;
     private static int testNo = 0;
 
-<<<<<<< HEAD
     private void createTopics() throws InterruptedException {
-=======
-    public void createTopics() throws InterruptedException {
->>>>>>> origin/0.10.2
         streamOne = streamOne + "-" + testNo;
         streamConcurrent = streamConcurrent + "-" + testNo;
         streamThree = streamThree + "-" + testNo;
@@ -130,29 +116,10 @@ public class QueryableStateIntegrationTest {
         outputTopicConcurrent = outputTopicConcurrent + "-" + testNo;
         outputTopicThree = outputTopicThree + "-" + testNo;
         streamTwo = streamTwo + "-" + testNo;
-<<<<<<< HEAD
         CLUSTER.createTopics(streamOne, streamConcurrent);
         CLUSTER.createTopic(streamTwo, STREAM_TWO_PARTITIONS, NUM_REPLICAS);
         CLUSTER.createTopic(streamThree, STREAM_THREE_PARTITIONS, 1);
         CLUSTER.createTopics(outputTopic, outputTopicConcurrent, outputTopicThree);
-=======
-        CLUSTER.createTopic(streamOne);
-        CLUSTER.createTopic(streamConcurrent);
-        CLUSTER.createTopic(streamTwo, STREAM_TWO_PARTITIONS, NUM_REPLICAS);
-        CLUSTER.createTopic(streamThree, STREAM_THREE_PARTITIONS, 1);
-        CLUSTER.createTopic(outputTopic);
-        CLUSTER.createTopic(outputTopicConcurrent);
-        CLUSTER.createTopic(outputTopicThree);
-    }
-
-    @Parameter
-    public long cacheSizeBytes;
-
-    //Single parameter, use Object[]
-    @Parameters
-    public static Object[] data() {
-        return new Object[]{0, 10 * 1024 * 1024L};
->>>>>>> origin/0.10.2
     }
 
     @Before
@@ -164,7 +131,6 @@ public class QueryableStateIntegrationTest {
 
         streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-<<<<<<< HEAD
         streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory("qs-test").getPath());
         streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -173,15 +139,6 @@ public class QueryableStateIntegrationTest {
         // override this to make the rebalances happen quickly
         streamsConfiguration.put(IntegrationTestUtils.INTERNAL_LEAVE_GROUP_ON_CLOSE, true);
 
-=======
-        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory("qs-test").getPath());
-        streamsConfiguration.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-        streamsConfiguration.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-        streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, cacheSizeBytes);
-        streamsConfiguration.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-        streamsConfiguration.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        streamsConfiguration.put(IntegrationTestUtils.INTERNAL_LEAVE_GROUP_ON_CLOSE, true);
->>>>>>> origin/0.10.2
 
         stringComparator = new Comparator<KeyValue<String, String>>() {
 

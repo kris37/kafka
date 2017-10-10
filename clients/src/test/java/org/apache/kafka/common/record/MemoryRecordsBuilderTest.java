@@ -16,10 +16,7 @@
  */
 package org.apache.kafka.common.record;
 
-<<<<<<< HEAD
 import org.apache.kafka.common.utils.Utils;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.test.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,10 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-<<<<<<< HEAD
 import static org.junit.Assert.fail;
-=======
->>>>>>> origin/0.10.2
 
 @RunWith(value = Parameterized.class)
 public class MemoryRecordsBuilderTest {
@@ -351,7 +345,6 @@ public class MemoryRecordsBuilderTest {
         byte[] value = "bar".getBytes();
         int writeLimit = 0;
         ByteBuffer buffer = ByteBuffer.allocate(512);
-<<<<<<< HEAD
         MemoryRecordsBuilder builder = new MemoryRecordsBuilder(buffer, RecordBatch.CURRENT_MAGIC_VALUE, compressionType,
                 TimestampType.CREATE_TIME, 0L, LegacyRecord.NO_TIMESTAMP, RecordBatch.NO_PRODUCER_ID, RecordBatch.NO_PRODUCER_EPOCH,
                 RecordBatch.NO_SEQUENCE, false, false, RecordBatch.NO_PARTITION_LEADER_EPOCH, writeLimit);
@@ -362,17 +355,6 @@ public class MemoryRecordsBuilderTest {
 
         assertTrue(builder.isFull());
         assertFalse(builder.hasRoomFor(0L, key, value));
-=======
-        MemoryRecordsBuilder builder = new MemoryRecordsBuilder(buffer, Record.CURRENT_MAGIC_VALUE, compressionType,
-                TimestampType.CREATE_TIME, 0L, Record.NO_TIMESTAMP, writeLimit);
-
-        assertFalse(builder.isFull());
-        assertTrue(builder.hasRoomFor(key, value));
-        builder.append(0L, key, value);
-
-        assertTrue(builder.isFull());
-        assertFalse(builder.hasRoomFor(key, value));
->>>>>>> origin/0.10.2
 
         MemoryRecords memRecords = builder.build();
         List<Record> records = TestUtils.toList(memRecords.records());

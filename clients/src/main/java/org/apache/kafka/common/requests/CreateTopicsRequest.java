@@ -110,19 +110,11 @@ public class CreateTopicsRequest extends AbstractRequest {
         }
 
         @Override
-<<<<<<< HEAD
         public CreateTopicsRequest build(short version) {
             if (validateOnly && version == 0)
                 throw new UnsupportedVersionException("validateOnly is not supported in version 0 of " +
                         "CreateTopicsRequest");
             return new CreateTopicsRequest(topics, timeout, validateOnly, version);
-=======
-        public CreateTopicsRequest build() {
-            if (validateOnly && version() == 0)
-                throw new UnsupportedVersionException("validateOnly is not supported in version 0 of " +
-                        "CreateTopicsRequest");
-            return new CreateTopicsRequest(topics, timeout, validateOnly, version());
->>>>>>> origin/0.10.2
         }
 
         @Override

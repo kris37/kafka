@@ -71,8 +71,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ws.rs.BadRequestException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -92,20 +90,14 @@ public class ConnectorPluginsResourceTest {
 
         props = new HashMap<>(partialProps);
         props.put("connector.class", ConnectorPluginsResourceTestConnector.class.getSimpleName());
-<<<<<<< HEAD
         props.put("plugin.path", null);
-=======
->>>>>>> origin/0.10.2
     }
 
     private static final ConfigInfos CONFIG_INFOS;
     private static final ConfigInfos PARTIAL_CONFIG_INFOS;
     private static final int ERROR_COUNT = 0;
     private static final int PARTIAL_CONFIG_ERROR_COUNT = 1;
-<<<<<<< HEAD
     private static final Set<PluginDesc<Connector>> CONNECTOR_PLUGINS = new TreeSet<>();
-=======
->>>>>>> origin/0.10.2
 
     static {
         List<ConfigInfo> configs = new LinkedList<>();
@@ -145,7 +137,6 @@ public class ConnectorPluginsResourceTest {
 
         CONFIG_INFOS = new ConfigInfos(ConnectorPluginsResourceTestConnector.class.getName(), ERROR_COUNT, Collections.singletonList("Test"), configs);
         PARTIAL_CONFIG_INFOS = new ConfigInfos(ConnectorPluginsResourceTestConnector.class.getName(), PARTIAL_CONFIG_ERROR_COUNT, Collections.singletonList("Test"), partialConfigs);
-<<<<<<< HEAD
 
         Class<?>[] abstractConnectorClasses = {
             Connector.class,
@@ -174,8 +165,6 @@ public class ConnectorPluginsResourceTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-=======
->>>>>>> origin/0.10.2
     }
 
     @Mock
@@ -249,57 +238,6 @@ public class ConnectorPluginsResourceTest {
     }
 
     @Test
-<<<<<<< HEAD
-=======
-    public void testValidateConfigWithSingleErrorDueToMissingConnectorClassname() throws Throwable {
-        herder.validateConnectorConfig(EasyMock.eq(partialProps));
-
-        PowerMock.expectLastCall().andAnswer(new IAnswer<ConfigInfos>() {
-            @Override
-            public ConfigInfos answer() {
-                ConfigDef connectorConfigDef = ConnectorConfig.configDef();
-                List<ConfigValue> connectorConfigValues = connectorConfigDef.validate(partialProps);
-
-                Connector connector = new ConnectorPluginsResourceTestConnector();
-                Config config = connector.validate(partialProps);
-                ConfigDef configDef = connector.config();
-                Map<String, ConfigDef.ConfigKey> configKeys = configDef.configKeys();
-                List<ConfigValue> configValues = config.configValues();
-
-                Map<String, ConfigDef.ConfigKey> resultConfigKeys = new HashMap<>(configKeys);
-                resultConfigKeys.putAll(connectorConfigDef.configKeys());
-                configValues.addAll(connectorConfigValues);
-
-                return AbstractHerder.generateResult(
-                    ConnectorPluginsResourceTestConnector.class.getName(),
-                    resultConfigKeys,
-                    configValues,
-                    Collections.singletonList("Test")
-                );
-            }
-        });
-
-        PowerMock.replayAll();
-
-        // This call to validateConfigs does not throw a BadRequestException because we've mocked
-        // validateConnectorConfig.
-        ConfigInfos configInfos = connectorPluginsResource.validateConfigs(
-            ConnectorPluginsResourceTestConnector.class.getSimpleName(),
-            partialProps
-        );
-        assertEquals(PARTIAL_CONFIG_INFOS.name(), configInfos.name());
-        assertEquals(PARTIAL_CONFIG_INFOS.errorCount(), configInfos.errorCount());
-        assertEquals(PARTIAL_CONFIG_INFOS.groups(), configInfos.groups());
-        assertEquals(
-            new HashSet<>(PARTIAL_CONFIG_INFOS.values()),
-            new HashSet<>(configInfos.values())
-        );
-
-        PowerMock.verifyAll();
-    }
-
-    @Test
->>>>>>> origin/0.10.2
     public void testValidateConfigWithSimpleName() throws Throwable {
         herder.validateConnectorConfig(EasyMock.eq(props));
 
@@ -464,12 +402,8 @@ public class ConnectorPluginsResourceTest {
     }
 
     @Test
-<<<<<<< HEAD
     public void testListConnectorPlugins() throws Exception {
         expectPlugins();
-=======
-    public void testListConnectorPlugins() {
->>>>>>> origin/0.10.2
         Set<ConnectorPluginInfo> connectorPlugins = new HashSet<>(connectorPluginsResource.listConnectorPlugins());
         assertFalse(connectorPlugins.contains(newInfo(Connector.class, "0.0")));
         assertFalse(connectorPlugins.contains(newInfo(SourceConnector.class, "0.0")));

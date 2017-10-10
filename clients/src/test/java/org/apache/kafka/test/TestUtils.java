@@ -33,11 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-<<<<<<< HEAD
 import java.util.HashMap;
 import java.util.Iterator;
-=======
->>>>>>> origin/0.10.2
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -315,7 +312,6 @@ public class TestUtils {
         assertEquals(toList(it1), toList(it2));
     }
 
-<<<<<<< HEAD
     public static <T> void checkEquals(Iterator<T> it1, Iterator<T> it2) {
         assertEquals(Utils.toList(it1), Utils.toList(it2));
     }
@@ -327,13 +323,4 @@ public class TestUtils {
         return list;
     }
 
-=======
-    public static <T> List<T> toList(Iterable<? extends T> iterable) {
-        List<T> list = new ArrayList<>();
-        for (T item : iterable)
-            list.add(item);
-        return list;
-    }
-
->>>>>>> origin/0.10.2
 }

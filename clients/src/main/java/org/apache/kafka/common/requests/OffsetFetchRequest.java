@@ -61,19 +61,11 @@ public class OffsetFetchRequest extends AbstractRequest {
         }
 
         @Override
-<<<<<<< HEAD
         public OffsetFetchRequest build(short version) {
             if (isAllTopicPartitions() && version < 2)
                 throw new UnsupportedVersionException("The broker only supports OffsetFetchRequest " +
                         "v" + version + ", but we need v2 or newer to request all topic partitions.");
             return new OffsetFetchRequest(groupId, partitions, version);
-=======
-        public OffsetFetchRequest build() {
-            if (isAllTopicPartitions() && version() < 2)
-                throw new UnsupportedVersionException("The broker only supports OffsetFetchRequest " +
-                        "v" + version() + ", but we need v2 or newer to request all topic partitions.");
-            return new OffsetFetchRequest(groupId, partitions, version());
->>>>>>> origin/0.10.2
         }
 
         @Override
@@ -91,11 +83,7 @@ public class OffsetFetchRequest extends AbstractRequest {
     private final List<TopicPartition> partitions;
 
     public static OffsetFetchRequest forAllPartitions(String groupId) {
-<<<<<<< HEAD
         return new OffsetFetchRequest.Builder(groupId, null).build((short) 2);
-=======
-        return new OffsetFetchRequest.Builder(groupId, null).setVersion((short) 2).build();
->>>>>>> origin/0.10.2
     }
 
     // v0, v1, and v2 have the same fields.
@@ -128,13 +116,10 @@ public class OffsetFetchRequest extends AbstractRequest {
     }
 
     public OffsetFetchResponse getErrorResponse(Errors error) {
-<<<<<<< HEAD
         return getErrorResponse(AbstractResponse.DEFAULT_THROTTLE_TIME, error);
     }
 
     public OffsetFetchResponse getErrorResponse(int throttleTimeMs, Errors error) {
-=======
->>>>>>> origin/0.10.2
         short versionId = version();
 
         Map<TopicPartition, OffsetFetchResponse.PartitionData> responsePartitions = new HashMap<>();
@@ -151,13 +136,9 @@ public class OffsetFetchRequest extends AbstractRequest {
             case 0:
             case 1:
             case 2:
-<<<<<<< HEAD
                 return new OffsetFetchResponse(error, responsePartitions);
             case 3:
                 return new OffsetFetchResponse(throttleTimeMs, error, responsePartitions);
-=======
-                return new OffsetFetchResponse(error, responsePartitions, versionId);
->>>>>>> origin/0.10.2
             default:
                 throw new IllegalArgumentException(String.format("Version %d is not valid. Valid versions for %s are 0 to %d",
                         versionId, this.getClass().getSimpleName(), ApiKeys.OFFSET_FETCH.latestVersion()));
@@ -165,13 +146,8 @@ public class OffsetFetchRequest extends AbstractRequest {
     }
 
     @Override
-<<<<<<< HEAD
     public OffsetFetchResponse getErrorResponse(int throttleTimeMs, Throwable e) {
         return getErrorResponse(throttleTimeMs, Errors.forException(e));
-=======
-    public OffsetFetchResponse getErrorResponse(Throwable e) {
-        return getErrorResponse(Errors.forException(e));
->>>>>>> origin/0.10.2
     }
 
     public String groupId() {

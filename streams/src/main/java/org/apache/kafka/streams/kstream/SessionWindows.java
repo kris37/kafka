@@ -16,10 +16,6 @@
  */
 package org.apache.kafka.streams.kstream;
 
-<<<<<<< HEAD
-=======
-import org.apache.kafka.common.annotation.InterfaceStability;
->>>>>>> origin/0.10.2
 import org.apache.kafka.streams.processor.TimestampExtractor;
 
 /**
@@ -70,10 +66,6 @@ import org.apache.kafka.streams.processor.TimestampExtractor;
  * @see KGroupedStream#aggregate(Initializer, Aggregator, Merger, SessionWindows, org.apache.kafka.common.serialization.Serde, org.apache.kafka.streams.processor.StateStoreSupplier)
  * @see TimestampExtractor
  */
-<<<<<<< HEAD
-=======
-@InterfaceStability.Unstable
->>>>>>> origin/0.10.2
 public final class SessionWindows {
 
     private final long gapMs;

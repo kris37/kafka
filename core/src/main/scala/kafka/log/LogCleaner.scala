@@ -518,11 +518,7 @@ private[log] class Cleaner(val id: Int,
       source.log.readInto(readBuffer, position)
       val records = MemoryRecords.readableRecords(readBuffer)
       throttler.maybeThrottle(records.sizeInBytes)
-<<<<<<< HEAD
       val result = records.filterTo(topicPartition, logCleanerFilter, writeBuffer, maxLogMessageSize, decompressionBufferSupplier)
-=======
-      val result = records.filterTo(topicPartition, logCleanerFilter, writeBuffer, maxLogMessageSize)
->>>>>>> origin/0.10.2
       stats.readMessages(result.messagesRead, result.bytesRead)
       stats.recopyMessages(result.messagesRetained, result.bytesRetained)
 
@@ -533,11 +529,7 @@ private[log] class Cleaner(val id: Int,
       if (outputBuffer.position > 0) {
         outputBuffer.flip()
         val retained = MemoryRecords.readableRecords(outputBuffer)
-<<<<<<< HEAD
         dest.append(firstOffset = retained.batches.iterator.next().baseOffset,
-=======
-        dest.append(firstOffset = retained.deepEntries.iterator.next().offset,
->>>>>>> origin/0.10.2
           largestOffset = result.maxOffset,
           largestTimestamp = result.maxTimestamp,
           shallowOffsetOfMaxTimestamp = result.shallowOffsetOfMaxTimestamp,

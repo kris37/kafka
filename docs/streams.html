@@ -152,17 +152,10 @@
             Every task in Kafka Streams embeds one or more state stores that can be accessed via APIs to store and query data required for processing.
             These state stores can either be a persistent key-value store, an in-memory hashmap, or another convenient data structure.
             Kafka Streams offers fault-tolerance and automatic recovery for local state stores.
-<<<<<<< HEAD
         </p>
         <p>
             Kafka Streams allows direct read-only queries of the state stores by methods, threads, processes or applications external to the stream processing application that created the state stores. This is provided through a feature called <b>Interactive Queries</b>. All stores are named and Interactive Queries exposes only the read operations of the underlying implementation.
         </p>
-=======
-        </p>
-        <p>
-            Kafka Streams allows direct read-only queries of the state stores by methods, threads, processes or applications external to the stream processing application that created the state stores. This is provided through a feature called <b>Interactive Queries</b>. All stores are named and Interactive Queries exposes only the read operations of the underlying implementation.
-        </p>
->>>>>>> origin/0.10.2
         <br>
 
         <h2><a id="streams_architecture" href="#streams_architecture">Architecture</a></h2>
@@ -177,7 +170,6 @@
 
         <h3><a id="streams_architecture_tasks" href="#streams_architecture_tasks">Stream Partitions and Tasks</a></h3>
 
-<<<<<<< HEAD
         <p>
         The messaging layer of Kafka partitions data for storing and transporting it. Kafka Streams partitions data for processing it.
         In both cases, this partitioning is what enables data locality, elasticity, scalability, high performance, and fault tolerance.
@@ -210,40 +202,6 @@
         <p>
         The following diagram shows two tasks each assigned with one partition of the input streams.
         </p>
-=======
-        <p>
-        The messaging layer of Kafka partitions data for storing and transporting it. Kafka Streams partitions data for processing it.
-        In both cases, this partitioning is what enables data locality, elasticity, scalability, high performance, and fault tolerance.
-        Kafka Streams uses the concepts of <b>partitions</b> and <b>tasks</b> as logical units of its parallelism model based on Kafka topic partitions.
-        There are close links between Kafka Streams and Kafka in the context of parallelism:
-        </p>
-
-        <ul>
-            <li>Each <b>stream partition</b> is a totally ordered sequence of data records and maps to a Kafka <b>topic partition</b>.</li>
-            <li>A <b>data record</b> in the stream maps to a Kafka <b>message</b> from that topic.</li>
-            <li>The <b>keys</b> of data records determine the partitioning of data in both Kafka and Kafka Streams, i.e., how data is routed to specific partitions within topics.</li>
-        </ul>
-
-        <p>
-        An application's processor topology is scaled by breaking it into multiple tasks.
-        More specifically, Kafka Streams creates a fixed number of tasks based on the input stream partitions for the application,
-        with each task assigned a list of partitions from the input streams (i.e., Kafka topics). The assignment of partitions to tasks
-        never changes so that each task is a fixed unit of parallelism of the application. Tasks can then instantiate their own processor topology
-        based on the assigned partitions; they also maintain a buffer for each of its assigned partitions and process messages one-at-a-time from
-        these record buffers. As a result stream tasks can be processed independently and in parallel without manual intervention.
-        </p>
-
-        <p>
-        It is important to understand that Kafka Streams is not a resource manager, but a library that “runs” anywhere its stream processing application runs.
-        Multiple instances of the application are executed either on the same machine, or spread across multiple machines and tasks can be distributed automatically
-        by the library to those running application instances. The assignment of partitions to tasks never changes; if an application instance fails, all its assigned
-        tasks will be automatically restarted on other instances and continue to consume from the same stream partitions.
-        </p>
-
-        <p>
-        The following diagram shows two tasks each assigned with one partition of the input streams.
-        </p>
->>>>>>> origin/0.10.2
         <img class="centered" src="/{{version}}/images/streams-architecture-tasks.jpg" style="width:400px">
         <br>
 
@@ -279,66 +237,8 @@
         <p>
         Every stream task in a Kafka Streams application may embed one or more local state stores that can be accessed via APIs to store and query data required for processing.
         Kafka Streams offers fault-tolerance and automatic recovery for such local state stores.
-<<<<<<< HEAD
         </p>
 
-        <p>
-        The following diagram shows two stream tasks with their dedicated local state stores.
-=======
->>>>>>> origin/0.10.2
-        </p>
-        <img class="centered" src="/{{version}}/images/streams-architecture-states.jpg" style="width:400px">
-        <br>
-
-<<<<<<< HEAD
-        <h3><a id="streams_architecture_recovery" href="#streams_architecture_recovery">Fault Tolerance</a></h3>
-
-        <p>
-        Kafka Streams builds on fault-tolerance capabilities integrated natively within Kafka. Kafka partitions are highly available and replicated; so when stream data is persisted to Kafka it is available
-        even if the application fails and needs to re-process it. Tasks in Kafka Streams leverage the fault-tolerance capability
-        offered by the <a href="https://www.confluent.io/blog/tutorial-getting-started-with-the-new-apache-kafka-0.9-consumer-client/">Kafka consumer client</a> to handle failures.
-        If a task runs on a machine that fails, Kafka Streams automatically restarts the task in one of the remaining running instances of the application.
-        </p>
-
-        <p>
-        In addition, Kafka Streams makes sure that the local state stores are robust to failures, too. For each state store, it maintains a replicated changelog Kafka topic in which it tracks any state updates.
-        These changelog topics are partitioned as well so that each local state store instance, and hence the task accessing the store, has its own dedicated changelog topic partition.
-        <a href="/{{version}}/documentation/#compaction">Log compaction</a> is enabled on the changelog topics so that old data can be purged safely to prevent the topics from growing indefinitely.
-        If tasks run on a machine that fails and are restarted on another machine, Kafka Streams guarantees to restore their associated state stores to the content before the failure by
-        replaying the corresponding changelog topics prior to resuming the processing on the newly started tasks. As a result, failure handling is completely transparent to the end user.
-        </p>
-
-        <p>
-        Note that the cost of task (re)initialization typically depends primarily on the time for restoring the state by replaying the state stores' associated changelog topics.
-        To minimize this restoration time, users can configure their applications to have <b>standby replicas</b> of local states (i.e. fully replicated copies of the state).
-        When a task migration happens, Kafka Streams then attempts to assign a task to an application instance where such a standby replica already exists in order to minimize
-        the task (re)initialization cost. See <code>num.standby.replicas</code> at the <a href="/{{version}}/documentation/#streamsconfigs">Kafka Streams Configs</a> Section.
-        </p>
-        <br>
-
-        <h2><a id="streams_developer" href="#streams_developer">Developer Guide</a></h2>
-
-        <p>
-        There is a <a href="/{{version}}/documentation/#quickstart_kafkastreams">quickstart</a> example that provides how to run a stream processing program coded in the Kafka Streams library.
-        This section focuses on how to write, configure, and execute a Kafka Streams application.
-        </p>
-
-        <p>
-        As we have mentioned above, the computational logic of a Kafka Streams application is defined as a <a href="#streams_topology">processor topology</a>.
-        Currently Kafka Streams provides two sets of APIs to define the processor topology, which will be described in the subsequent sections.
-        </p>
-
-        <h3><a id="streams_processor" href="#streams_processor">Low-Level Processor API</a></h3>
-
-        <h4><a id="streams_processor_process" href="#streams_processor_process">Processor</a></h4>
-
-        <p>
-        As mentioned in the <a href="#streams_concepts">Core Concepts</a> section, a stream processor is a node in the processor topology that represents a single processing step.
-        With the <code>Processor</code> API developers can define arbitrary stream processors that process one received record at a time, and connect these processors with
-        their associated state stores to compose the processor topology that represents their customized processing logic.
-        </p>
-
-=======
         <p>
         The following diagram shows two stream tasks with their dedicated local state stores.
         </p>
@@ -392,7 +292,6 @@
         their associated state stores to compose the processor topology that represents their customized processing logic.
         </p>
 
->>>>>>> origin/0.10.2
         <p>
         The <code>Processor</code> interface provides two main API methods:
         <code>process</code> and <code>punctuate</code>. The <code>process</code> method is performed on each
@@ -480,7 +379,6 @@ public class MyProcessor implements Processor&lt;String, String&gt; {
         With the customized processors defined in the Processor API, developers can use the <code>TopologyBuilder</code> to build a processor topology
         by connecting these processors together:
         </p>
-<<<<<<< HEAD
 
 <pre>
 TopologyBuilder builder = new TopologyBuilder();
@@ -499,26 +397,6 @@ builder.addSource("SOURCE", "src-topic")
     // as output and the "PROCESS1" node as its upstream processor
     .addSink("SINK1", "sink-topic1", "PROCESS1")
 
-=======
-
-<pre>
-TopologyBuilder builder = new TopologyBuilder();
-
-builder.addSource("SOURCE", "src-topic")
-    // add "PROCESS1" node which takes the source processor "SOURCE" as its upstream processor
-    .addProcessor("PROCESS1", () -> new MyProcessor1(), "SOURCE")
-
-    // add "PROCESS2" node which takes "PROCESS1" as its upstream processor
-    .addProcessor("PROCESS2", () -> new MyProcessor2(), "PROCESS1")
-
-    // add "PROCESS3" node which takes "PROCESS1" as its upstream processor
-    .addProcessor("PROCESS3", () -> new MyProcessor3(), "PROCESS1")
-
-    // add the sink processor node "SINK1" that takes Kafka topic "sink-topic1"
-    // as output and the "PROCESS1" node as its upstream processor
-    .addSink("SINK1", "sink-topic1", "PROCESS1")
-
->>>>>>> origin/0.10.2
     // add the sink processor node "SINK2" that takes Kafka topic "sink-topic2"
     // as output and the "PROCESS2" node as its upstream processor
     .addSink("SINK2", "sink-topic2", "PROCESS2")
@@ -588,7 +466,6 @@ builder.addSource("SOURCE", "src-topic")
         A simple example is included with the source code for Kafka in the <code>streams/examples</code> package. The rest of this section will walk
         through some code to demonstrate the key steps in creating a topology using the Streams DSL, but we recommend developers to read the full example source
         codes for details.
-<<<<<<< HEAD
 
         <h4><a id="streams_duality" href="#streams_duality">Duality of Streams and Tables</a></h4>
 
@@ -644,63 +521,6 @@ builder.addSource("SOURCE", "src-topic")
         <h4><a id="streams_dsl_source" href="#streams_dsl_source">Create Source Streams from Kafka</a></h4>
 
         <p>
-=======
-
-        <h4><a id="streams_duality" href="#streams_duality">Duality of Streams and Tables</a></h4>
-
-        <p>
-        Before we discuss concepts such as aggregations in Kafka Streams we must first introduce tables, and most importantly the relationship between tables and streams:
-        the so-called <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying/">stream-table duality</a>.
-        Essentially, this duality means that a stream can be viewed as a table, and vice versa. Kafka's log compaction feature, for example, exploits this duality.
-        </p>
-
-        <p>
-        A simple form of a table is a collection of key-value pairs, also called a map or associative array. Such a table may look as follows:
-        </p>
-        <img class="centered" src="/{{version}}/images/streams-table-duality-01.png">
-
-        The <b>stream-table duality</b> describes the close relationship between streams and tables.
-        <ul>
-        <li><b>Stream as Table</b>: A stream can be considered a changelog of a table, where each data record in the stream captures a state change of the table. A stream is thus a table in disguise, and it can be easily turned into a “real” table by replaying the changelog from beginning to end to reconstruct the table. Similarly, in a more general analogy, aggregating data records in a stream – such as computing the total number of pageviews by user from a stream of pageview events – will return a table (here with the key and the value being the user and its corresponding pageview count, respectively).</li>
-        <li><b>Table as Stream</b>: A table can be considered a snapshot, at a point in time, of the latest value for each key in a stream (a stream's data records are key-value pairs). A table is thus a stream in disguise, and it can be easily turned into a “real” stream by iterating over each key-value entry in the table.</li>
-        </ul>
-
-        <p>
-        Let's illustrate this with an example. Imagine a table that tracks the total number of pageviews by user (first column of diagram below). Over time, whenever a new pageview event is processed, the state of the table is updated accordingly. Here, the state changes between different points in time – and different revisions of the table – can be represented as a changelog stream (second column).
-        </p>
-        <img class="centered" src="/{{version}}/images/streams-table-duality-02.png" style="width:300px">
-
-        <p>
-        Interestingly, because of the stream-table duality, the same stream can be used to reconstruct the original table (third column):
-        </p>
-        <img class="centered" src="/{{version}}/images/streams-table-duality-03.png" style="width:600px">
-
-        <p>
-        The same mechanism is used, for example, to replicate databases via change data capture (CDC) and, within Kafka Streams, to replicate its so-called state stores across machines for fault-tolerance.
-        The stream-table duality is such an important concept that Kafka Streams models it explicitly via the <a href="#streams_kstream_ktable">KStream, KTable, and GlobalKTable</a> interfaces, which we describe in the next sections.
-        </p>
-
-        <h5><a id="streams_kstream_ktable" href="#streams_kstream_ktable">KStream, KTable, and GlobalKTable</a></h5>
-        The DSL uses three main abstractions. A <b>KStream</b> is an abstraction of a record stream, where each data record represents a self-contained datum in the unbounded data set.
-        A <b>KTable</b> is an abstraction of a changelog stream, where each data record represents an update. More precisely, the value in a data record is considered to be an update of the last value for the same record key,
-        if any (if a corresponding key doesn't exist yet, the update will be considered a create).
-        Like a <b>KTable</b>, a <b>GlobalKTable</b> is an abstraction of a changelog stream, where each data record represents an update.
-        However, a <b>GlobalKTable</b> is different from a <b>KTable</b> in that it is fully replicated on each KafkaStreams instance.
-        <b>GlobalKTable</b> also provides the ability to look up current values of data records by keys.
-        This table-lookup functionality is available through <a href="#streams_dsl_joins">join operations</a>.
-
-        To illustrate the difference between KStreams and KTables/GlobalKTables, let’s imagine the following two data records are being sent to the stream:
-
-<pre>
-("alice", 1) --> ("alice", 3)
-</pre>
-
-        If these records a KStream and the stream processing application were to sum the values it would return <code>4</code>. If these records were a KTable or GlobalKTable, the return would be <code>3</code>, since the last record would be considered as an update.
-
-        <h4><a id="streams_dsl_source" href="#streams_dsl_source">Create Source Streams from Kafka</a></h4>
-
-        <p>
->>>>>>> origin/0.10.2
         Either a <b>record stream</b> (defined as <code>KStream</code>) or a <b>changelog stream</b> (defined as <code>KTable</code> or <code>GlobalKTable</code>)
         can be created as a source stream from one or more Kafka topics (for <code>KTable</code> and <code>GlobalKTable</code> you can only create the source stream
         from a single topic).
@@ -844,7 +664,6 @@ KStream&lt;String, String&gt; materialized = joined.through("topic4");
         Besides defining the topology, developers will also need to configure their applications
         in <code>StreamsConfig</code> before running it. A complete list of
         Kafka Streams configs can be found <a href="/{{version}}/documentation/#streamsconfigs"><b>here</b></a>.
-<<<<<<< HEAD
         Note, that different parameters do have different "levels of importance", with the following interpretation:
         </p>
         <ul>
@@ -857,14 +676,6 @@ KStream&lt;String, String&gt; materialized = joined.through("topic4");
         Specifying the configuration in Kafka Streams is similar to the Kafka Producer and Consumer clients. Typically, you create a <code>java.util.Properties</code> instance,
         set the necessary parameters, and construct a <code>StreamsConfig</code> instance from the <code>Properties</code> instance.
         </p>
-=======
-        </p>
-
-        <p>
-        Specifying the configuration in Kafka Streams is similar to the Kafka Producer and Consumer clients. Typically, you create a <code>java.util.Properties</code> instance,
-        set the necessary parameters, and construct a <code>StreamsConfig</code> instance from the <code>Properties</code> instance.
-        </p>
->>>>>>> origin/0.10.2
 
 <pre>
 import java.util.Properties;
@@ -997,15 +808,12 @@ $ java -cp path-to-app-fatjar.jar com.example.MyStreamsApp
         <h2><a id="streams_upgrade_and_api" href="#streams_upgrade_and_api">Upgrade Guide and API Changes</a></h2>
 
         <p>
-<<<<<<< HEAD
         If you want to upgrade from 0.10.2.x to 0.11.0 you don't need to do any code changes as the public API is fully backward compatible.
         However, some configuration parameters were deprecated and thus it is recommend to update your code eventually to allow for future upgrades.
         See <a href="#streams_api_changes_0110">below</a> a complete list of 0.11.0 API and semantical changes that allow you to advance your application and/or simplify your code base, including the usage of new features.
         </p>
 
         <p>
-=======
->>>>>>> origin/0.10.2
         If you want to upgrade from 0.10.1.x to 0.10.2, see the <a href="/{{version}}/documentation/#upgrade_1020_streams">Upgrade Section for 0.10.2</a>.
         It highlights incompatible changes you need to consider to upgrade your code and application.
         See <a href="#streams_api_changes_0102">below</a> a complete list of 0.10.2 API and semantical changes that allow you to advance your application and/or simplify your code base, including the usage of new features.
@@ -1017,7 +825,6 @@ $ java -cp path-to-app-fatjar.jar com.example.MyStreamsApp
         See <a href="#streams_api_changes_0101">below</a> a complete list of 0.10.1 API changes that allow you to advance your application and/or simplify your code base, including the usage of new features.
         </p>
 
-<<<<<<< HEAD
         <h3><a id="streams_api_changes_0110" href="#streams_api_changes_0110">Notable changes in 0.11.0.0</a></h3>
 
         <p>
@@ -1038,15 +845,6 @@ $ java -cp path-to-app-fatjar.jar com.example.MyStreamsApp
           <li> of particular importance to improve the resiliency of a Kafka Streams application are two changes to default parameters of producer <code>retries</code> and consumer <code>max.poll.interval.ms</code> </li>
         </ul>
 
-=======
-         <h3><a id="streams_api_changes_01021" href="#streams_api_changes_0102">Notable changes in 0.10.2.1</a></h3>
-         <p>
-            Parameter updates in <code>StreamsConfig</code>:
-        </p>
-          <ul>
-            <li> of particular importance to improve the resiliency of a Kafka Streams application are two changes to default parameters of producer <code>retries</code> and consumer <code>max.poll.interval.ms</code> </li>
-          </ul>
->>>>>>> origin/0.10.2
         <h3><a id="streams_api_changes_0102" href="#streams_api_changes_0102">Streams API changes in 0.10.2.0</a></h3>
 
         <p>

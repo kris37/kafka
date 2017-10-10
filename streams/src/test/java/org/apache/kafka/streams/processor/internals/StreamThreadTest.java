@@ -45,34 +45,23 @@ import org.apache.kafka.test.MockInternalTopicManager;
 import org.apache.kafka.test.MockProcessorSupplier;
 import org.apache.kafka.test.MockStateStoreSupplier;
 import org.apache.kafka.test.MockTimestampExtractor;
-<<<<<<< HEAD
 import org.apache.kafka.test.TestCondition;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.test.TestUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-<<<<<<< HEAD
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
-=======
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
->>>>>>> origin/0.10.2
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-<<<<<<< HEAD
 import java.util.Iterator;
-=======
->>>>>>> origin/0.10.2
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -478,20 +467,9 @@ public class StreamThreadTest {
     private class MockStreamsPartitionAssignor extends StreamPartitionAssignor {
 
         private final Map<TaskId, Set<TopicPartition>> activeTaskAssignment;
-        private final Map<TaskId, Set<TopicPartition>> standbyTaskAssignment;
 
-<<<<<<< HEAD
         MockStreamsPartitionAssignor(final Map<TaskId, Set<TopicPartition>> activeTaskAssignment) {
-=======
-        public MockStreamsPartitionAssignor(final Map<TaskId, Set<TopicPartition>> activeTaskAssignment) {
-            this(activeTaskAssignment, Collections.<TaskId, Set<TopicPartition>>emptyMap());
-        }
-
-        public MockStreamsPartitionAssignor(final Map<TaskId, Set<TopicPartition>> activeTaskAssignment,
-                                            final Map<TaskId, Set<TopicPartition>> standbyTaskAssignment) {
->>>>>>> origin/0.10.2
             this.activeTaskAssignment = activeTaskAssignment;
-            this.standbyTaskAssignment = standbyTaskAssignment;
         }
 
         @Override
@@ -500,18 +478,11 @@ public class StreamThreadTest {
         }
 
         @Override
-<<<<<<< HEAD
         public void close() {}
-=======
-        Map<TaskId, Set<TopicPartition>> standbyTasks() {
-            return standbyTaskAssignment;
-        }
->>>>>>> origin/0.10.2
     }
 
     @Test
     public void testMetrics() throws Exception {
-<<<<<<< HEAD
         final StreamThread thread = new StreamThread(
             builder,
             config,
@@ -526,18 +497,6 @@ public class StreamThreadTest {
         final String defaultGroupName = "stream-metrics";
         final String defaultPrefix = "thread." + thread.threadClientId();
         final Map<String, String> defaultTags = Collections.singletonMap("client-id", thread.threadClientId());
-=======
-        TopologyBuilder builder = new TopologyBuilder().setApplicationId("MetricsApp");
-        StreamsConfig config = new StreamsConfig(configProps());
-        MockClientSupplier clientSupplier = new MockClientSupplier();
-
-        Metrics metrics = new Metrics();
-        StreamThread thread = new StreamThread(builder, config, clientSupplier, applicationId,
-            clientId,  processId, metrics, new MockTime(), new StreamsMetadataState(builder, StreamsMetadataState.UNKNOWN_HOST), 0);
-        String defaultGroupName = "stream-metrics";
-        String defaultPrefix = "thread." + thread.threadClientId();
-        Map<String, String> defaultTags = Collections.singletonMap("client-id", thread.threadClientId());
->>>>>>> origin/0.10.2
 
         assertNotNull(metrics.getSensor(defaultPrefix + ".commit-latency"));
         assertNotNull(metrics.getSensor(defaultPrefix + ".poll-latency"));
@@ -1544,129 +1503,6 @@ public class StreamThreadTest {
         assertFalse(testStreamTask.committed);
     }
 
-    @Test
-    public void shouldReleaseStateDirLockIfFailureOnTaskCloseForUnassignedSuspendedTask() throws Exception {
-        final TopologyBuilder builder = new TopologyBuilder();
-        builder.setApplicationId(applicationId);
-
-        final TaskId taskId = new TaskId(0, 0);
-        final MockClientSupplier clientSupplier = new MockClientSupplier();
-        final StreamsConfig config = new StreamsConfig(configProps());
-        final StateDirectory stateDirectory = new StateDirectory(applicationId, config.getString(StreamsConfig.STATE_DIR_CONFIG));
-
-        final TestStreamTask testStreamTask = new TestStreamTask(taskId,
-            applicationId,
-            Utils.mkSet(new TopicPartition("topic", 0)),
-            builder.build(0),
-            clientSupplier.consumer,
-            clientSupplier.producer,
-            clientSupplier.restoreConsumer,
-            config,
-            new MockStreamsMetrics(new Metrics()),
-            stateDirectory) {
-
-            @Override
-            public void close() {
-                throw new RuntimeException("KABOOM!!!");
-            }
-        };
-
-        final StreamThread thread = new StreamThread(builder, config, clientSupplier, applicationId,
-            clientId, processId, new Metrics(), new MockTime(),
-            new StreamsMetadataState(builder, StreamsMetadataState.UNKNOWN_HOST), 0) {
-            @Override
-            protected StreamTask createStreamTask(final TaskId id, final Collection<TopicPartition> partitions) {
-                return testStreamTask;
-            }
-        };
-
-        final Map<TaskId, Set<TopicPartition>> activeTasks = new HashMap<>();
-        activeTasks.put(testStreamTask.id, testStreamTask.partitions);
-        thread.partitionAssignor(new MockStreamsPartitionAssignor(activeTasks));
-        thread.rebalanceListener.onPartitionsAssigned(testStreamTask.partitions);
-        thread.rebalanceListener.onPartitionsRevoked(Collections.<TopicPartition>emptyList());
-
-        thread.partitionAssignor(new MockStreamsPartitionAssignor(Collections.<TaskId, Set<TopicPartition>>emptyMap()));
-
-        final StateDirectory testStateDir = new StateDirectory(applicationId, config.getString(StreamsConfig.STATE_DIR_CONFIG));
-        try {
-            assertFalse(testStateDir.lock(taskId, 0));
-            thread.rebalanceListener.onPartitionsAssigned(Collections.<TopicPartition>emptyList());
-            assertTrue(testStateDir.lock(taskId, 0));
-        } finally {
-            testStateDir.unlock(taskId);
-        }
-    }
-
-    @Test
-    public void shouldReleaseStateDirLockIfFailureOnStandbyTaskCloseForUnassignedSuspendedStandbyTask() throws Exception {
-        final String storeName = "store";
-        final String changelogTopic = applicationId + "-" + storeName + "-changelog";
-
-        final KStreamBuilder builder = new KStreamBuilder();
-        builder.setApplicationId(applicationId);
-        builder.stream("topic1").groupByKey().count(storeName);
-
-        final TaskId taskId = new TaskId(0, 0);
-        final MockClientSupplier clientSupplier = new MockClientSupplier();
-        final StreamsConfig config = new StreamsConfig(configProps());
-        final StateDirectory stateDirectory = new StateDirectory(applicationId, config.getString(StreamsConfig.STATE_DIR_CONFIG));
-
-        clientSupplier.restoreConsumer.updatePartitions(changelogTopic,
-            Collections.singletonList(new PartitionInfo(changelogTopic, 0, null, null, null)));
-        clientSupplier.restoreConsumer.updateBeginningOffsets(new HashMap<TopicPartition, Long>() {
-            {
-                put(new TopicPartition(changelogTopic, 0), 0L);
-            }
-        });
-        clientSupplier.restoreConsumer.updateEndOffsets(new HashMap<TopicPartition, Long>() {
-            {
-                put(new TopicPartition(changelogTopic, 0), 0L);
-            }
-        });
-
-        final StreamThread thread = new StreamThread(builder, config, clientSupplier, applicationId,
-            clientId, processId, new Metrics(), new MockTime(),
-            new StreamsMetadataState(builder, StreamsMetadataState.UNKNOWN_HOST), 0)
-        {
-            @Override
-            protected StandbyTask createStandbyTask(final TaskId id, final Collection<TopicPartition> partitions) {
-                return new StandbyTask(
-                    taskId,
-                    applicationId,
-                    partitions,
-                    builder.build(0),
-                    clientSupplier.consumer,
-                    clientSupplier.restoreConsumer,
-                    config,
-                    new StreamsMetricsImpl(new Metrics(), "groupName", Collections.<String, String>emptyMap()),
-                    stateDirectory) {
-
-                    @Override
-                    public void close() {
-                        throw new RuntimeException("KABOOM!!!");
-                    }
-                };
-            }
-        };
-
-        final Map<TaskId, Set<TopicPartition>> standbyTasks = new HashMap<>();
-        standbyTasks.put(taskId, Collections.singleton(new TopicPartition("topic", 0)));
-        thread.partitionAssignor(new MockStreamsPartitionAssignor(Collections.<TaskId, Set<TopicPartition>>emptyMap(), standbyTasks));
-        thread.rebalanceListener.onPartitionsAssigned(Collections.<TopicPartition>emptySet());
-        thread.rebalanceListener.onPartitionsRevoked(Collections.<TopicPartition>emptyList());
-
-        thread.partitionAssignor(new MockStreamsPartitionAssignor(Collections.<TaskId, Set<TopicPartition>>emptyMap()));
-
-        final StateDirectory testStateDir = new StateDirectory(applicationId, config.getString(StreamsConfig.STATE_DIR_CONFIG));
-        try {
-            assertFalse(testStateDir.lock(taskId, 0));
-            thread.rebalanceListener.onPartitionsAssigned(Collections.<TopicPartition>emptyList());
-            assertTrue(testStateDir.lock(taskId, 0));
-        } finally {
-            testStateDir.unlock(taskId);
-        }
-    }
 
     @Test
     @SuppressWarnings("unchecked")

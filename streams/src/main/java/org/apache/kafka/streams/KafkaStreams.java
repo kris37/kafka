@@ -79,21 +79,12 @@ import static org.apache.kafka.streams.StreamsConfig.PROCESSING_GUARANTEE_CONFIG
 /**
  * A Kafka client that allows for performing continuous computation on input coming from one or more input topics and
  * sends output to zero, one, or more output topics.
-<<<<<<< HEAD
  * <p>
  * The computational logic can be specified either by using the {@link TopologyBuilder} to define a DAG topology of
  * {@link Processor}s or by using the {@link KStreamBuilder} which provides the high-level DSL to define transformations.
  * <p>
  * One {@code KafkaStreams} instance can contain one or more threads specified in the configs for the processing work.
  * <p>
-=======
- * <p>
- * The computational logic can be specified either by using the {@link TopologyBuilder} to define a DAG topology of
- * {@link Processor}s or by using the {@link KStreamBuilder} which provides the high-level DSL to define transformations.
- * <p>
- * One {@code KafkaStreams} instance can contain one or more threads specified in the configs for the processing work.
- * <p>
->>>>>>> origin/0.10.2
  * A {@code KafkaStreams} instance can co-ordinate with any other instances with the same
  * {@link StreamsConfig#APPLICATION_ID_CONFIG application ID} (whether in the same process, on other processes on this
  * machine, or on remote machines) as a single (possibly distributed) stream processing application.
@@ -110,7 +101,6 @@ import static org.apache.kafka.streams.StreamsConfig.PROCESSING_GUARANTEE_CONFIG
  * Map<String, Object> props = new HashMap<>();
  * props.put(StreamsConfig.APPLICATION_ID_CONFIG, "my-stream-processing-application");
  * props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-<<<<<<< HEAD
  * props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
  * props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
  * StreamsConfig config = new StreamsConfig(props);
@@ -126,23 +116,6 @@ import static org.apache.kafka.streams.StreamsConfig.PROCESSING_GUARANTEE_CONFIG
  * @see TopologyBuilder
  */
 @InterfaceStability.Evolving
-=======
- * props.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
- * props.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
- * StreamsConfig config = new StreamsConfig(props);
- *
- * KStreamBuilder builder = new KStreamBuilder();
- * builder.stream("my-input-topic").mapValues(value -> value.length().toString()).to("my-output-topic");
- *
- * KafkaStreams streams = new KafkaStreams(builder, config);
- * streams.start();
- * }</pre>
- *
- * @see KStreamBuilder
- * @see TopologyBuilder
- */
-@InterfaceStability.Unstable
->>>>>>> origin/0.10.2
 public class KafkaStreams {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaStreams.class);
@@ -175,7 +148,6 @@ public class KafkaStreams {
      *                 +--------------+
      *         +<----- | Created      |
      *         |       +-----+--------+
-<<<<<<< HEAD
      *         |             |
      *         |             v
      *         |       +-----+--------+
@@ -189,21 +161,6 @@ public class KafkaStreams {
      *         |             |
      *         |             v
      *         |       +-----+--------+
-=======
-     *         |             |
-     *         |             v
-     *         |       +-----+--------+
-     *         +<----- | Rebalancing  | <----+
-     *         |       +--------------+      |
-     *         |                             |
-     *         |                             |
-     *         |       +--------------+      |
-     *         +-----> | Running      | ---->+
-     *         |       +-----+--------+
-     *         |             |
-     *         |             v
-     *         |       +-----+--------+
->>>>>>> origin/0.10.2
      *         +-----> | Pending      |
      *                 | Shutdown     |
      *                 +-----+--------+
@@ -233,17 +190,12 @@ public class KafkaStreams {
             return validTransitions.contains(newState.ordinal());
         }
     }
-<<<<<<< HEAD
 
     private final Object stateLock = new Object();
 
     private volatile State state = State.CREATED;
 
     private KafkaStreams.StateListener stateListener = null;
-=======
-    private volatile State state = State.CREATED;
-    private StateListener stateListener = null;
->>>>>>> origin/0.10.2
 
 
     /**
@@ -261,7 +213,6 @@ public class KafkaStreams {
     }
 
     /**
-<<<<<<< HEAD
      * An app can set a single {@link KafkaStreams.StateListener} so that the app is notified when state changes.
      * @param listener a new state listener
      */
@@ -281,27 +232,6 @@ public class KafkaStreams {
             if (stateListener != null) {
                 stateListener.onChange(state, oldState);
             }
-=======
-     * An app can set a single {@link StateListener} so that the app is notified when state changes.
-     * @param listener a new state listener
-     */
-    public void setStateListener(final StateListener listener) {
-        stateListener = listener;
-    }
-
-    private synchronized void setState(final State newState) {
-        final State oldState = state;
-        if (!state.isValidTransition(newState)) {
-            log.warn("{} Unexpected state transition from {} to {}.", logPrefix, oldState, newState);
-        } else {
-            log.info("{} State transition from {} to {}.", logPrefix, oldState, newState);
-        }
-
-        state = newState;
-
-        if (stateListener != null) {
-            stateListener.onChange(state, oldState);
->>>>>>> origin/0.10.2
         }
     }
 
@@ -335,15 +265,11 @@ public class KafkaStreams {
         public synchronized void onChange(final StreamThread thread,
                                           final StreamThread.State newState,
                                           final StreamThread.State oldState) {
-<<<<<<< HEAD
             if (newState != StreamThread.State.DEAD) {
                 threadState.put(thread.getId(), newState);
             } else {
                 threadState.remove(thread.getId());
             }
-=======
-            threadState.put(thread.getId(), newState);
->>>>>>> origin/0.10.2
             if (newState == StreamThread.State.PARTITIONS_REVOKED ||
                 newState == StreamThread.State.ASSIGNING_PARTITIONS) {
                 setState(State.REBALANCING);
@@ -456,7 +382,7 @@ public class KafkaStreams {
                                           time,
                                           streamsMetadataState,
                                           cacheSizeBytes);
-            threads[i].setStateListener(new StreamStateListener());
+            threads[i].setStateListener(streamStateListener);
             threadState.put(threads[i].getId(), threads[i].state());
             storeProviders.add(new StreamThreadStateStoreProvider(threads[i]));
         }
@@ -489,11 +415,7 @@ public class KafkaStreams {
     private void checkBrokerVersionCompatibility() throws StreamsException {
         final StreamsKafkaClient client = new StreamsKafkaClient(config);
 
-<<<<<<< HEAD
         client.checkBrokerCompatibility(EXACTLY_ONCE.equals(config.getString(PROCESSING_GUARANTEE_CONFIG)));
-=======
-        client.checkBrokerCompatibility();
->>>>>>> origin/0.10.2
 
         try {
             client.close();
@@ -642,17 +564,10 @@ public class KafkaStreams {
     /**
      * Do a clean up of the local {@link StateStore} directory ({@link StreamsConfig#STATE_DIR_CONFIG}) by deleting all
      * data with regard to the {@link StreamsConfig#APPLICATION_ID_CONFIG application ID}.
-<<<<<<< HEAD
      * <p>
      * May only be called either before this {@code KafkaStreams} instance is {@link #start() started} or after the
      * instance is {@link #close() closed}.
      * <p>
-=======
-     * <p>
-     * May only be called either before this {@code KafkaStreams} instance is {@link #start() started} or after the
-     * instance is {@link #close() closed}.
-     * <p>
->>>>>>> origin/0.10.2
      * Calling this method triggers a restore of local {@link StateStore}s on the next {@link #start() application start}.
      *
      * @throws IllegalStateException if the instance is currently running
@@ -747,11 +662,8 @@ public class KafkaStreams {
      *   <li>this is a point in time view and it may change due to partition reassignment</li>
      *   <li>the key may not exist in the {@link StateStore}; this method provides a way of finding which host it
      *       <em>would</em> exist on</li>
-<<<<<<< HEAD
      *   <li>if this is for a window store the serializer should be the serializer for the record key,
      *       not the window serializer</li>
-=======
->>>>>>> origin/0.10.2
      * </ul>
      *
      * @param storeName     the {@code storeName} to find metadata for

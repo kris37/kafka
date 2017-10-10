@@ -22,24 +22,18 @@ import kafka.utils.MockTime;
 import kafka.utils.ZkUtils;
 import kafka.zk.EmbeddedZookeeper;
 import org.apache.kafka.common.TopicPartition;
-<<<<<<< HEAD
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.security.JaasUtils;
 import org.apache.kafka.test.TestCondition;
 import org.apache.kafka.test.TestUtils;
-=======
->>>>>>> origin/0.10.2
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collections;
 import java.util.HashSet;
-=======
->>>>>>> origin/0.10.2
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -51,12 +45,8 @@ public class EmbeddedKafkaCluster extends ExternalResource {
 
     private static final Logger log = LoggerFactory.getLogger(EmbeddedKafkaCluster.class);
     private static final int DEFAULT_BROKER_PORT = 0; // 0 results in a random port being selected
-<<<<<<< HEAD
     private static final int TOPIC_CREATION_TIMEOUT = 30000;
     private static final int TOPIC_DELETION_TIMEOUT = 30000;
-=======
-    public static final int TOPIC_CREATION_TIMEOUT = 30000;
->>>>>>> origin/0.10.2
     private EmbeddedZookeeper zookeeper = null;
     private final KafkaEmbedded[] brokers;
     private ZkUtils zkUtils = null;
@@ -109,11 +99,8 @@ public class EmbeddedKafkaCluster extends ExternalResource {
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.DeleteTopicEnableProp(), true);
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.LogCleanerDedupeBufferSizeProp(), 2 * 1024 * 1024L);
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupMinSessionTimeoutMsProp(), 0);
-<<<<<<< HEAD
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.GroupInitialRebalanceDelayMsProp(), 0);
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), (short) 1);
-=======
->>>>>>> origin/0.10.2
         putIfAbsent(brokerConfig, KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
 
         for (int i = 0; i < brokers.length; i++) {
@@ -221,7 +208,6 @@ public class EmbeddedKafkaCluster extends ExternalResource {
             topicPartitions.add(new TopicPartition(topic, partition));
         }
         IntegrationTestUtils.waitForTopicPartitions(brokers(), topicPartitions, TOPIC_CREATION_TIMEOUT);
-<<<<<<< HEAD
     }
 
     /**
@@ -240,8 +226,6 @@ public class EmbeddedKafkaCluster extends ExternalResource {
      */
     public void deleteTopicAndWait(final String topic) throws Exception {
         deleteTopicsAndWait(TOPIC_DELETION_TIMEOUT, topic);
-=======
->>>>>>> origin/0.10.2
     }
 
     /**
@@ -313,14 +297,6 @@ public class EmbeddedKafkaCluster extends ExternalResource {
             allTopics.addAll(scala.collection.JavaConversions.seqAsJavaList(zkUtils.getAllTopics()));
             return !allTopics.removeAll(deletedTopic);
         }
-    }
-
-    public List<KafkaServer> brokers() {
-        final List<KafkaServer> servers = new ArrayList<>();
-        for (final KafkaEmbedded broker : brokers) {
-            servers.add(broker.kafkaServer());
-        }
-        return servers;
     }
 
     public List<KafkaServer> brokers() {

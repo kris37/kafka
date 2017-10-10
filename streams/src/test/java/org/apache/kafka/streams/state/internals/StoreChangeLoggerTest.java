@@ -17,12 +17,6 @@
 package org.apache.kafka.streams.state.internals;
 
 
-<<<<<<< HEAD
-=======
-import java.util.HashMap;
-import java.util.Map;
-
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.processor.StreamPartitioner;
 import org.apache.kafka.streams.processor.internals.RecordCollectorImpl;
@@ -48,27 +42,17 @@ public class StoreChangeLoggerTest {
                 @SuppressWarnings("unchecked")
                 @Override
                 public <K1, V1> void send(final String topic,
-<<<<<<< HEAD
                                           final K1 key,
                                           final V1 value,
                                           final Integer partition,
                                           final Long timestamp,
                                           final Serializer<K1> keySerializer,
                                           final Serializer<V1> valueSerializer) {
-=======
-                                          K1 key,
-                                          V1 value,
-                                          Integer partition,
-                                          Long timestamp,
-                                          Serializer<K1> keySerializer,
-                                          Serializer<V1> valueSerializer) {
->>>>>>> origin/0.10.2
                     logged.put((Integer) key, (String) value);
                 }
 
                 @Override
                 public <K1, V1> void send(final String topic,
-<<<<<<< HEAD
                                           final K1 key,
                                           final V1 value,
                                           final Long timestamp,
@@ -76,17 +60,6 @@ public class StoreChangeLoggerTest {
                                           final Serializer<V1> valueSerializer,
                                           final StreamPartitioner<? super K1, ? super V1> partitioner) {
                     throw new UnsupportedOperationException();
-=======
-                                           K1 key,
-                                           V1 value,
-                                           Integer partition,
-                                           Long timestamp,
-                                           Serializer<K1> keySerializer,
-                                           Serializer<V1> valueSerializer,
-                                           StreamPartitioner<? super K1, ? super V1> partitioner) {
-                    // ignore partitioner
-                    send(topic, key, value, partition, timestamp, keySerializer, valueSerializer);
->>>>>>> origin/0.10.2
                 }
             }
     );

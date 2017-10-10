@@ -16,10 +16,7 @@
  */
 package org.apache.kafka.connect.cli;
 
-<<<<<<< HEAD
 import org.apache.kafka.common.utils.Exit;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.connect.runtime.Connect;

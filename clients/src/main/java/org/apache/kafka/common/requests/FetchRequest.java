@@ -156,11 +156,7 @@ public class FetchRequest extends AbstractRequest {
                     append(", maxWait=").append(maxWait).
                     append(", minBytes=").append(minBytes).
                     append(", maxBytes=").append(maxBytes).
-<<<<<<< HEAD
                     append(", fetchData=").append(fetchData).
-=======
-                    append(", fetchData=").append(Utils.mkString(fetchData)).
->>>>>>> origin/0.10.2
                     append(")");
             return bld.toString();
         }

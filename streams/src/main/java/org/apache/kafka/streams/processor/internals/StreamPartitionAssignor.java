@@ -59,10 +59,6 @@ public class StreamPartitionAssignor implements PartitionAssignor, Configurable 
 
     private static final Logger log = LoggerFactory.getLogger(StreamPartitionAssignor.class);
     private Time time = Time.SYSTEM;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/0.10.2
     private final static int UNKNOWN = -1;
     public final static int NOT_AVAILABLE = -2;
 
@@ -644,19 +640,11 @@ public class StreamPartitionAssignor implements PartitionAssignor, Configurable 
         // first construct the topics to make ready
         Map<InternalTopicConfig, Integer> topicsToMakeReady = new HashMap<>();
         Set<String> topicNamesToMakeReady = new HashSet<>();
-<<<<<<< HEAD
 
         for (InternalTopicMetadata metadata : topicPartitions.values()) {
             InternalTopicConfig topic = metadata.config;
             Integer numPartitions = metadata.numPartitions;
 
-=======
-
-        for (InternalTopicMetadata metadata : topicPartitions.values()) {
-            InternalTopicConfig topic = metadata.config;
-            Integer numPartitions = metadata.numPartitions;
-
->>>>>>> origin/0.10.2
             if (numPartitions == NOT_AVAILABLE) {
                 continue;
             }
@@ -793,11 +781,7 @@ public class StreamPartitionAssignor implements PartitionAssignor, Configurable 
                     } else if (numPartitions != partitions) {
                         final String[] topics = copartitionGroup.toArray(new String[copartitionGroup.size()]);
                         Arrays.sort(topics);
-<<<<<<< HEAD
                         throw new TopologyBuilderException(String.format("stream-thread [%s] Topics not co-partitioned: [%s]", threadName, Utils.join(Arrays.asList(topics), ",")));
-=======
-                        throw new TopologyBuilderException(String.format("stream-thread [%s] Topics not co-partitioned: [%s]", threadName, Utils.mkString(Arrays.asList(topics), ",")));
->>>>>>> origin/0.10.2
                     }
                 } else if (allRepartitionTopicsNumPartitions.get(topic).numPartitions == NOT_AVAILABLE) {
                     numPartitions = NOT_AVAILABLE;

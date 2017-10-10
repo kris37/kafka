@@ -63,11 +63,7 @@ public class ProcessorStateManager implements StateManager {
     // TODO: this map does not work with customized grouper where multiple partitions
     // of the same topic can be assigned to the same topic.
     private final Map<String, TopicPartition> partitionForTopic;
-<<<<<<< HEAD
     private OffsetCheckpoint checkpoint;
-=======
-    private final OffsetCheckpoint checkpoint;
->>>>>>> origin/0.10.2
 
     /**
      * @throws LockException if the state directory cannot be locked because another thread holds the lock
@@ -83,19 +79,12 @@ public class ProcessorStateManager implements StateManager {
                                  final boolean eosEnabled) throws LockException, IOException {
         this.taskId = taskId;
         this.stateDirectory = stateDirectory;
-<<<<<<< HEAD
         this.changelogReader = changelogReader;
         logPrefix = String.format("task [%s]", taskId);
 
         partitionForTopic = new HashMap<>();
         for (final TopicPartition source : sources) {
             partitionForTopic.put(source.topic(), source);
-=======
-        this.logPrefix = String.format("task [%s]", taskId);
-        this.partitionForTopic = new HashMap<>();
-        for (TopicPartition source : sources) {
-            this.partitionForTopic.put(source.topic(), source);
->>>>>>> origin/0.10.2
         }
         stores = new LinkedHashMap<>();
         globalStores = new HashMap<>();
@@ -104,10 +93,7 @@ public class ProcessorStateManager implements StateManager {
         this.isStandby = isStandby;
         restoreCallbacks = isStandby ? new HashMap<String, StateRestoreCallback>() : null;
         this.storeToChangelogTopic = storeToChangelogTopic;
-<<<<<<< HEAD
         this.eosEnabled = eosEnabled;
-=======
->>>>>>> origin/0.10.2
 
         if (!stateDirectory.lock(taskId, 5)) {
             throw new LockException(String.format("%s Failed to lock the state directory for task %s",
@@ -117,19 +103,13 @@ public class ProcessorStateManager implements StateManager {
         // note that the parent directory could have been accidentally deleted here,
         // so catch that exception if that is the case
         try {
-<<<<<<< HEAD
             baseDir = stateDirectory.directoryForTask(taskId);
         } catch (final ProcessorStateException e) {
-=======
-            this.baseDir = stateDirectory.directoryForTask(taskId);
-        } catch (ProcessorStateException e) {
->>>>>>> origin/0.10.2
             throw new LockException(String.format("%s Failed to get the directory for task %s. Exception %s",
                 logPrefix, taskId, e));
         }
 
         // load the checkpoint information
-<<<<<<< HEAD
         checkpoint = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
         checkpointedOffsets = new HashMap<>(checkpoint.read());
 
@@ -140,10 +120,6 @@ public class ProcessorStateManager implements StateManager {
         }
 
         log.info("{} Created state store manager for task {} with the acquired state dir lock", logPrefix, taskId);
-=======
-        checkpoint = new OffsetCheckpoint(new File(this.baseDir, CHECKPOINT_FILE_NAME));
-        this.checkpointedOffsets = new HashMap<>(checkpoint.read());
->>>>>>> origin/0.10.2
     }
 
 
@@ -204,79 +180,12 @@ public class ProcessorStateManager implements StateManager {
             changelogReader.register(restorer);
         }
 
-<<<<<<< HEAD
         stores.put(store.name(), store);
     }
 
     @Override
     public Map<TopicPartition, Long> checkpointed() {
         final Map<TopicPartition, Long> partitionsAndOffsets = new HashMap<>();
-=======
-        this.stores.put(store.name(), store);
-    }
-
-    private void restoreActiveState(String topicName, StateRestoreCallback stateRestoreCallback) {
-        // ---- try to restore the state from change-log ---- //
-
-        // subscribe to the store's partition
-        if (!restoreConsumer.subscription().isEmpty()) {
-            throw new IllegalStateException(String.format("%s Restore consumer should have not subscribed to any partitions (%s) beforehand", logPrefix, restoreConsumer.subscription()));
-        }
-        TopicPartition storePartition = new TopicPartition(topicName, getPartition(topicName));
-        restoreConsumer.assign(Collections.singletonList(storePartition));
-
-        try {
-            // calculate the end offset of the partition
-            // TODO: this is a bit hacky to first seek then position to get the end offset
-            restoreConsumer.seekToEnd(singleton(storePartition));
-            long endOffset = restoreConsumer.position(storePartition);
-
-            // restore from the checkpointed offset of the change log if it is persistent and the offset exists;
-            // restore the state from the beginning of the change log otherwise
-            if (checkpointedOffsets.containsKey(storePartition)) {
-                restoreConsumer.seek(storePartition, checkpointedOffsets.get(storePartition));
-            } else {
-                restoreConsumer.seekToBeginning(singleton(storePartition));
-            }
-            log.debug("restoring partition {} from offset {} to endOffset {}",
-                      storePartition,
-                      restoreConsumer.position(storePartition),
-                      endOffset);
-
-            // restore its state from changelog records
-            long limit = offsetLimit(storePartition);
-            while (true) {
-                long offset = 0L;
-                for (ConsumerRecord<byte[], byte[]> record : restoreConsumer.poll(100).records(storePartition)) {
-                    offset = record.offset();
-                    if (offset >= limit) break;
-                    stateRestoreCallback.restore(record.key(), record.value());
-                }
-
-                if (offset >= limit) {
-                    break;
-                } else if (restoreConsumer.position(storePartition) == endOffset) {
-                    break;
-                } else if (restoreConsumer.position(storePartition) > endOffset) {
-                    // For a logging enabled changelog (no offset limit),
-                    // the log end offset should not change while restoring since it is only written by this thread.
-                    throw new IllegalStateException(String.format("%s Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
-                            logPrefix, storePartition, endOffset, restoreConsumer.position(storePartition)));
-                }
-            }
-
-            // record the restored offset for its change log partition
-            long newOffset = Math.min(limit, restoreConsumer.position(storePartition));
-            restoredOffsets.put(storePartition, newOffset);
-        } finally {
-            // un-assign the change log partition
-            restoreConsumer.assign(Collections.<TopicPartition>emptyList());
-        }
-    }
-
-    public Map<TopicPartition, Long> checkpointed() {
-        Map<TopicPartition, Long> partitionsAndOffsets = new HashMap<>();
->>>>>>> origin/0.10.2
 
         for (final Map.Entry<String, StateRestoreCallback> entry : restoreCallbacks.entrySet()) {
             final String topicName = entry.getKey();
@@ -406,7 +315,6 @@ public class ProcessorStateManager implements StateManager {
     // write the checkpoint
     @Override
     public void checkpoint(final Map<TopicPartition, Long> ackedOffsets) {
-<<<<<<< HEAD
         log.trace("{} Writing checkpoint: {}", logPrefix, ackedOffsets);
         checkpointedOffsets.putAll(changelogReader.restoredOffsets());
         for (final Map.Entry<String, StateStore> entry : stores.entrySet()) {
@@ -414,12 +322,6 @@ public class ProcessorStateManager implements StateManager {
             // only checkpoint the offset to the offsets file if
             // it is persistent AND changelog enabled
             if (entry.getValue().persistent() && storeToChangelogTopic.containsKey(storeName)) {
-=======
-        for (String storeName : stores.keySet()) {
-            // only checkpoint the offset to the offsets file if
-            // it is persistent AND changelog enabled
-            if (stores.get(storeName).persistent() && storeToChangelogTopic.containsKey(storeName)) {
->>>>>>> origin/0.10.2
                 final String changelogTopic = storeToChangelogTopic.get(storeName);
                 final TopicPartition topicPartition = new TopicPartition(changelogTopic, getPartition(storeName));
                 if (ackedOffsets.containsKey(topicPartition)) {
@@ -432,7 +334,6 @@ public class ProcessorStateManager implements StateManager {
         }
         // write the checkpoint file before closing, to indicate clean shutdown
         try {
-<<<<<<< HEAD
             if (checkpoint == null) {
                 checkpoint = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
             }
@@ -441,16 +342,6 @@ public class ProcessorStateManager implements StateManager {
             log.warn("Failed to write checkpoint file to {}", new File(baseDir, CHECKPOINT_FILE_NAME), e);
         }
     }
-=======
-            checkpoint.write(checkpointedOffsets);
-        } catch (IOException e) {
-            log.warn("Failed to write checkpoint file to {}", new File(baseDir, CHECKPOINT_FILE_NAME), e);
-        }
-    }
-
-    private int getPartition(String topic) {
-        TopicPartition partition = partitionForTopic.get(topic);
->>>>>>> origin/0.10.2
 
     private int getPartition(final String topic) {
         final TopicPartition partition = partitionForTopic.get(topic);

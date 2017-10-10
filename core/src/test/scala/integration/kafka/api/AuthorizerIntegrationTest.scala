@@ -40,13 +40,9 @@ import scala.collection.mutable
 import scala.collection.mutable.Buffer
 import org.apache.kafka.common.KafkaException
 import kafka.admin.AdminUtils
-<<<<<<< HEAD
 import kafka.log.LogConfig
 import kafka.network.SocketServer
 import org.apache.kafka.clients.consumer.OffsetAndMetadata
-=======
-import kafka.network.SocketServer
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.network.ListenerName
 import org.apache.kafka.common.record.{CompressionType, MemoryRecords, RecordBatch, SimpleRecord}
 
@@ -132,7 +128,6 @@ class AuthorizerIntegrationTest extends BaseRequestTest {
       ApiKeys.TXN_OFFSET_COMMIT -> classOf[TxnOffsetCommitResponse]
   )
 
-<<<<<<< HEAD
   val requestKeyToError = Map[ApiKeys, Nothing => Errors](
     ApiKeys.METADATA -> ((resp: requests.MetadataResponse) => resp.errors.asScala.find(_._1 == topic).getOrElse(("test", Errors.NONE))._2),
     ApiKeys.PRODUCE -> ((resp: requests.ProduceResponse) => resp.responses.asScala.find(_._1 == tp).get._2.error),
@@ -162,26 +157,6 @@ class AuthorizerIntegrationTest extends BaseRequestTest {
     ApiKeys.ADD_OFFSETS_TO_TXN -> ((resp: AddOffsetsToTxnResponse) => resp.error),
     ApiKeys.END_TXN -> ((resp: EndTxnResponse) => resp.error),
     ApiKeys.TXN_OFFSET_COMMIT -> ((resp: TxnOffsetCommitResponse) => resp.errors.get(tp))
-=======
-  val RequestKeyToErrorCode = Map[ApiKeys, (Nothing) => Short](
-    ApiKeys.METADATA -> ((resp: requests.MetadataResponse) => resp.errors().asScala.find(_._1 == topic).getOrElse(("test", Errors.NONE))._2.code),
-    ApiKeys.PRODUCE -> ((resp: requests.ProduceResponse) => resp.responses().asScala.find(_._1 == tp).get._2.error.code),
-    ApiKeys.FETCH -> ((resp: requests.FetchResponse) => resp.responseData().asScala.find(_._1 == tp).get._2.errorCode),
-    ApiKeys.LIST_OFFSETS -> ((resp: requests.ListOffsetResponse) => resp.responseData().asScala.find(_._1 == tp).get._2.errorCode),
-    ApiKeys.OFFSET_COMMIT -> ((resp: requests.OffsetCommitResponse) => resp.responseData().asScala.find(_._1 == tp).get._2),
-    ApiKeys.OFFSET_FETCH -> ((resp: requests.OffsetFetchResponse) => resp.error.code),
-    ApiKeys.GROUP_COORDINATOR -> ((resp: requests.GroupCoordinatorResponse) => resp.errorCode()),
-    ApiKeys.UPDATE_METADATA_KEY -> ((resp: requests.UpdateMetadataResponse) => resp.errorCode()),
-    ApiKeys.JOIN_GROUP -> ((resp: JoinGroupResponse) => resp.errorCode()),
-    ApiKeys.SYNC_GROUP -> ((resp: SyncGroupResponse) => resp.errorCode()),
-    ApiKeys.HEARTBEAT -> ((resp: HeartbeatResponse) => resp.errorCode()),
-    ApiKeys.LEAVE_GROUP -> ((resp: LeaveGroupResponse) => resp.errorCode()),
-    ApiKeys.LEADER_AND_ISR -> ((resp: requests.LeaderAndIsrResponse) => resp.responses().asScala.find(_._1 == tp).get._2),
-    ApiKeys.STOP_REPLICA -> ((resp: requests.StopReplicaResponse) => resp.responses().asScala.find(_._1 == tp).get._2),
-    ApiKeys.CONTROLLED_SHUTDOWN_KEY -> ((resp: requests.ControlledShutdownResponse) => resp.errorCode()),
-    ApiKeys.CREATE_TOPICS -> ((resp: CreateTopicsResponse) => resp.errors().asScala.find(_._1 == createTopic).get._2.error.code),
-    ApiKeys.DELETE_TOPICS -> ((resp: requests.DeleteTopicsResponse) => resp.errors().asScala.find(_._1 == deleteTopic).get._2.code)
->>>>>>> origin/0.10.2
   )
 
   val requestKeysToAcls = Map[ApiKeys, Map[Resource, Set[Acl]]](
@@ -700,7 +675,6 @@ class AuthorizerIntegrationTest extends BaseRequestTest {
       // It is possible that the first call returns records of "topic" and the second call throws TopicAuthorizationException
       consumeRecords(consumer)
       consumeRecords(consumer)
-      consumeRecords(consumer)
       Assert.fail("Expected TopicAuthorizationException")
     } catch {
       case _: TopicAuthorizationException => //expected
@@ -1203,7 +1177,6 @@ class AuthorizerIntegrationTest extends BaseRequestTest {
 
   private def sendOffsetFetchRequest(request: requests.OffsetFetchRequest,
                                      socketServer: SocketServer): requests.OffsetFetchResponse = {
-<<<<<<< HEAD
     val response = connectAndSend(request, ApiKeys.OFFSET_FETCH, socketServer)
     requests.OffsetFetchResponse.parse(response, request.version)
   }
@@ -1228,10 +1201,4 @@ class AuthorizerIntegrationTest extends BaseRequestTest {
     producer
   }
 
-=======
-    val response = send(request, ApiKeys.OFFSET_FETCH, socketServer)
-    requests.OffsetFetchResponse.parse(response, request.version)
-  }
-
->>>>>>> origin/0.10.2
 }

@@ -16,13 +16,6 @@
  */
 package kafka.coordinator.group
 
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupMetadata.scala
-=======
-package kafka.coordinator
-
-import collection.{Seq, mutable, immutable}
-
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupMetadata.scala
 import java.util.UUID
 
 import kafka.common.OffsetAndMetadata
@@ -293,7 +286,6 @@ private[group] class GroupMetadata(val groupId: String, initialState: GroupState
     GroupOverview(groupId, protocolType.getOrElse(""))
   }
 
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupMetadata.scala
   def initializeOffsets(offsets: collection.Map[TopicPartition, CommitRecordMetadataAndOffset],
                         pendingTxnOffsets: Map[Long, mutable.Map[TopicPartition, CommitRecordMetadataAndOffset]]) {
     this.offsets ++= offsets
@@ -308,15 +300,6 @@ private[group] class GroupMetadata(val groupId: String, initialState: GroupState
       if (!offsets.contains(topicPartition) || offsets(topicPartition).olderThan(offsetWithCommitRecordMetadata))
         offsets.put(topicPartition, offsetWithCommitRecordMetadata)
     }
-=======
-  def initializeOffsets(offsets: collection.Map[TopicPartition, OffsetAndMetadata]) {
-     this.offsets ++= offsets
-  }
-
-  def completePendingOffsetWrite(topicPartition: TopicPartition, offset: OffsetAndMetadata) {
-    if (pendingOffsetCommits.contains(topicPartition))
-      offsets.put(topicPartition, offset)
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupMetadata.scala
 
     pendingOffsetCommits.get(topicPartition) match {
       case Some(stagedOffset) if offsetWithCommitRecordMetadata.offsetAndMetadata == stagedOffset =>
@@ -339,7 +322,6 @@ private[group] class GroupMetadata(val groupId: String, initialState: GroupState
     pendingOffsetCommits ++= offsets
   }
 
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupMetadata.scala
   def prepareTxnOffsetCommit(producerId: Long, offsets: Map[TopicPartition, OffsetAndMetadata]) {
     trace(s"TxnOffsetCommit for producer $producerId and group $groupId with offsets $offsets is pending")
     receivedTransactionalOffsetCommits = true
@@ -348,19 +330,6 @@ private[group] class GroupMetadata(val groupId: String, initialState: GroupState
 
     offsets.foreach { case (topicPartition, offsetAndMetadata) =>
       producerOffsets.put(topicPartition, CommitRecordMetadataAndOffset(None, offsetAndMetadata))
-=======
-  def removeOffsets(topicPartitions: Seq[TopicPartition]): immutable.Map[TopicPartition, OffsetAndMetadata] = {
-    topicPartitions.flatMap { topicPartition =>
-      pendingOffsetCommits.remove(topicPartition)
-      val removedOffset = offsets.remove(topicPartition)
-      removedOffset.map(topicPartition -> _)
-    }.toMap
-  }
-
-  def removeExpiredOffsets(startMs: Long) = {
-    val expiredOffsets = offsets.filter {
-      case (topicPartition, offset) => offset.expireTimestamp < startMs && !pendingOffsetCommits.contains(topicPartition)
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupMetadata.scala
     }
   }
 

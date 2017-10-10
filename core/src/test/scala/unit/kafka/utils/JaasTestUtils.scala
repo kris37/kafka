@@ -135,7 +135,6 @@ object JaasTestUtils {
 
   val serviceName = "kafka"
 
-<<<<<<< HEAD
   def saslConfigs(saslProperties: Option[Properties]): Properties = {
     val result = saslProperties match {
       case Some(properties) => properties
@@ -152,20 +151,6 @@ object JaasTestUtils {
     val jaasFile = TestUtils.tempFile()
     writeToFile(jaasFile, jaasSections)
     jaasFile
-=======
-  def writeKafkaFile(kafkaServerSaslMechanisms: List[String], kafkaClientSaslMechanism: Option[String], serverKeyTabLocation: Option[File], clientKeyTabLocation: Option[File]): String = {
-    val jaasFile = TestUtils.tempFile()
-    val kafkaSections = Seq(kafkaServerSection(kafkaServerSaslMechanisms, serverKeyTabLocation), kafkaClientSection(kafkaClientSaslMechanism, clientKeyTabLocation))
-    writeToFile(jaasFile, kafkaSections)
-    jaasFile.getCanonicalPath
-  }
-
-  def writeZkAndKafkaFiles(kafkaServerSaslMechanisms: List[String], kafkaClientSaslMechanism: Option[String], serverKeyTabLocation: Option[File], clientKeyTabLocation: Option[File]): String = {
-    val jaasFile = TestUtils.tempFile()
-    val kafkaSections = Seq(kafkaServerSection(kafkaServerSaslMechanisms, serverKeyTabLocation), kafkaClientSection(kafkaClientSaslMechanism, clientKeyTabLocation))
-    writeToFile(jaasFile, kafkaSections ++ zkSections)
-    jaasFile.getCanonicalPath
->>>>>>> origin/0.10.2
   }
 
   // Returns the dynamic configuration, using credentials for user #1
@@ -241,11 +226,7 @@ object JaasTestUtils {
   /*
    * Used for the static JAAS configuration and it uses the credentials for client#2
    */
-<<<<<<< HEAD
   def kafkaClientSection(mechanism: Option[String], keytabLocation: Option[File]): JaasSection = {
-=======
-  private def kafkaClientSection(mechanism: Option[String], keytabLocation: Option[File]): JaasSection = {
->>>>>>> origin/0.10.2
     new JaasSection(KafkaClientContextName, mechanism.map(m =>
       kafkaClientModule(m, keytabLocation, KafkaClientPrincipal2, KafkaPlainUser2, KafkaPlainPassword2, KafkaScramUser2, KafkaScramPassword2)).toSeq)
   }

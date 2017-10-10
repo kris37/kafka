@@ -33,43 +33,22 @@ class StandbyContextImpl extends AbstractProcessorContext implements RecordColle
     private static final RecordCollector NO_OP_COLLECTOR = new RecordCollector() {
         @Override
         public <K, V> void send(final String topic,
-<<<<<<< HEAD
                                 final K key,
                                 final V value,
                                 final Integer partition,
                                 final Long timestamp,
                                 final Serializer<K> keySerializer,
                                 final Serializer<V> valueSerializer) {
-=======
-                                K key,
-                                V value,
-                                Integer partition,
-                                Long timestamp,
-                                Serializer<K> keySerializer,
-                                Serializer<V> valueSerializer) {
->>>>>>> origin/0.10.2
         }
 
         @Override
         public <K, V> void send(final String topic,
-<<<<<<< HEAD
                                 final K key,
                                 final V value,
                                 final Long timestamp,
                                 final Serializer<K> keySerializer,
                                 final Serializer<V> valueSerializer,
                                 final StreamPartitioner<? super K, ? super V> partitioner) {}
-=======
-                                K key,
-                                V value,
-                                Integer partition,
-                                Long timestamp,
-                                Serializer<K> keySerializer,
-                                Serializer<V> valueSerializer,
-                                StreamPartitioner<? super K, ? super V> partitioner) {
-
-        }
->>>>>>> origin/0.10.2
 
         @Override
         public void flush() {}

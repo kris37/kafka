@@ -66,11 +66,7 @@ public class RocksDBWindowStoreSupplier<K, V> extends AbstractStoreSupplier<K, V
                                 name,
                                 retentionPeriod,
                                 numSegments,
-<<<<<<< HEAD
                                 new WindowKeySchema()
-=======
-                                new WindowStoreKeySchema()
->>>>>>> origin/0.10.2
                         )));
 
     }
@@ -90,16 +86,9 @@ public class RocksDBWindowStoreSupplier<K, V> extends AbstractStoreSupplier<K, V
     private WindowStore<K, V> maybeWrapCaching(final SegmentedBytesStore inner) {
         final MeteredSegmentedBytesStore metered = new MeteredSegmentedBytesStore(inner, "rocksdb-window", time);
         if (!enableCaching) {
-<<<<<<< HEAD
             return new RocksDBWindowStore<>(metered, keySerde, valueSerde, retainDuplicates, windowSize);
         }
         final RocksDBWindowStore<Bytes, byte[]> windowed = RocksDBWindowStore.bytesStore(metered, retainDuplicates, windowSize);
         return new CachingWindowStore<>(windowed, keySerde, valueSerde, windowSize, segmentInterval);
-=======
-            return new RocksDBWindowStore<>(metered, keySerde, valueSerde, retainDuplicates);
-        }
-        final RocksDBWindowStore<Bytes, byte[]> windowed = RocksDBWindowStore.bytesStore(metered, retainDuplicates);
-        return new CachingWindowStore<>(windowed, keySerde, valueSerde, windowSize);
->>>>>>> origin/0.10.2
     }
 }

@@ -32,10 +32,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.errors.StreamsException;
 import org.apache.kafka.streams.processor.DefaultPartitionGrouper;
 import org.apache.kafka.streams.processor.FailOnInvalidTimestamp;
-<<<<<<< HEAD
 import org.apache.kafka.streams.processor.TimestampExtractor;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.streams.processor.internals.StreamPartitionAssignor;
 import org.apache.kafka.streams.processor.internals.StreamThread;
 import org.slf4j.Logger;
@@ -89,13 +86,10 @@ public class StreamsConfig extends AbstractConfig {
 
     private static final ConfigDef CONFIG;
 
-<<<<<<< HEAD
     private final boolean eosEnabled;
     private final static long DEFAULT_COMMIT_INTERVAL_MS = 30000L;
     private final static long EOS_DEFAULT_COMMIT_INTERVAL_MS = 100L;
 
-=======
->>>>>>> origin/0.10.2
     /**
      * Prefix used to isolate {@link KafkaConsumer consumer} configs from {@link KafkaProducer producer} configs.
      * It is recommended to use {@link #consumerPrefix(String)} to add this prefix to {@link ConsumerConfig consumer
@@ -111,7 +105,6 @@ public class StreamsConfig extends AbstractConfig {
      */
     public static final String PRODUCER_PREFIX = "producer.";
 
-<<<<<<< HEAD
     /**
      * Config value for parameter {@link #PROCESSING_GUARANTEE_CONFIG "processing.guarantee"} for at-least-once processing guarantees.
      */
@@ -132,41 +125,11 @@ public class StreamsConfig extends AbstractConfig {
 
     /** {@code bootstrap.servers} */
     public static final String BOOTSTRAP_SERVERS_CONFIG = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
-=======
-    /** {@code state.dir} */
-    public static final String STATE_DIR_CONFIG = "state.dir";
-    private static final String STATE_DIR_DOC = "Directory location for state store.";
-
-    /**
-     * {@code zookeeper.connect}
-     * @deprecated Kakfa Streams does not use Zookeeper anymore and this parameter will be ignored.
-     */
-    @Deprecated
-    public static final String ZOOKEEPER_CONNECT_CONFIG = "zookeeper.connect";
-    private static final String ZOOKEEPER_CONNECT_DOC = "Zookeeper connect string for Kafka topics management.";
-
-    /** {@code commit.interval.ms} */
-    public static final String COMMIT_INTERVAL_MS_CONFIG = "commit.interval.ms";
-    private static final String COMMIT_INTERVAL_MS_DOC = "The frequency with which to save the position of the processor.";
-
-    /** {@code poll.ms} */
-    public static final String POLL_MS_CONFIG = "poll.ms";
-    private static final String POLL_MS_DOC = "The amount of time in milliseconds to block waiting for input.";
-
-    /** {@code num.stream.threads} */
-    public static final String NUM_STREAM_THREADS_CONFIG = "num.stream.threads";
-    private static final String NUM_STREAM_THREADS_DOC = "The number of threads to execute stream processing.";
-
-    /** {@code num.standby.replicas} */
-    public static final String NUM_STANDBY_REPLICAS_CONFIG = "num.standby.replicas";
-    private static final String NUM_STANDBY_REPLICAS_DOC = "The number of standby replicas for each task.";
->>>>>>> origin/0.10.2
 
     /** {@code buffered.records.per.partition} */
     public static final String BUFFERED_RECORDS_PER_PARTITION_CONFIG = "buffered.records.per.partition";
     private static final String BUFFERED_RECORDS_PER_PARTITION_DOC = "The maximum number of records to buffer per partition.";
 
-<<<<<<< HEAD
     /** {@code cache.max.bytes.buffering} */
     public static final String CACHE_MAX_BYTES_BUFFERING_CONFIG = "cache.max.bytes.buffering";
     private static final String CACHE_MAX_BYTES_BUFFERING_DOC = "Maximum number of memory bytes to be used for buffering across all threads";
@@ -205,42 +168,6 @@ public class StreamsConfig extends AbstractConfig {
 
     /** {@code metadata.max.age.ms} */
     public static final String METADATA_MAX_AGE_CONFIG = CommonClientConfigs.METADATA_MAX_AGE_CONFIG;
-=======
-    /** {@code state.cleanup.delay} */
-    public static final String STATE_CLEANUP_DELAY_MS_CONFIG = "state.cleanup.delay.ms";
-    private static final String STATE_CLEANUP_DELAY_MS_DOC = "The amount of time in milliseconds to wait before deleting state when a partition has migrated.";
-
-    /** {@code timestamp.extractor} */
-    public static final String TIMESTAMP_EXTRACTOR_CLASS_CONFIG = "timestamp.extractor";
-    private static final String TIMESTAMP_EXTRACTOR_CLASS_DOC = "Timestamp extractor class that implements the <code>TimestampExtractor</code> interface.";
-
-    /** {@code partition.grouper} */
-    public static final String PARTITION_GROUPER_CLASS_CONFIG = "partition.grouper";
-    private static final String PARTITION_GROUPER_CLASS_DOC = "Partition grouper class that implements the <code>PartitionGrouper</code> interface.";
-
-    /** {@code application.id} */
-    public static final String APPLICATION_ID_CONFIG = "application.id";
-    private static final String APPLICATION_ID_DOC = "An identifier for the stream processing application. Must be unique within the Kafka cluster. It is used as 1) the default client-id prefix, 2) the group-id for membership management, 3) the changelog topic prefix.";
-
-    /** {@code replication.factor} */
-    public static final String REPLICATION_FACTOR_CONFIG = "replication.factor";
-    private static final String REPLICATION_FACTOR_DOC = "The replication factor for change log topics and repartition topics created by the stream processing application.";
-
-    /** {@code key.serde} */
-    public static final String KEY_SERDE_CLASS_CONFIG = "key.serde";
-    private static final String KEY_SERDE_CLASS_DOC = "Serializer / deserializer class for key that implements the <code>Serde</code> interface.";
-
-    /** {@code value.serde} */
-    public static final String VALUE_SERDE_CLASS_CONFIG = "value.serde";
-    private static final String VALUE_SERDE_CLASS_DOC = "Serializer / deserializer class for value that implements the <code>Serde</code> interface.";
-
-    /**{@code user.endpoint} */
-    public static final String APPLICATION_SERVER_CONFIG = "application.server";
-    private static final String APPLICATION_SERVER_DOC = "A host:port pair pointing to an embedded user defined endpoint that can be used for discovering the locations of state stores within a single KafkaStreams application";
-
-    /** {@code metrics.sample.window.ms} */
-    public static final String METRICS_SAMPLE_WINDOW_MS_CONFIG = CommonClientConfigs.METRICS_SAMPLE_WINDOW_MS_CONFIG;
->>>>>>> origin/0.10.2
 
     /** {@code metrics.num.samples} */
     public static final String METRICS_NUM_SAMPLES_CONFIG = CommonClientConfigs.METRICS_NUM_SAMPLES_CONFIG;
@@ -251,7 +178,6 @@ public class StreamsConfig extends AbstractConfig {
     /** {@code metric.reporters} */
     public static final String METRIC_REPORTER_CLASSES_CONFIG = CommonClientConfigs.METRIC_REPORTER_CLASSES_CONFIG;
 
-<<<<<<< HEAD
     /** {@code metrics.sample.window.ms} */
     public static final String METRICS_SAMPLE_WINDOW_MS_CONFIG = CommonClientConfigs.METRICS_SAMPLE_WINDOW_MS_CONFIG;
 
@@ -280,32 +206,6 @@ public class StreamsConfig extends AbstractConfig {
 
     /** {@code reconnect.backoff.ms} */
     public static final String RECONNECT_BACKOFF_MS_CONFIG = CommonClientConfigs.RECONNECT_BACKOFF_MS_CONFIG;
-=======
-    /** {@code bootstrap.servers} */
-    public static final String BOOTSTRAP_SERVERS_CONFIG = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
-
-    /** {@code client.id} */
-    public static final String CLIENT_ID_CONFIG = CommonClientConfigs.CLIENT_ID_CONFIG;
-
-    /** {@code rocksdb.config.setter} */
-    public static final String ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
-    private static final String ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter class that implements the <code>RocksDBConfigSetter</code> interface";
-
-    /** {@code windowstore.changelog.additional.retention.ms} */
-    public static final String WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG = "windowstore.changelog.additional.retention.ms";
-    private static final String WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOC = "Added to a windows maintainMs to ensure data is not deleted from the log prematurely. Allows for clock drift. Default is 1 day";
-
-    /** {@code cache.max.bytes.buffering} */
-    public static final String CACHE_MAX_BYTES_BUFFERING_CONFIG = "cache.max.bytes.buffering";
-    private static final String CACHE_MAX_BYTES_BUFFERING_DOC = "Maximum number of memory bytes to be used for buffering across all threads";
-
-    public static final String SECURITY_PROTOCOL_CONFIG = CommonClientConfigs.SECURITY_PROTOCOL_CONFIG;
-    private static final String SECURITY_PROTOCOL_DOC = CommonClientConfigs.SECURITY_PROTOCOL_DOC;
-    public static final String DEFAULT_SECURITY_PROTOCOL = CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL;
-
-    public static final String CONNECTIONS_MAX_IDLE_MS_CONFIG = CommonClientConfigs.CONNECTIONS_MAX_IDLE_MS_CONFIG;
-    private static final String CONNECTIONS_MAX_IDLE_MS_DOC = CommonClientConfigs.CONNECTIONS_MAX_IDLE_MS_DOC;
->>>>>>> origin/0.10.2
 
     /** {@code reconnect.backoff.max} */
     public static final String RECONNECT_BACKOFF_MAX_MS_CONFIG = CommonClientConfigs.RECONNECT_BACKOFF_MAX_MS_CONFIG;
@@ -319,7 +219,6 @@ public class StreamsConfig extends AbstractConfig {
 
     /** {@code retry.backoff.ms} */
     public static final String RETRY_BACKOFF_MS_CONFIG = CommonClientConfigs.RETRY_BACKOFF_MS_CONFIG;
-<<<<<<< HEAD
 
     /** {@code rocksdb.config.setter} */
     public static final String ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
@@ -327,19 +226,9 @@ public class StreamsConfig extends AbstractConfig {
 
     /** {@code security.protocol} */
     public static final String SECURITY_PROTOCOL_CONFIG = CommonClientConfigs.SECURITY_PROTOCOL_CONFIG;
-=======
-    private static final String RETRY_BACKOFF_MS_DOC = CommonClientConfigs.RETRY_BACKOFF_MS_DOC;
-
-    public static final String METADATA_MAX_AGE_CONFIG = CommonClientConfigs.METADATA_MAX_AGE_CONFIG;
-    private static final String METADATA_MAX_AGE_DOC = CommonClientConfigs.METADATA_MAX_AGE_DOC;
-
-    public static final String RECONNECT_BACKOFF_MS_CONFIG = CommonClientConfigs.RECONNECT_BACKOFF_MS_CONFIG;
-    private static final String RECONNECT_BACKOFF_MS_DOC = CommonClientConfigs.RECONNECT_BACKOFF_MS_DOC;
->>>>>>> origin/0.10.2
 
     /** {@code send.buffer.bytes} */
     public static final String SEND_BUFFER_CONFIG = CommonClientConfigs.SEND_BUFFER_CONFIG;
-<<<<<<< HEAD
 
     /** {@code state.cleanup.delay} */
     public static final String STATE_CLEANUP_DELAY_MS_CONFIG = "state.cleanup.delay.ms";
@@ -382,18 +271,6 @@ public class StreamsConfig extends AbstractConfig {
 
             // HIGH
 
-=======
-    private static final String SEND_BUFFER_DOC = CommonClientConfigs.SEND_BUFFER_DOC;
-
-    public static final String RECEIVE_BUFFER_CONFIG = CommonClientConfigs.RECEIVE_BUFFER_CONFIG;
-    private static final String RECEIVE_BUFFER_DOC = CommonClientConfigs.RECEIVE_BUFFER_DOC;
-
-    public static final String REQUEST_TIMEOUT_MS_CONFIG = CommonClientConfigs.REQUEST_TIMEOUT_MS_CONFIG;
-    private static final String REQUEST_TIMEOUT_MS_DOC = CommonClientConfigs.REQUEST_TIMEOUT_MS_DOC;
-
-    static {
-        CONFIG = new ConfigDef()
->>>>>>> origin/0.10.2
             .define(APPLICATION_ID_CONFIG, // required with no default value
                     Type.STRING,
                     Importance.HIGH,
@@ -402,7 +279,6 @@ public class StreamsConfig extends AbstractConfig {
                     Type.LIST,
                     Importance.HIGH,
                     CommonClientConfigs.BOOTSTRAP_SERVERS_DOC)
-<<<<<<< HEAD
             .define(REPLICATION_FACTOR_CONFIG,
                     Type.INT,
                     1,
@@ -471,74 +347,11 @@ public class StreamsConfig extends AbstractConfig {
                     "",
                     Importance.LOW,
                     APPLICATION_SERVER_DOC)
-=======
-            .define(CLIENT_ID_CONFIG,
-                    Type.STRING,
-                    "",
-                    Importance.HIGH,
-                    CommonClientConfigs.CLIENT_ID_DOC)
-            .define(ZOOKEEPER_CONNECT_CONFIG,
-                    Type.STRING,
-                    "",
-                    Importance.HIGH,
-                    ZOOKEEPER_CONNECT_DOC)
-            .define(STATE_DIR_CONFIG,
-                    Type.STRING,
-                    "/tmp/kafka-streams",
-                    Importance.MEDIUM,
-                    STATE_DIR_DOC)
-            .define(REPLICATION_FACTOR_CONFIG,
-                    Type.INT,
-                    1,
-                    Importance.MEDIUM,
-                    REPLICATION_FACTOR_DOC)
-            .define(TIMESTAMP_EXTRACTOR_CLASS_CONFIG,
-                    Type.CLASS,
-                    FailOnInvalidTimestamp.class.getName(),
-                    Importance.MEDIUM,
-                    TIMESTAMP_EXTRACTOR_CLASS_DOC)
-            .define(PARTITION_GROUPER_CLASS_CONFIG,
-                    Type.CLASS,
-                    DefaultPartitionGrouper.class.getName(),
-                    Importance.MEDIUM,
-                    PARTITION_GROUPER_CLASS_DOC)
-            .define(KEY_SERDE_CLASS_CONFIG,
-                    Type.CLASS,
-                    Serdes.ByteArraySerde.class.getName(),
-                    Importance.MEDIUM,
-                    KEY_SERDE_CLASS_DOC)
-            .define(VALUE_SERDE_CLASS_CONFIG,
-                    Type.CLASS,
-                    Serdes.ByteArraySerde.class.getName(),
-                    Importance.MEDIUM,
-                    VALUE_SERDE_CLASS_DOC)
-            .define(COMMIT_INTERVAL_MS_CONFIG,
-                    Type.LONG,
-                    30000,
-                    Importance.LOW,
-                    COMMIT_INTERVAL_MS_DOC)
-            .define(POLL_MS_CONFIG,
-                    Type.LONG,
-                    100,
-                    Importance.LOW,
-                    POLL_MS_DOC)
-            .define(NUM_STREAM_THREADS_CONFIG,
-                    Type.INT,
-                    1,
-                    Importance.LOW,
-                    NUM_STREAM_THREADS_DOC)
-            .define(NUM_STANDBY_REPLICAS_CONFIG,
-                    Type.INT,
-                    0,
-                    Importance.LOW,
-                    NUM_STANDBY_REPLICAS_DOC)
->>>>>>> origin/0.10.2
             .define(BUFFERED_RECORDS_PER_PARTITION_CONFIG,
                     Type.INT,
                     1000,
                     Importance.LOW,
                     BUFFERED_RECORDS_PER_PARTITION_DOC)
-<<<<<<< HEAD
             .define(COMMIT_INTERVAL_MS_CONFIG,
                     Type.LONG,
                     DEFAULT_COMMIT_INTERVAL_MS,
@@ -555,45 +368,23 @@ public class StreamsConfig extends AbstractConfig {
                     atLeast(0),
                     ConfigDef.Importance.LOW,
                     CommonClientConfigs.METADATA_MAX_AGE_DOC)
-=======
-            .define(STATE_CLEANUP_DELAY_MS_CONFIG,
-                    Type.LONG,
-                    60000,
-                    Importance.LOW,
-                    STATE_CLEANUP_DELAY_MS_DOC)
-            .define(METRIC_REPORTER_CLASSES_CONFIG,
-                    Type.LIST,
-                    "",
-                    Importance.LOW,
-                    CommonClientConfigs.METRIC_REPORTER_CLASSES_DOC)
-            .define(METRICS_SAMPLE_WINDOW_MS_CONFIG,
-                    Type.LONG,
-                    30000,
-                    atLeast(0),
-                    Importance.LOW,
-                    CommonClientConfigs.METRICS_SAMPLE_WINDOW_MS_DOC)
->>>>>>> origin/0.10.2
             .define(METRICS_NUM_SAMPLES_CONFIG,
                     Type.INT,
                     2,
                     atLeast(1),
                     Importance.LOW,
                     CommonClientConfigs.METRICS_NUM_SAMPLES_DOC)
-<<<<<<< HEAD
             .define(METRIC_REPORTER_CLASSES_CONFIG,
                     Type.LIST,
                     "",
                     Importance.LOW,
                     CommonClientConfigs.METRIC_REPORTER_CLASSES_DOC)
-=======
->>>>>>> origin/0.10.2
             .define(METRICS_RECORDING_LEVEL_CONFIG,
                     Type.STRING,
                     Sensor.RecordingLevel.INFO.toString(),
                     in(Sensor.RecordingLevel.INFO.toString(), Sensor.RecordingLevel.DEBUG.toString()),
                     Importance.LOW,
                     CommonClientConfigs.METRICS_RECORDING_LEVEL_DOC)
-<<<<<<< HEAD
             .define(METRICS_SAMPLE_WINDOW_MS_CONFIG,
                     Type.LONG,
                     30000,
@@ -684,86 +475,12 @@ public class StreamsConfig extends AbstractConfig {
                     "",
                     Importance.LOW,
                     ZOOKEEPER_CONNECT_DOC);
-=======
-            .define(APPLICATION_SERVER_CONFIG,
-                    Type.STRING,
-                    "",
-                    Importance.LOW,
-                    APPLICATION_SERVER_DOC)
-            .define(ROCKSDB_CONFIG_SETTER_CLASS_CONFIG,
-                    Type.CLASS,
-                    null,
-                    Importance.LOW,
-                    ROCKSDB_CONFIG_SETTER_CLASS_DOC)
-            .define(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG,
-                    Type.LONG,
-                    24 * 60 * 60 * 1000,
-                    Importance.MEDIUM,
-                    WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOC)
-            .define(CACHE_MAX_BYTES_BUFFERING_CONFIG,
-                    Type.LONG,
-                    10 * 1024 * 1024L,
-                    atLeast(0),
-                    Importance.LOW,
-                    CACHE_MAX_BYTES_BUFFERING_DOC)
-            .define(SECURITY_PROTOCOL_CONFIG,
-                    Type.STRING,
-                    DEFAULT_SECURITY_PROTOCOL,
-                    Importance.MEDIUM,
-                    SECURITY_PROTOCOL_DOC)
-            .define(CONNECTIONS_MAX_IDLE_MS_CONFIG,
-                    ConfigDef.Type.LONG,
-                    9 * 60 * 1000,
-                    ConfigDef.Importance.MEDIUM,
-                    CONNECTIONS_MAX_IDLE_MS_DOC)
-            .define(RETRY_BACKOFF_MS_CONFIG,
-                    ConfigDef.Type.LONG,
-                    100L,
-                    atLeast(0L),
-                    ConfigDef.Importance.LOW,
-                    RETRY_BACKOFF_MS_DOC)
-            .define(METADATA_MAX_AGE_CONFIG,
-                    ConfigDef.Type.LONG,
-                    5 * 60 * 1000,
-                    atLeast(0),
-                    ConfigDef.Importance.LOW,
-                    METADATA_MAX_AGE_DOC)
-            .define(RECONNECT_BACKOFF_MS_CONFIG,
-                    ConfigDef.Type.LONG,
-                    50L,
-                    atLeast(0L),
-                    ConfigDef.Importance.LOW,
-                    RECONNECT_BACKOFF_MS_DOC)
-            .define(SEND_BUFFER_CONFIG,
-                    ConfigDef.Type.INT,
-                    128 * 1024,
-                    atLeast(0),
-                    ConfigDef.Importance.MEDIUM,
-                    SEND_BUFFER_DOC)
-            .define(RECEIVE_BUFFER_CONFIG,
-                    ConfigDef.Type.INT,
-                    32 * 1024,
-                    atLeast(0),
-                    ConfigDef.Importance.MEDIUM,
-                    RECEIVE_BUFFER_DOC)
-            .define(REQUEST_TIMEOUT_MS_CONFIG,
-                    ConfigDef.Type.INT,
-                    40 * 1000,
-                    atLeast(0),
-                    ConfigDef.Importance.MEDIUM,
-                    REQUEST_TIMEOUT_MS_DOC);
->>>>>>> origin/0.10.2
     }
 
     // this is the list of configs for underlying clients
     // that streams prefer different default values
     private static final Map<String, Object> PRODUCER_DEFAULT_OVERRIDES;
-<<<<<<< HEAD
     static {
-=======
-    static
-    {
->>>>>>> origin/0.10.2
         final Map<String, Object> tempProducerDefaultOverrides = new HashMap<>();
         tempProducerDefaultOverrides.put(ProducerConfig.LINGER_MS_CONFIG, "100");
         tempProducerDefaultOverrides.put(ProducerConfig.RETRIES_CONFIG, 10);
@@ -782,12 +499,7 @@ public class StreamsConfig extends AbstractConfig {
     }
 
     private static final Map<String, Object> CONSUMER_DEFAULT_OVERRIDES;
-<<<<<<< HEAD
     static {
-=======
-    static
-    {
->>>>>>> origin/0.10.2
         final Map<String, Object> tempConsumerDefaultOverrides = new HashMap<>();
         tempConsumerDefaultOverrides.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
         tempConsumerDefaultOverrides.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -852,7 +564,6 @@ public class StreamsConfig extends AbstractConfig {
      */
     public StreamsConfig(final Map<?, ?> props) {
         super(CONFIG, props);
-<<<<<<< HEAD
         eosEnabled = EXACTLY_ONCE.equals(getString(PROCESSING_GUARANTEE_CONFIG));
     }
 
@@ -869,8 +580,6 @@ public class StreamsConfig extends AbstractConfig {
         }
 
         return configUpdates;
-=======
->>>>>>> origin/0.10.2
     }
 
     private Map<String, Object> getCommonConsumerConfigs() throws ConfigException {
@@ -881,7 +590,6 @@ public class StreamsConfig extends AbstractConfig {
         if (clientProvidedProps.containsKey(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG)) {
             throw new ConfigException("Unexpected user-specified consumer config " + ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG
                 + ", as the streams client will always turn off auto committing.");
-<<<<<<< HEAD
         }
         if (eosEnabled) {
             if (clientProvidedProps.containsKey(ConsumerConfig.ISOLATION_LEVEL_CONFIG)) {
@@ -891,11 +599,6 @@ public class StreamsConfig extends AbstractConfig {
         }
 
         final Map<String, Object> consumerProps = new HashMap<>(eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES);
-=======
-        }
-
-        final Map<String, Object> consumerProps = new HashMap<>(CONSUMER_DEFAULT_OVERRIDES);
->>>>>>> origin/0.10.2
         consumerProps.putAll(clientProvidedProps);
 
         // bootstrap.servers should be from StreamsConfig
@@ -970,7 +673,6 @@ public class StreamsConfig extends AbstractConfig {
      * @return Map of the producer configuration.
      */
     public Map<String, Object> getProducerConfigs(final String clientId) {
-<<<<<<< HEAD
         final Map<String, Object> clientProvidedProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
         if (eosEnabled) {
@@ -985,8 +687,6 @@ public class StreamsConfig extends AbstractConfig {
             }
         }
 
-=======
->>>>>>> origin/0.10.2
         // generate producer configs from original properties and overridden maps
         final Map<String, Object> props = new HashMap<>(eosEnabled ? PRODUCER_EOS_OVERRIDES : PRODUCER_DEFAULT_OVERRIDES);
         props.putAll(clientProvidedProps);
@@ -1007,7 +707,6 @@ public class StreamsConfig extends AbstractConfig {
 
     /**
      * Return an {@link Serde#configure(Map, boolean) configured} instance of {@link #KEY_SERDE_CLASS_CONFIG key Serde
-<<<<<<< HEAD
      * class}. This method is deprecated. Use {@link #defaultKeySerde()} method instead.
      *
      * @return an configured instance of key Serde class
@@ -1041,25 +740,11 @@ public class StreamsConfig extends AbstractConfig {
             return serde;
         } catch (final Exception e) {
             throw new StreamsException(String.format("Failed to configure key serde %s", get(DEFAULT_KEY_SERDE_CLASS_CONFIG)), e);
-=======
-     * class}.
-     *
-     * @return an configured instance of key Serde class
-     */
-    public Serde keySerde() {
-        try {
-            final Serde<?> serde = getConfiguredInstance(KEY_SERDE_CLASS_CONFIG, Serde.class);
-            serde.configure(originals(), true);
-            return serde;
-        } catch (final Exception e) {
-            throw new StreamsException(String.format("Failed to configure key serde %s", get(KEY_SERDE_CLASS_CONFIG)), e);
->>>>>>> origin/0.10.2
         }
     }
 
     /**
      * Return an {@link Serde#configure(Map, boolean) configured} instance of {@link #VALUE_SERDE_CLASS_CONFIG value
-<<<<<<< HEAD
      * Serde class}. This method is deprecated. Use {@link #defaultValueSerde()} instead.
      *
      * @return an configured instance of value Serde class
@@ -1101,19 +786,6 @@ public class StreamsConfig extends AbstractConfig {
         TimestampExtractor timestampExtractor = getConfiguredInstance(TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TimestampExtractor.class);
         if (timestampExtractor == null) {
             return getConfiguredInstance(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TimestampExtractor.class);
-=======
-     * Serde class}.
-     *
-     * @return an configured instance of value Serde class
-     */
-    public Serde valueSerde() {
-        try {
-            final Serde<?> serde = getConfiguredInstance(VALUE_SERDE_CLASS_CONFIG, Serde.class);
-            serde.configure(originals(), false);
-            return serde;
-        } catch (final Exception e) {
-            throw new StreamsException(String.format("Failed to configure value serde %s", get(VALUE_SERDE_CLASS_CONFIG)), e);
->>>>>>> origin/0.10.2
         }
         return timestampExtractor;
     }

@@ -83,7 +83,6 @@ public class KGroupedStreamImplTest {
         groupedStream.reduce(null, "store");
     }
 
-<<<<<<< HEAD
     @Test
     public void shouldAllowNullStoreNameOnReduce() throws Exception {
         groupedStream.reduce(MockReducer.STRING_ADDER, (String) null);
@@ -92,17 +91,11 @@ public class KGroupedStreamImplTest {
     @Test(expected = InvalidTopicException.class)
     public void shouldNotHaveInvalidStoreNameOnReduce() throws Exception {
         groupedStream.reduce(MockReducer.STRING_ADDER, INVALID_STORE_NAME);
-=======
-    @Test(expected = NullPointerException.class)
-    public void shouldNotHaveNullStoreNameOnReduce() throws Exception {
-        groupedStream.reduce(MockReducer.STRING_ADDER, (String) null);
->>>>>>> origin/0.10.2
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldNotHaveNullStoreSupplierOnReduce() throws Exception {
         groupedStream.reduce(MockReducer.STRING_ADDER, (StateStoreSupplier<KeyValueStore>) null);
-<<<<<<< HEAD
     }
 
     @Test(expected = NullPointerException.class)
@@ -114,8 +107,6 @@ public class KGroupedStreamImplTest {
     @Test(expected = NullPointerException.class)
     public void shouldNotHaveNullStoreSupplierOnWindowedCount() throws Exception {
         groupedStream.count(TimeWindows.of(10), (StateStoreSupplier<WindowStore>) null);
-=======
->>>>>>> origin/0.10.2
     }
 
     @Test(expected = NullPointerException.class)
@@ -128,7 +119,6 @@ public class KGroupedStreamImplTest {
         groupedStream.reduce(MockReducer.STRING_ADDER, (Windows) null, "store");
     }
 
-<<<<<<< HEAD
     @Test
     public void shouldAllowNullStoreNameWithWindowedReduce() throws Exception {
         groupedStream.reduce(MockReducer.STRING_ADDER, TimeWindows.of(10), (String) null);
@@ -137,11 +127,6 @@ public class KGroupedStreamImplTest {
     @Test(expected = InvalidTopicException.class)
     public void shouldNotHaveInvalidStoreNameWithWindowedReduce() throws Exception {
         groupedStream.reduce(MockReducer.STRING_ADDER, TimeWindows.of(10), INVALID_STORE_NAME);
-=======
-    @Test(expected = NullPointerException.class)
-    public void shouldNotHaveNullStoreNameWithWindowedReduce() throws Exception {
-        groupedStream.reduce(MockReducer.STRING_ADDER, TimeWindows.of(10), (String) null);
->>>>>>> origin/0.10.2
     }
 
     @Test(expected = NullPointerException.class)
@@ -154,7 +139,6 @@ public class KGroupedStreamImplTest {
         groupedStream.aggregate(MockInitializer.STRING_INIT, null, Serdes.String(), "store");
     }
 
-<<<<<<< HEAD
     @Test
     public void shouldAllowNullStoreNameOnAggregate() throws Exception {
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Serdes.String(), null);
@@ -163,11 +147,6 @@ public class KGroupedStreamImplTest {
     @Test(expected = InvalidTopicException.class)
     public void shouldNotHaveInvalidStoreNameOnAggregate() throws Exception {
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Serdes.String(), INVALID_STORE_NAME);
-=======
-    @Test(expected = NullPointerException.class)
-    public void shouldNotHaveNullStoreNameOnAggregate() throws Exception {
-        groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, Serdes.String(), null);
->>>>>>> origin/0.10.2
     }
 
     @Test(expected = NullPointerException.class)
@@ -185,7 +164,6 @@ public class KGroupedStreamImplTest {
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, null, Serdes.String(), "store");
     }
 
-<<<<<<< HEAD
     @Test
     public void shouldAllowNullStoreNameOnWindowedAggregate() throws Exception {
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, TimeWindows.of(10), Serdes.String(), null);
@@ -194,16 +172,10 @@ public class KGroupedStreamImplTest {
     @Test(expected = InvalidTopicException.class)
     public void shouldNotHaveInvalidStoreNameOnWindowedAggregate() throws Exception {
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, TimeWindows.of(10), Serdes.String(), INVALID_STORE_NAME);
-=======
-    @Test(expected = NullPointerException.class)
-    public void shouldNotHaveNullStoreNameOnWindowedAggregate() throws Exception {
-        groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, TimeWindows.of(10), Serdes.String(), null);
->>>>>>> origin/0.10.2
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldNotHaveNullStoreSupplierOnWindowedAggregate() throws Exception {
-<<<<<<< HEAD
         groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, TimeWindows.of(10), (StateStoreSupplier<WindowStore>) null);
     }
 
@@ -225,9 +197,6 @@ public class KGroupedStreamImplTest {
         assertEquals(Integer.valueOf(2), results.get(new Windowed<>("1", new SessionWindow(10, 30))));
         assertEquals(Integer.valueOf(1), results.get(new Windowed<>("2", new SessionWindow(15, 15))));
         assertEquals(Integer.valueOf(3), results.get(new Windowed<>("1", new SessionWindow(70, 100))));
-=======
-        groupedStream.aggregate(MockInitializer.STRING_INIT, MockAggregator.TOSTRING_ADDER, TimeWindows.of(10), null);
->>>>>>> origin/0.10.2
     }
 
     @Test
@@ -256,7 +225,6 @@ public class KGroupedStreamImplTest {
             }
         });
 
-<<<<<<< HEAD
         doAggregateSessionWindows(results);
         assertEquals(table.queryableStoreName(), "session-store");
     }
@@ -292,37 +260,6 @@ public class KGroupedStreamImplTest {
     }
 
     private void doCountSessionWindows(final Map<Windowed<String>, Long> results) throws Exception {
-=======
-        driver = new KStreamTestDriver(builder, TestUtils.tempDirectory());
-        driver.setTime(10);
-        driver.process(TOPIC, "1", "1");
-        driver.setTime(15);
-        driver.process(TOPIC, "2", "2");
-        driver.setTime(30);
-        driver.process(TOPIC, "1", "1");
-        driver.setTime(70);
-        driver.process(TOPIC, "1", "1");
-        driver.setTime(90);
-        driver.process(TOPIC, "1", "1");
-        driver.setTime(100);
-        driver.process(TOPIC, "1", "1");
-        driver.flushState();
-        assertEquals(Integer.valueOf(2), results.get(new Windowed<>("1", new SessionWindow(10, 30))));
-        assertEquals(Integer.valueOf(1), results.get(new Windowed<>("2", new SessionWindow(15, 15))));
-        assertEquals(Integer.valueOf(3), results.get(new Windowed<>("1", new SessionWindow(70, 100))));
-    }
-
-    @Test
-    public void shouldCountSessionWindows() throws Exception {
-        final Map<Windowed<String>, Long> results = new HashMap<>();
-        groupedStream.count(SessionWindows.with(30), "session-store")
-                .foreach(new ForeachAction<Windowed<String>, Long>() {
-                    @Override
-                    public void apply(final Windowed<String> key, final Long value) {
-                        results.put(key, value);
-                    }
-                });
->>>>>>> origin/0.10.2
         driver = new KStreamTestDriver(builder, TestUtils.tempDirectory());
         driver.setTime(10);
         driver.process(TOPIC, "1", "1");
@@ -343,7 +280,6 @@ public class KGroupedStreamImplTest {
     }
 
     @Test
-<<<<<<< HEAD
     public void shouldCountSessionWindows() throws Exception {
         final Map<Windowed<String>, Long> results = new HashMap<>();
         KTable table = groupedStream.count(SessionWindows.with(30), "session-store");
@@ -372,24 +308,6 @@ public class KGroupedStreamImplTest {
     }
 
     private void doReduceSessionWindows(final Map<Windowed<String>, String> results) throws Exception {
-=======
-    public void shouldReduceSessionWindows() throws Exception {
-        final Map<Windowed<String>, String> results = new HashMap<>();
-        groupedStream.reduce(
-                new Reducer<String>() {
-                    @Override
-                    public String apply(final String value1, final String value2) {
-                        return value1 + ":" + value2;
-                    }
-                }, SessionWindows.with(30),
-                "session-store")
-                .foreach(new ForeachAction<Windowed<String>, String>() {
-                    @Override
-                    public void apply(final Windowed<String> key, final String value) {
-                        results.put(key, value);
-                    }
-                });
->>>>>>> origin/0.10.2
         driver = new KStreamTestDriver(builder, TestUtils.tempDirectory());
         driver.setTime(10);
         driver.process(TOPIC, "1", "A");
@@ -566,23 +484,7 @@ public class KGroupedStreamImplTest {
         groupedStream.count(SessionWindows.with(90), (StateStoreSupplier<SessionStore>) null);
     }
 
-<<<<<<< HEAD
     private void doCountWindowed(final List<KeyValue<Windowed<String>, Long>> results) throws Exception {
-=======
-    @Test
-    public void shouldCountWindowed() throws Exception {
-        final List<KeyValue<Windowed<String>, Long>> results = new ArrayList<>();
-        groupedStream.count(
-                TimeWindows.of(500L),
-                "aggregate-by-key-windowed")
-                .foreach(new ForeachAction<Windowed<String>, Long>() {
-                    @Override
-                    public void apply(final Windowed<String> key, final Long value) {
-                        results.add(KeyValue.pair(key, value));
-                    }
-                });
-
->>>>>>> origin/0.10.2
         driver = new KStreamTestDriver(builder, TestUtils.tempDirectory(), 0);
         driver.setTime(0);
         driver.process(TOPIC, "1", "A");
@@ -603,7 +505,6 @@ public class KGroupedStreamImplTest {
                 KeyValue.pair(new Windowed<>("2", new TimeWindow(500, 1000)), 2L)
         )));
     }
-<<<<<<< HEAD
 
     @Test
     public void shouldCountWindowed() throws Exception {
@@ -635,6 +536,4 @@ public class KGroupedStreamImplTest {
 
         doCountWindowed(results);
     }
-=======
->>>>>>> origin/0.10.2
 }

@@ -64,12 +64,7 @@ object ZkUtils {
   val BrokerSequenceIdPath = s"$BrokersPath/seqid"
   val ConfigChangesPath = s"$ConfigPath/changes"
   val ConfigUsersPath = s"$ConfigPath/users"
-<<<<<<< HEAD
   val ProducerIdBlockPath = "/latest_producer_id_block"
-=======
-
-
->>>>>>> origin/0.10.2
   // Important: it is necessary to add any new top level Zookeeper path to the Seq
   val SecureZkRootPaths = Seq(AdminPath,
                               BrokersPath,
@@ -79,12 +74,8 @@ object ZkUtils {
                               ControllerEpochPath,
                               IsrChangeNotificationPath,
                               KafkaAclPath,
-<<<<<<< HEAD
                               KafkaAclChangesPath,
                               ProducerIdBlockPath)
-=======
-                              KafkaAclChangesPath)
->>>>>>> origin/0.10.2
 
   // Important: it is necessary to add any new top level Zookeeper path that contains
   //            sensitive information that should not be world readable to the Seq
@@ -472,11 +463,7 @@ class ZkUtils(val zkClient: ZkClient,
     val acl = if (acls eq UseDefaultAcls) ZkUtils.defaultAcls(isSecure, path) else acls
     val parentDir = path.substring(0, path.lastIndexOf('/'))
     if (parentDir.length != 0) {
-<<<<<<< HEAD
       zkPath.createPersistent(parentDir, createParents = true, acl)
-=======
-      ZkPath.createPersistent(zkClient, parentDir, createParents = true, acl)
->>>>>>> origin/0.10.2
     }
   }
 
@@ -486,19 +473,11 @@ class ZkUtils(val zkClient: ZkClient,
   private def createEphemeralPath(path: String, data: String, acls: java.util.List[ACL] = UseDefaultAcls): Unit = {
     val acl = if (acls eq UseDefaultAcls) ZkUtils.defaultAcls(isSecure, path) else acls
     try {
-<<<<<<< HEAD
       zkPath.createEphemeral(path, data, acl)
     } catch {
       case _: ZkNoNodeException =>
         createParentPath(path)
         zkPath.createEphemeral(path, data, acl)
-=======
-      ZkPath.createEphemeral(zkClient, path, data, acl)
-    } catch {
-      case _: ZkNoNodeException =>
-        createParentPath(path)
-        ZkPath.createEphemeral(zkClient, path, data, acl)
->>>>>>> origin/0.10.2
     }
   }
 
@@ -535,29 +514,17 @@ class ZkUtils(val zkClient: ZkClient,
   def createPersistentPath(path: String, data: String = "", acls: java.util.List[ACL] = UseDefaultAcls): Unit = {
     val acl = if (acls eq UseDefaultAcls) ZkUtils.defaultAcls(isSecure, path) else acls
     try {
-<<<<<<< HEAD
       zkPath.createPersistent(path, data, acl)
     } catch {
       case _: ZkNoNodeException =>
         createParentPath(path)
         zkPath.createPersistent(path, data, acl)
-=======
-      ZkPath.createPersistent(zkClient, path, data, acl)
-    } catch {
-      case _: ZkNoNodeException =>
-        createParentPath(path)
-        ZkPath.createPersistent(zkClient, path, data, acl)
->>>>>>> origin/0.10.2
     }
   }
 
   def createSequentialPersistentPath(path: String, data: String = "", acls: java.util.List[ACL] = UseDefaultAcls): String = {
     val acl = if (acls eq UseDefaultAcls) ZkUtils.defaultAcls(isSecure, path) else acls
-<<<<<<< HEAD
     zkPath.createPersistentSequential(path, data, acl)
-=======
-    ZkPath.createPersistentSequential(zkClient, path, data, acl)
->>>>>>> origin/0.10.2
   }
 
   /**
@@ -573,11 +540,7 @@ class ZkUtils(val zkClient: ZkClient,
       case _: ZkNoNodeException =>
         createParentPath(path)
         try {
-<<<<<<< HEAD
           zkPath.createPersistent(path, data, acl)
-=======
-          ZkPath.createPersistent(zkClient, path, data, acl)
->>>>>>> origin/0.10.2
         } catch {
           case _: ZkNodeExistsException =>
             zkClient.writeData(path, data)
@@ -647,11 +610,7 @@ class ZkUtils(val zkClient: ZkClient,
     } catch {
       case _: ZkNoNodeException =>
         createParentPath(path)
-<<<<<<< HEAD
         zkPath.createEphemeral(path, data, acl)
-=======
-        ZkPath.createEphemeral(zkClient, path, data, acl)
->>>>>>> origin/0.10.2
     }
   }
 

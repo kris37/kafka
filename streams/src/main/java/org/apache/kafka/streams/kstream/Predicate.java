@@ -16,10 +16,6 @@
  */
 package org.apache.kafka.streams.kstream;
 
-<<<<<<< HEAD
-=======
-import org.apache.kafka.common.annotation.InterfaceStability;
->>>>>>> origin/0.10.2
 import org.apache.kafka.streams.KeyValue;
 
 /**

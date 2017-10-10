@@ -18,10 +18,6 @@ package org.apache.kafka.clients;
 
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.protocol.ApiKeys;
-<<<<<<< HEAD
-=======
-import org.apache.kafka.common.protocol.ProtoUtils;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.requests.ApiVersionsResponse;
 import org.apache.kafka.common.requests.ApiVersionsResponse.ApiVersion;
 import org.junit.Assert;
@@ -114,7 +110,6 @@ public class NodeApiVersionsTest {
         assertEquals(2, versions.usableVersion(ApiKeys.FETCH));
     }
 
-<<<<<<< HEAD
     @Test
     public void testUsableVersionNoDesiredVersionReturnsLatestUsable() {
         NodeApiVersions apiVersions = NodeApiVersions.create(Collections.singleton(
@@ -145,8 +140,6 @@ public class NodeApiVersionsTest {
         apiVersions.usableVersion(ApiKeys.PRODUCE, (short) 0);
     }
 
-=======
->>>>>>> origin/0.10.2
     @Test(expected = UnsupportedVersionException.class)
     public void testUsableVersionCalculationNoKnownVersions() {
         List<ApiVersion> versionList = new ArrayList<>();
@@ -164,11 +157,7 @@ public class NodeApiVersionsTest {
         versionList.add(new ApiVersion((short) 100, (short) 0, (short) 1));
         NodeApiVersions versions =  new NodeApiVersions(versionList);
         for (ApiKeys apiKey: ApiKeys.values()) {
-<<<<<<< HEAD
             assertEquals(apiKey.latestVersion(), versions.usableVersion(apiKey));
-=======
-            assertEquals(ProtoUtils.latestVersion(apiKey.id), versions.usableVersion(apiKey));
->>>>>>> origin/0.10.2
         }
     }
 }

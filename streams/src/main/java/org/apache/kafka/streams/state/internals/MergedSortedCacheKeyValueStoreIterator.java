@@ -27,7 +27,6 @@ import org.apache.kafka.streams.state.StateSerdes;
  * @param <K>
  * @param <V>
  */
-<<<<<<< HEAD
 class MergedSortedCacheKeyValueStoreIterator<K, V> extends AbstractMergedSortedCacheStoreIterator<K, Bytes, V, byte[]> {
 
     private final StateSerdes<K, V> serdes;
@@ -56,37 +55,11 @@ class MergedSortedCacheKeyValueStoreIterator<K, V> extends AbstractMergedSortedC
 
     @Override
     public K deserializeStoreKey(final Bytes key) {
-=======
-class MergedSortedCacheKeyValueStoreIterator<K, V> extends AbstractMergedSortedCacheStoreIterator<K, Bytes, V> {
-
-    MergedSortedCacheKeyValueStoreIterator(final PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                           final KeyValueIterator<Bytes, byte[]> storeIterator,
-                                           final StateSerdes<K, V> serdes) {
-        super(cacheIterator, storeIterator, serdes);
-    }
-
-    @Override
-    public KeyValue<K, V> deserializeStorePair(KeyValue<Bytes, byte[]> pair) {
-        return KeyValue.pair(serdes.keyFrom(pair.key.get()), serdes.valueFrom(pair.value));
-    }
-
-    @Override
-    K deserializeCacheKey(final Bytes cacheKey) {
-        return serdes.keyFrom(cacheKey.get());
-    }
-
-    @Override
-    public K deserializeStoreKey(Bytes key) {
->>>>>>> origin/0.10.2
         return serdes.keyFrom(key.get());
     }
 
     @Override
-<<<<<<< HEAD
     public int compare(final Bytes cacheKey, final Bytes storeKey) {
-=======
-    public int compare(Bytes cacheKey, Bytes storeKey) {
->>>>>>> origin/0.10.2
         return cacheKey.compareTo(storeKey);
     }
 }

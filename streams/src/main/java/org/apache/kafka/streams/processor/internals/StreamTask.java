@@ -66,7 +66,6 @@ public class StreamTask extends AbstractTask implements Punctuator {
     private boolean transactionInFlight = false;
     private final Time time;
     private final TaskMetrics metrics;
-<<<<<<< HEAD
 
     protected class TaskMetrics  {
         final StreamsMetricsImpl metrics;
@@ -77,22 +76,6 @@ public class StreamTask extends AbstractTask implements Punctuator {
             final String name = id().toString();
             this.metrics = (StreamsMetricsImpl) metrics;
             taskCommitTimeSensor = metrics.addLatencyAndThroughputSensor("task", name, "commit", Sensor.RecordingLevel.DEBUG, "streams-task-id", name);
-=======
-    private Runnable commitDelegate = new Runnable() {
-        @Override
-        public void run() {
-            log.debug("{} Committing its state", logPrefix);
-            // 1) flush local state
-            stateMgr.flush(processorContext);
-
-            log.trace("{} Start flushing its producer's sent records upon committing its state", logPrefix);
-            // 2) flush produced records in the downstream and change logs of local states
-            recordCollector.flush();
-            // 3) write checkpoints for any local state
-            stateMgr.checkpoint(recordCollectorOffsets());
-            // 4) commit consumed offsets if it is dirty already
-            commitOffsets();
->>>>>>> origin/0.10.2
         }
 
         void removeAllSensors() {
@@ -519,19 +502,12 @@ public class StreamTask extends AbstractTask implements Punctuator {
     boolean maybePunctuate() {
         final long timestamp = partitionGroup.timestamp();
 
-<<<<<<< HEAD
         // if the timestamp is not known yet, meaning there is not enough data accumulated
         // to reason stream partition time, then skip.
         if (timestamp == TimestampTracker.NOT_KNOWN) {
             return false;
         } else {
             return punctuationQueue.mayPunctuate(timestamp, this);
-=======
-        public TaskMetrics(StreamsMetrics metrics) {
-            String name = id.toString();
-            this.metrics = (StreamsMetricsImpl) metrics;
-            this.taskCommitTimeSensor = metrics.addLatencyAndThroughputSensor("task", name, "commit", Sensor.RecordingLevel.DEBUG, "streams-task-id", name);
->>>>>>> origin/0.10.2
         }
     }
 

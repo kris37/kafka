@@ -68,7 +68,6 @@ public class DefaultPartitionGrouperTest {
 
         assertEquals(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
     }
-<<<<<<< HEAD
 
     @Test
     public void shouldComputeGroupingForSingleGroupWithMultipleTopics() {
@@ -100,39 +99,6 @@ public class DefaultPartitionGrouperTest {
 
         final int topicGroupId = 0;
 
-=======
-
-    @Test
-    public void shouldComputeGroupingForSingleGroupWithMultipleTopics() {
-        final PartitionGrouper grouper = new DefaultPartitionGrouper();
-        final Map<TaskId, Set<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
-        final Map<Integer, Set<String>> topicGroups = new HashMap<>();
-
-        final int topicGroupId = 0;
-
-        topicGroups.put(topicGroupId, mkSet("topic1", "topic2"));
-        expectedPartitionsForTask.put(
-            new TaskId(topicGroupId, 0),
-            mkSet(new TopicPartition("topic1", 0), new TopicPartition("topic2", 0)));
-        expectedPartitionsForTask.put(
-            new TaskId(topicGroupId, 1),
-            mkSet(new TopicPartition("topic1", 1), new TopicPartition("topic2", 1)));
-        expectedPartitionsForTask.put(
-            new TaskId(topicGroupId, 2),
-            mkSet(new TopicPartition("topic1", 2)));
-
-        assertEquals(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
-    }
-
-    @Test
-    public void shouldNotCreateAnyTasksBecauseOneTopicHasUnknownPartitions() {
-        final PartitionGrouper grouper = new DefaultPartitionGrouper();
-        final Map<TaskId, Set<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
-        final Map<Integer, Set<String>> topicGroups = new HashMap<>();
-
-        final int topicGroupId = 0;
-
->>>>>>> origin/0.10.2
         topicGroups.put(topicGroupId, mkSet("topic1", "unknownTopic", "topic2"));
 
         assertEquals(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));

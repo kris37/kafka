@@ -25,15 +25,10 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.TimeoutException;
-<<<<<<< HEAD
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.metrics.Metrics;
 import org.apache.kafka.common.protocol.ApiKeys;
 import org.apache.kafka.common.record.CompressionRatioEstimator;
-=======
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.record.BufferSupplier;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.record.CompressionType;
 import org.apache.kafka.common.record.DefaultRecord;
 import org.apache.kafka.common.record.DefaultRecordBatch;
@@ -67,10 +62,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-<<<<<<< HEAD
 import static org.junit.Assert.assertNotNull;
-=======
->>>>>>> origin/0.10.2
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -137,11 +129,7 @@ public class RecordAccumulatorTest {
         assertEquals(1, batches.size());
         ProducerBatch batch = batches.get(0);
 
-<<<<<<< HEAD
         Iterator<Record> iter = batch.records().records().iterator();
-=======
-        Iterator<LogEntry> iter = batch.records().deepEntries(BufferSupplier.NO_CACHING).iterator();
->>>>>>> origin/0.10.2
         for (int i = 0; i < appends; i++) {
             Record record = iter.next();
             assertEquals("Keys should match", ByteBuffer.wrap(key), record.key());
@@ -188,17 +176,10 @@ public class RecordAccumulatorTest {
         assertEquals(1, batches.size());
         ProducerBatch batch = batches.get(0);
 
-<<<<<<< HEAD
         Iterator<Record> iter = batch.records().records().iterator();
         Record record = iter.next();
         assertEquals("Keys should match", ByteBuffer.wrap(key), record.key());
         assertEquals("Values should match", ByteBuffer.wrap(value), record.value());
-=======
-        Iterator<LogEntry> iter = batch.records().deepEntries(BufferSupplier.NO_CACHING).iterator();
-        LogEntry entry = iter.next();
-        assertEquals("Keys should match", ByteBuffer.wrap(key), entry.record().key());
-        assertEquals("Values should match", ByteBuffer.wrap(value), entry.record().value());
->>>>>>> origin/0.10.2
         assertFalse("No more records", iter.hasNext());
     }
 
@@ -248,13 +229,8 @@ public class RecordAccumulatorTest {
             Set<Node> nodes = accum.ready(cluster, now).readyNodes;
             List<ProducerBatch> batches = accum.drain(cluster, nodes, 5 * 1024, 0).get(node1.id());
             if (batches != null) {
-<<<<<<< HEAD
                 for (ProducerBatch batch : batches) {
                     for (Record record : batch.records().records())
-=======
-                for (RecordBatch batch : batches) {
-                    for (LogEntry entry : batch.records().deepEntries(BufferSupplier.NO_CACHING))
->>>>>>> origin/0.10.2
                         read++;
                     accum.deallocate(batch);
                 }
@@ -499,32 +475,19 @@ public class RecordAccumulatorTest {
         long retryBackoffMs = 100L;
         long lingerMs = 3000L;
         int requestTimeout = 60;
-<<<<<<< HEAD
         int messagesPerBatch = expectedNumAppends(1024);
 
         final RecordAccumulator accum = new RecordAccumulator(1024 + DefaultRecordBatch.RECORD_BATCH_OVERHEAD, 10 * 1024,
                 CompressionType.NONE, lingerMs, retryBackoffMs, metrics, time, new ApiVersions(), null);
         final AtomicInteger expiryCallbackCount = new AtomicInteger();
         final AtomicReference<Exception> unexpectedException = new AtomicReference<>();
-=======
-        int messagesPerBatch = 1024 / msgSize;
-
-        final RecordAccumulator accum = new RecordAccumulator(1024, 10 * 1024, CompressionType.NONE, lingerMs,
-                retryBackoffMs, metrics, time);
-        final AtomicInteger expiryCallbackCount = new AtomicInteger();
-        final AtomicReference<Exception> unexpectedException = new AtomicReference<Exception>();
->>>>>>> origin/0.10.2
         Callback callback = new Callback() {
             @Override
             public void onCompletion(RecordMetadata metadata, Exception exception) {
                 if (exception instanceof TimeoutException) {
                     expiryCallbackCount.incrementAndGet();
                     try {
-<<<<<<< HEAD
                         accum.append(tp1, 0L, key, value, Record.EMPTY_HEADERS, null, maxBlockTimeMs);
-=======
-                        accum.append(tp1, 0L, key, value, null, maxBlockTimeMs);
->>>>>>> origin/0.10.2
                     } catch (InterruptedException e) {
                         throw new RuntimeException("Unexpected interruption", e);
                     }
@@ -534,22 +497,14 @@ public class RecordAccumulatorTest {
         };
 
         for (int i = 0; i < messagesPerBatch + 1; i++)
-<<<<<<< HEAD
             accum.append(tp1, 0L, key, value, null, callback, maxBlockTimeMs);
-=======
-            accum.append(tp1, 0L, key, value, callback, maxBlockTimeMs);
->>>>>>> origin/0.10.2
 
         assertEquals(2, accum.batches().get(tp1).size());
         assertTrue("First batch not full", accum.batches().get(tp1).peekFirst().isFull());
 
         // Advance the clock to expire the first batch.
         time.sleep(requestTimeout + 1);
-<<<<<<< HEAD
         List<ProducerBatch> expiredBatches = accum.abortExpiredBatches(requestTimeout, time.milliseconds());
-=======
-        List<RecordBatch> expiredBatches = accum.abortExpiredBatches(requestTimeout, time.milliseconds());
->>>>>>> origin/0.10.2
         assertEquals("The batch was not expired", 1, expiredBatches.size());
         assertEquals("Callbacks not invoked for expiry", messagesPerBatch, expiryCallbackCount.get());
         assertNull("Unexpected exception", unexpectedException.get());

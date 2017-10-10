@@ -63,20 +63,12 @@ public class RocksDBSegmentedBytesStoreTest {
                                                     schema);
 
         stateDir = TestUtils.tempDirectory();
-<<<<<<< HEAD
         context = new MockProcessorContext(
             stateDir,
             Serdes.String(),
             Serdes.Long(),
             new NoOpRecordCollector(),
             new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())));
-=======
-        final MockProcessorContext context = new MockProcessorContext(stateDir,
-                                                                      Serdes.String(),
-                                                                      Serdes.Long(),
-                                                                      new NoOpRecordCollector(),
-                                                                      new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())));
->>>>>>> origin/0.10.2
         bytesStore.init(context, bytesStore);
     }
 
@@ -166,11 +158,7 @@ public class RocksDBSegmentedBytesStoreTest {
     }
 
     private Bytes serializeKey(final Windowed<String> key) {
-<<<<<<< HEAD
         return SessionKeySerde.toBinary(key, Serdes.String().serializer(), "dummy");
-=======
-        return SessionKeySerde.toBinary(key, Serdes.String().serializer(), "topic");
->>>>>>> origin/0.10.2
     }
 
     private List<KeyValue<Windowed<String>, Long>> toList(final KeyValueIterator<Bytes, byte[]> iterator) {
@@ -178,11 +166,7 @@ public class RocksDBSegmentedBytesStoreTest {
         while (iterator.hasNext()) {
             final KeyValue<Bytes, byte[]> next = iterator.next();
             final KeyValue<Windowed<String>, Long> deserialized
-<<<<<<< HEAD
                     = KeyValue.pair(SessionKeySerde.from(next.key.get(), Serdes.String().deserializer(), "dummy"), Serdes.Long().deserializer().deserialize("", next.value));
-=======
-                    = KeyValue.pair(SessionKeySerde.from(next.key.get(), Serdes.String().deserializer(), "topic"), Serdes.Long().deserializer().deserialize("", next.value));
->>>>>>> origin/0.10.2
             results.add(deserialized);
         }
         return results;

@@ -179,7 +179,6 @@ public class TopologyBuilder {
         private final Pattern pattern;
         private final Deserializer<?> keyDeserializer;
         private final Deserializer<?> valDeserializer;
-<<<<<<< HEAD
         private final TimestampExtractor timestampExtractor;
 
         private SourceNodeFactory(final String name,
@@ -188,10 +187,6 @@ public class TopologyBuilder {
                                   final TimestampExtractor timestampExtractor,
                                   final Deserializer<?> keyDeserializer,
                                   final Deserializer<?> valDeserializer) {
-=======
-
-        private SourceNodeFactory(String name, String[] topics, Pattern pattern, Deserializer<?> keyDeserializer, Deserializer<?> valDeserializer) {
->>>>>>> origin/0.10.2
             super(name);
             this.topics = topics != null ? Arrays.asList(topics) : new ArrayList<String>();
             this.pattern = pattern;
@@ -205,11 +200,7 @@ public class TopologyBuilder {
             // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
             if (subscribedTopics.isEmpty())
-<<<<<<< HEAD
                 return Collections.singletonList("" + pattern + "");
-=======
-                return Collections.singletonList("Pattern[" + pattern + "]");
->>>>>>> origin/0.10.2
 
             List<String> matchedTopics = new ArrayList<>();
             for (String update : subscribedTopics) {
@@ -237,15 +228,9 @@ public class TopologyBuilder {
             // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
             if (sourceTopics == null)
-<<<<<<< HEAD
                 return new SourceNode<>(name, Collections.singletonList("" + pattern + ""), timestampExtractor, keyDeserializer, valDeserializer);
             else
                 return new SourceNode<>(name, maybeDecorateInternalSourceTopics(sourceTopics), timestampExtractor, keyDeserializer, valDeserializer);
-=======
-                return new SourceNode<>(name, Collections.singletonList("Pattern[" + pattern + "]"), keyDeserializer, valDeserializer);
-            else
-                return new SourceNode<>(name, maybeDecorateInternalSourceTopics(sourceTopics), keyDeserializer, valDeserializer);
->>>>>>> origin/0.10.2
         }
 
         private boolean isMatch(String topic) {
@@ -361,11 +346,7 @@ public class TopologyBuilder {
      * @return this builder instance so methods can be chained together; never null
      */
     public synchronized final TopologyBuilder addSource(final String name, final String... topics) {
-<<<<<<< HEAD
         return addSource(null, name, null, null, null, topics);
-=======
-        return addSource(null, name, null, null, topics);
->>>>>>> origin/0.10.2
     }
 
     /**
@@ -381,14 +362,9 @@ public class TopologyBuilder {
      * @param topics the name of one or more Kafka topics that this source is to consume
      * @return this builder instance so methods can be chained together; never null
      */
-<<<<<<< HEAD
 
     public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name, final String... topics) {
         return addSource(offsetReset, name, null, null, null, topics);
-=======
-    public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name,  final String... topics) {
-        return addSource(offsetReset, name, null, null, topics);
->>>>>>> origin/0.10.2
     }
 
     /**
@@ -440,14 +416,9 @@ public class TopologyBuilder {
      * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
      * @return this builder instance so methods can be chained together; never null
      */
-<<<<<<< HEAD
 
     public synchronized final TopologyBuilder addSource(final String name, final Pattern topicPattern) {
         return addSource(null, name, null, null, null, topicPattern);
-=======
-    public synchronized final TopologyBuilder addSource(final String name, final Pattern topicPattern) {
-        return addSource(null, name, null, null, topicPattern);
->>>>>>> origin/0.10.2
     }
 
     /**
@@ -464,7 +435,6 @@ public class TopologyBuilder {
      * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
      * @return this builder instance so methods can be chained together; never null
      */
-<<<<<<< HEAD
 
     public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name, final Pattern topicPattern) {
         return addSource(offsetReset, name, null, null, null, topicPattern);
@@ -508,10 +478,6 @@ public class TopologyBuilder {
      */
     public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final TimestampExtractor timestampExtractor, final String name, final Pattern topicPattern) {
         return addSource(offsetReset, name, timestampExtractor, null, null, topicPattern);
-=======
-    public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name,  final Pattern topicPattern) {
-        return addSource(offsetReset, name, null, null, topicPattern);
->>>>>>> origin/0.10.2
     }
 
 
@@ -530,11 +496,6 @@ public class TopologyBuilder {
      * @return this builder instance so methods can be chained together; never null
      * @throws TopologyBuilderException if processor is already added or if topics have already been registered by another source
      */
-<<<<<<< HEAD
-=======
-    public synchronized final TopologyBuilder addSource(final String name, final Deserializer keyDeserializer, final Deserializer valDeserializer, final String... topics) {
-        return addSource(null, name, keyDeserializer, valDeserializer, topics);
->>>>>>> origin/0.10.2
 
     public synchronized final TopologyBuilder addSource(final String name, final Deserializer keyDeserializer, final Deserializer valDeserializer, final String... topics) {
         return addSource(null, name, null, keyDeserializer, valDeserializer, topics);
@@ -558,7 +519,6 @@ public class TopologyBuilder {
      * @return this builder instance so methods can be chained together; never null
      * @throws TopologyBuilderException if processor is already added or if topics have already been registered by another source
      */
-<<<<<<< HEAD
 
     public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset,
                                                         final String name,
@@ -566,9 +526,6 @@ public class TopologyBuilder {
                                                         final Deserializer keyDeserializer,
                                                         final Deserializer valDeserializer,
                                                         final String... topics) {
-=======
-    public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name, final Deserializer keyDeserializer, final Deserializer valDeserializer, final String... topics) {
->>>>>>> origin/0.10.2
         if (topics.length == 0) {
             throw new TopologyBuilderException("You must provide at least one topic");
         }
@@ -583,11 +540,7 @@ public class TopologyBuilder {
             sourceTopicNames.add(topic);
         }
 
-<<<<<<< HEAD
         nodeFactories.put(name, new SourceNodeFactory(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
-=======
-        nodeFactories.put(name, new SourceNodeFactory(name, topics, null, keyDeserializer, valDeserializer));
->>>>>>> origin/0.10.2
         nodeToSourceTopics.put(name, Arrays.asList(topics));
         nodeGrouper.add(name);
 
@@ -684,11 +637,7 @@ public class TopologyBuilder {
 
         globalTopics.add(topic);
         final String[] topics = {topic};
-<<<<<<< HEAD
         nodeFactories.put(sourceName, new SourceNodeFactory(sourceName, topics, null, timestampExtractor, keyDeserializer, valueDeserializer));
-=======
-        nodeFactories.put(sourceName, new SourceNodeFactory(sourceName, topics, null, keyDeserializer, valueDeserializer));
->>>>>>> origin/0.10.2
         nodeToSourceTopics.put(sourceName, Arrays.asList(topics));
         nodeGrouper.add(sourceName);
 
@@ -737,12 +686,7 @@ public class TopologyBuilder {
      */
 
     public synchronized final TopologyBuilder addSource(final String name, final Deserializer keyDeserializer, final Deserializer valDeserializer, final Pattern topicPattern) {
-<<<<<<< HEAD
         return addSource(null, name, null, keyDeserializer, valDeserializer, topicPattern);
-=======
-        return addSource(null, name,  keyDeserializer, valDeserializer, topicPattern);
-
->>>>>>> origin/0.10.2
     }
 
     /**
@@ -767,16 +711,12 @@ public class TopologyBuilder {
      * @throws TopologyBuilderException if processor is already added or if topics have already been registered by name
      */
 
-<<<<<<< HEAD
     public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset,
                                                         final String name,
                                                         final TimestampExtractor timestampExtractor,
                                                         final Deserializer keyDeserializer,
                                                         final Deserializer valDeserializer,
                                                         final Pattern topicPattern) {
-=======
-    public synchronized final TopologyBuilder addSource(final AutoOffsetReset offsetReset, final String name,  final Deserializer keyDeserializer, final Deserializer valDeserializer, final Pattern topicPattern) {
->>>>>>> origin/0.10.2
         Objects.requireNonNull(topicPattern, "topicPattern can't be null");
         Objects.requireNonNull(name, "name can't be null");
 
@@ -1139,7 +1079,6 @@ public class TopologyBuilder {
         if (!sourceTopics.isEmpty()) {
             stateStoreNameToSourceTopics.put(stateStoreName,
                     Collections.unmodifiableSet(sourceTopics));
-<<<<<<< HEAD
         }
 
         if (!sourcePatterns.isEmpty()) {
@@ -1147,15 +1086,6 @@ public class TopologyBuilder {
                     Collections.unmodifiableSet(sourcePatterns));
         }
 
-=======
-        }
-
-        if (!sourcePatterns.isEmpty()) {
-            stateStoreNameToSourceRegex.put(stateStoreName,
-                    Collections.unmodifiableSet(sourcePatterns));
-        }
-
->>>>>>> origin/0.10.2
     }
 
 
@@ -1602,13 +1532,10 @@ public class TopologyBuilder {
         return applicationId + "-" + topic;
     }
 
-<<<<<<< HEAD
     public SubscriptionUpdates subscriptionUpdates() {
         return subscriptionUpdates;
     }
 
-=======
->>>>>>> origin/0.10.2
     public synchronized Pattern sourceTopicPattern() {
         if (this.topicPattern == null) {
             final List<String> allSourceTopics = new ArrayList<>();

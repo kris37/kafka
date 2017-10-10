@@ -41,11 +41,7 @@ import static org.apache.kafka.common.requests.IsolationLevel.READ_UNCOMMITTED;
 import static org.apache.kafka.streams.StreamsConfig.EXACTLY_ONCE;
 import static org.apache.kafka.streams.StreamsConfig.consumerPrefix;
 import static org.apache.kafka.streams.StreamsConfig.producerPrefix;
-<<<<<<< HEAD
 import static org.hamcrest.core.IsEqual.equalTo;
-=======
-import static org.hamcrest.MatcherAssert.assertThat;
->>>>>>> origin/0.10.2
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -287,7 +283,6 @@ public class StreamsConfigTest {
     @Test
     public void shouldSetInternalLeaveGroupOnCloseConfigToFalseInConsumer() throws Exception {
         final StreamsConfig streamsConfig = new StreamsConfig(props);
-<<<<<<< HEAD
         final Map<String, Object> consumerConfigs = streamsConfig.getConsumerConfigs(null, "groupId", "clientId");
         assertThat(consumerConfigs.get("internal.leave.group.on.close"), CoreMatchers.<Object>equalTo(false));
     }
@@ -395,12 +390,6 @@ public class StreamsConfigTest {
         assertThat(streamsConfig.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG), equalTo(commitIntervalMs));
     }
 
-=======
-        final Map<String, Object> consumerConfigs = streamsConfig.getConsumerConfigs(null, "group", "client");
-        assertThat(consumerConfigs.get("internal.leave.group.on.close"), CoreMatchers.<Object>equalTo(false));
-    }
-
->>>>>>> origin/0.10.2
     static class MisconfiguredSerde implements Serde {
         @Override
         public void configure(final Map configs, final boolean isKey) {

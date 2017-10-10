@@ -212,22 +212,7 @@ public class KTableAggregateTest {
                 ), proc.processed);
     }
 
-<<<<<<< HEAD
     private void testCountHelper(final KStreamBuilder builder, final String input, final MockProcessorSupplier<String, Long> proc) throws IOException {
-=======
-    @Test
-    public void testCount() throws IOException {
-        final KStreamBuilder builder = new KStreamBuilder();
-        final String input = "count-test-input";
-        final MockProcessorSupplier<String, Long> proc = new MockProcessorSupplier<>();
-
-        builder.table(Serdes.String(), Serdes.String(), input, "anyStoreName")
-                .groupBy(MockKeyValueMapper.<String, String>SelectValueKeyValueMapper(), stringSerde, stringSerde)
-                .count("count")
-                .toStream()
-                .process(proc);
-
->>>>>>> origin/0.10.2
         driver = new KStreamTestDriver(builder, stateDir);
 
         driver.process(input, "A", "green");

@@ -19,15 +19,8 @@ package org.apache.kafka.common.requests;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.protocol.ApiKeys;
 import org.apache.kafka.common.protocol.Errors;
-<<<<<<< HEAD
 import org.apache.kafka.common.protocol.types.Struct;
 import org.apache.kafka.common.record.RecordBatch;
-=======
-import org.apache.kafka.common.protocol.ProtoUtils;
-import org.apache.kafka.common.protocol.types.Schema;
-import org.apache.kafka.common.protocol.types.Struct;
-import org.apache.kafka.common.record.Record;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.utils.CollectionUtils;
 
 import java.nio.ByteBuffer;
@@ -66,13 +59,10 @@ public class ProduceResponse extends AbstractResponse {
      * NOT_ENOUGH_REPLICAS_AFTER_APPEND (20)
      * INVALID_REQUIRED_ACKS (21)
      * TOPIC_AUTHORIZATION_FAILED (29)
-<<<<<<< HEAD
      * UNSUPPORTED_FOR_MESSAGE_FORMAT (43)
      * INVALID_PRODUCER_EPOCH (47)
      * CLUSTER_AUTHORIZATION_FAILED (31)
      * TRANSACTIONAL_ID_AUTHORIZATION_FAILED (53)
-=======
->>>>>>> origin/0.10.2
      */
 
     private static final String BASE_OFFSET_KEY_NAME = "base_offset";
@@ -137,11 +127,7 @@ public class ProduceResponse extends AbstractResponse {
                         .set(ERROR_CODE_KEY_NAME, part.error.code())
                         .set(BASE_OFFSET_KEY_NAME, part.baseOffset);
                 if (partStruct.hasField(LOG_APPEND_TIME_KEY_NAME))
-<<<<<<< HEAD
                     partStruct.set(LOG_APPEND_TIME_KEY_NAME, part.logAppendTime);
-=======
-                        partStruct.set(LOG_APPEND_TIME_KEY_NAME, part.logAppendTime);
->>>>>>> origin/0.10.2
                 partitionArray.add(partStruct);
             }
             topicData.set(PARTITION_RESPONSES_KEY_NAME, partitionArray.toArray());
@@ -166,19 +152,11 @@ public class ProduceResponse extends AbstractResponse {
         public Errors error;
         public long baseOffset;
         public long logAppendTime;
-<<<<<<< HEAD
 
         public PartitionResponse(Errors error) {
             this(error, INVALID_OFFSET, RecordBatch.NO_TIMESTAMP);
         }
 
-=======
-
-        public PartitionResponse(Errors error) {
-            this(error, INVALID_OFFSET, Record.NO_TIMESTAMP);
-        }
-
->>>>>>> origin/0.10.2
         public PartitionResponse(Errors error, long baseOffset, long logAppendTime) {
             this.error = error;
             this.baseOffset = baseOffset;

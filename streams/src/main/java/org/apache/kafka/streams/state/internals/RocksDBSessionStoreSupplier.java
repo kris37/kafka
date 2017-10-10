@@ -4,17 +4,10 @@
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
-<<<<<<< HEAD
  * the License. You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
-=======
- * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
->>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +17,6 @@
 package org.apache.kafka.streams.state.internals;
 
 import org.apache.kafka.common.serialization.Serde;
-<<<<<<< HEAD
-=======
-import org.apache.kafka.common.serialization.Serdes;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.streams.state.SessionStore;
@@ -46,7 +35,6 @@ public class RocksDBSessionStoreSupplier<K, V> extends AbstractStoreSupplier<K, 
 
     private static final String METRIC_SCOPE = "rocksdb-session";
     private static final int NUM_SEGMENTS = 3;
-    public static final String METRIC_SCOPE = "rocksdb-session-store";
     private final long retentionPeriod;
     private final boolean cached;
 
@@ -62,26 +50,17 @@ public class RocksDBSessionStoreSupplier<K, V> extends AbstractStoreSupplier<K, 
 
     public SessionStore<K, V> get() {
         final SessionKeySchema keySchema = new SessionKeySchema();
-<<<<<<< HEAD
         final long segmentInterval = Segments.segmentInterval(retentionPeriod, NUM_SEGMENTS);
         final RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(name,
                                                                                     retentionPeriod,
                                                                                     NUM_SEGMENTS,
                                                                                     keySchema);
-=======
-        final RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(name,
-                                                                                     retentionPeriod,
-                                                                                     NUM_SEGMENTS,
-                                                                                     keySchema
-        );
->>>>>>> origin/0.10.2
 
         if (cached && logged) {
             final ChangeLoggingSegmentedBytesStore logged = new ChangeLoggingSegmentedBytesStore(segmented);
             final MeteredSegmentedBytesStore metered = new MeteredSegmentedBytesStore(logged,
                                                                                       METRIC_SCOPE, time);
             final RocksDBSessionStore<Bytes, byte[]> sessionStore
-<<<<<<< HEAD
                     = RocksDBSessionStore.bytesStore(metered);
 
             return new CachingSessionStore<>(sessionStore, keySerde, valueSerde, segmentInterval);
@@ -96,22 +75,6 @@ public class RocksDBSessionStoreSupplier<K, V> extends AbstractStoreSupplier<K, 
             return new CachingSessionStore<>(sessionStore, keySerde, valueSerde, segmentInterval);
         }
 
-=======
-                    = new RocksDBSessionStore<>(metered, Serdes.Bytes(), Serdes.ByteArray());
-
-            return new CachingSessionStore<>(sessionStore, keySerde, valueSerde);
-        }
-
-        if (cached) {
-            final MeteredSegmentedBytesStore metered = new MeteredSegmentedBytesStore(segmented,
-                                                                                      METRIC_SCOPE, time);
-            final RocksDBSessionStore<Bytes, byte[]> sessionStore
-                    = new RocksDBSessionStore<>(metered, Serdes.Bytes(), Serdes.ByteArray());
-
-            return new CachingSessionStore<>(sessionStore, keySerde, valueSerde);
-        }
-
->>>>>>> origin/0.10.2
         if (logged) {
             final ChangeLoggingSegmentedBytesStore logged = new ChangeLoggingSegmentedBytesStore(segmented);
             final MeteredSegmentedBytesStore metered = new MeteredSegmentedBytesStore(logged,

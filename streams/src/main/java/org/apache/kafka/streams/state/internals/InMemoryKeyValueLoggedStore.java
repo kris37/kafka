@@ -52,11 +52,6 @@ public class InMemoryKeyValueLoggedStore<K, V> extends WrappedStateStore.Abstrac
             ProcessorStateManager.storeChangelogTopic(context.applicationId(), inner.name()),
             keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
             valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
-<<<<<<< HEAD
-=======
-
-        this.changeLogger = new StoreChangeLogger<>(storeName, context, serdes);
->>>>>>> origin/0.10.2
 
         this.changeLogger = new StoreChangeLogger<>(inner.name(), context, serdes);
 

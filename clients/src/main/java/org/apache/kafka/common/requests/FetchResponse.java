@@ -131,16 +131,6 @@ public class FetchResponse extends AbstractResponse {
             this.abortedTransactions = abortedTransactions;
             this.records = records;
         }
-<<<<<<< HEAD
-=======
-
-        @Override
-        public String toString() {
-            return "(errorCode=" + errorCode + ", highWaterMark=" + highWatermark +
-                    ", records=" + records + ")";
-        }
-    }
->>>>>>> origin/0.10.2
 
         @Override
         public boolean equals(Object o) {

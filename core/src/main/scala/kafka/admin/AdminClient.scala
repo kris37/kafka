@@ -16,13 +16,8 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.{Collections, Properties}
 import java.util.concurrent.atomic.AtomicInteger
-<<<<<<< HEAD
 import java.util.concurrent.{ConcurrentLinkedQueue, TimeUnit, Future}
 import kafka.admin.AdminClient.DeleteRecordsResult
-=======
-
-import org.apache.kafka.common.requests.ApiVersionsResponse.ApiVersion
->>>>>>> origin/0.10.2
 import kafka.common.KafkaException
 import kafka.coordinator.group.GroupOverview
 import kafka.utils.Logging
@@ -39,11 +34,7 @@ import org.apache.kafka.common.requests._
 import org.apache.kafka.common.requests.ApiVersionsResponse.ApiVersion
 import org.apache.kafka.common.requests.DescribeGroupsResponse.GroupMetadata
 import org.apache.kafka.common.requests.OffsetFetchResponse
-<<<<<<< HEAD
 import org.apache.kafka.common.utils.{KafkaThread, Time, Utils}
-=======
-import org.apache.kafka.common.utils.{Time, Utils}
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.{Cluster, Node, TopicPartition}
 
 import scala.collection.JavaConverters._
@@ -112,7 +103,6 @@ class AdminClient(val time: Time,
     throw new RuntimeException(s"Request $api failed on brokers $bootstrapBrokers")
   }
 
-<<<<<<< HEAD
   def findCoordinator(groupId: String, timeoutMs: Long = 0): Node = {
     val startTime = time.milliseconds
     val requestBuilder = new FindCoordinatorRequest.Builder(org.apache.kafka.common.requests.FindCoordinatorRequest.CoordinatorType.GROUP, groupId)
@@ -127,28 +117,17 @@ class AdminClient(val time: Time,
       throw new TimeoutException("The consumer group command timed out while waiting for group to initialize: ", response.error.exception)
 
     response.error.maybeThrow()
-=======
-  def findCoordinator(groupId: String): Node = {
-    val requestBuilder = new GroupCoordinatorRequest.Builder(groupId)
-    val response = sendAnyNode(ApiKeys.GROUP_COORDINATOR, requestBuilder).asInstanceOf[GroupCoordinatorResponse]
-    Errors.forCode(response.errorCode).maybeThrow()
->>>>>>> origin/0.10.2
     response.node
   }
 
   def listGroups(node: Node): List[GroupOverview] = {
     val response = send(node, ApiKeys.LIST_GROUPS, new ListGroupsRequest.Builder()).asInstanceOf[ListGroupsResponse]
-<<<<<<< HEAD
     response.error.maybeThrow()
-=======
-    Errors.forCode(response.errorCode).maybeThrow()
->>>>>>> origin/0.10.2
     response.groups.asScala.map(group => GroupOverview(group.groupId, group.protocolType)).toList
   }
 
   def getApiVersions(node: Node): List[ApiVersion] = {
     val response = send(node, ApiKeys.API_VERSIONS, new ApiVersionsRequest.Builder()).asInstanceOf[ApiVersionsResponse]
-<<<<<<< HEAD
     response.error.maybeThrow()
     response.apiVersions.asScala.toList
   }
@@ -163,10 +142,6 @@ class AdminClient(val time: Time,
       if (nodes.isEmpty)
         Thread.sleep(50)
     } while (nodes.isEmpty)
-=======
-    Errors.forCode(response.errorCode).maybeThrow()
-    response.apiVersions.asScala.toList
->>>>>>> origin/0.10.2
   }
 
   def findAllBrokers(): List[Node] = {
@@ -214,7 +189,6 @@ class AdminClient(val time: Time,
       throw response.error.exception
     response.maybeThrowFirstPartitionError
     response.responseData.asScala.map { case (tp, partitionData) => (tp, partitionData.offset) }.toMap
-<<<<<<< HEAD
   }
 
   def listAllBrokerVersionInfo(): Map[Node, Try[NodeApiVersions]] =
@@ -287,14 +261,7 @@ class AdminClient(val time: Time,
       DeleteRecordsResult(DeleteRecordsResponse.INVALID_LOW_WATERMARK, Errors.REQUEST_TIMED_OUT.exception())) ++ partitionsWithErrorResults ++ partitionsWithoutLeaderResults
 
     new CompositeFuture(time, defaultResults, futures.toList)
-=======
->>>>>>> origin/0.10.2
   }
-
-  def listAllBrokerVersionInfo(): Map[Node, Try[NodeApiVersions]] =
-    findAllBrokers.map { broker =>
-      broker -> Try[NodeApiVersions](new NodeApiVersions(getApiVersions(broker).asJava))
-    }.toMap
 
   /**
    * Case class used to represent a consumer of a consumer group

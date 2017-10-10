@@ -37,60 +37,7 @@ import static org.apache.kafka.common.utils.Utils.wrapNullable;
  * This will release resources like compression buffers that can be relatively large (64 KB for LZ4).
  */
 public class MemoryRecordsBuilder {
-<<<<<<< HEAD
     private static final float COMPRESSION_RATE_ESTIMATION_FACTOR = 1.05f;
-=======
-
-    static private final float COMPRESSION_RATE_DAMPING_FACTOR = 0.9f;
-    static private final float COMPRESSION_RATE_ESTIMATION_FACTOR = 1.05f;
-    static private final int COMPRESSION_DEFAULT_BUFFER_SIZE = 1024;
-
-    private static final float[] TYPE_TO_RATE;
-
-    static {
-        int maxTypeId = -1;
-        for (CompressionType type : CompressionType.values())
-            maxTypeId = Math.max(maxTypeId, type.id);
-        TYPE_TO_RATE = new float[maxTypeId + 1];
-        for (CompressionType type : CompressionType.values()) {
-            TYPE_TO_RATE[type.id] = type.rate;
-        }
-    }
-
-    // dynamically load the snappy and lz4 classes to avoid runtime dependency if we are not using compression
-    // caching constructors to avoid invoking of Class.forName method for each batch
-    private static MemoizingConstructorSupplier snappyOutputStreamSupplier = new MemoizingConstructorSupplier(new ConstructorSupplier() {
-        @Override
-        public Constructor get() throws ClassNotFoundException, NoSuchMethodException {
-            return Class.forName("org.xerial.snappy.SnappyOutputStream")
-                .getConstructor(OutputStream.class, Integer.TYPE);
-        }
-    });
-
-    private static MemoizingConstructorSupplier lz4OutputStreamSupplier = new MemoizingConstructorSupplier(new ConstructorSupplier() {
-        @Override
-        public Constructor get() throws ClassNotFoundException, NoSuchMethodException {
-            return Class.forName("org.apache.kafka.common.record.KafkaLZ4BlockOutputStream")
-                .getConstructor(OutputStream.class, Boolean.TYPE);
-        }
-    });
-
-    private static MemoizingConstructorSupplier snappyInputStreamSupplier = new MemoizingConstructorSupplier(new ConstructorSupplier() {
-        @Override
-        public Constructor get() throws ClassNotFoundException, NoSuchMethodException {
-            return Class.forName("org.xerial.snappy.SnappyInputStream")
-                .getConstructor(InputStream.class);
-        }
-    });
-
-    private static MemoizingConstructorSupplier lz4InputStreamSupplier = new MemoizingConstructorSupplier(new ConstructorSupplier() {
-        @Override
-        public Constructor get() throws ClassNotFoundException, NoSuchMethodException {
-            return Class.forName("org.apache.kafka.common.record.KafkaLZ4BlockInputStream")
-                .getConstructor(ByteBuffer.class, BufferSupplier.class, Boolean.TYPE);
-        }
-    });
->>>>>>> origin/0.10.2
 
     private final TimestampType timestampType;
     private final CompressionType compressionType;
@@ -126,10 +73,6 @@ public class MemoryRecordsBuilder {
     private MemoryRecords builtRecords;
     private boolean aborted = false;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/0.10.2
     public MemoryRecordsBuilder(ByteBufferOutputStream bufferStream,
                                 byte magic,
                                 CompressionType compressionType,
@@ -157,7 +100,6 @@ public class MemoryRecordsBuilder {
         this.compressionType = compressionType;
         this.baseOffset = baseOffset;
         this.logAppendTime = logAppendTime;
-<<<<<<< HEAD
         this.numRecords = 0;
         this.writtenUncompressed = 0;
         this.actualCompressionRatio = 1;
@@ -169,11 +111,6 @@ public class MemoryRecordsBuilder {
         this.isControlBatch = isControlBatch;
         this.partitionLeaderEpoch = partitionLeaderEpoch;
         this.writeLimit = writeLimit;
-=======
-        this.initPos = bufferStream.position();
-        this.writeLimit = writeLimit;
-        this.initialCapacity = bufferStream.initialCapacity();
->>>>>>> origin/0.10.2
 
         this.initialPosition = bufferStream.position();
 
@@ -182,7 +119,6 @@ public class MemoryRecordsBuilder {
         } else if (compressionType != CompressionType.NONE) {
             // for compressed records, leave space for the header and the shallow message metadata
             // and move the starting position to the value payload offset
-<<<<<<< HEAD
             bufferStream.position(initialPosition + Records.LOG_OVERHEAD + LegacyRecord.recordOverhead(magic));
         }
 
@@ -225,39 +161,6 @@ public class MemoryRecordsBuilder {
                                 int writeLimit) {
         this(new ByteBufferOutputStream(buffer), magic, compressionType, timestampType, baseOffset, logAppendTime,
                 producerId, producerEpoch, baseSequence, isTransactional, isControlBatch, partitionLeaderEpoch,
-                writeLimit);
-=======
-            bufferStream.position(initPos + Records.LOG_OVERHEAD + Record.recordOverhead(magic));
-        }
-
-        // create the stream
-        this.bufferStream = bufferStream;
-        appendStream = wrapForOutput(bufferStream, compressionType, magic, COMPRESSION_DEFAULT_BUFFER_SIZE);
->>>>>>> origin/0.10.2
-    }
-
-    /**
-     * Construct a new builder.
-     *
-     * @param buffer The underlying buffer to use (note that this class will allocate a new buffer if necessary
-     *               to fit the records appended)
-     * @param magic The magic value to use
-     * @param compressionType The compression codec to use
-     * @param timestampType The desired timestamp type. For magic > 0, this cannot be {@link TimestampType#NO_TIMESTAMP_TYPE}.
-     * @param baseOffset The initial offset to use for
-     * @param logAppendTime The log append time of this record set. Can be set to NO_TIMESTAMP if CREATE_TIME is used.
-     * @param writeLimit The desired limit on the total bytes for this record set (note that this can be exceeded
-     *                   when compression is used since size estimates are rough, and in the case that the first
-     *                   record added exceeds the size).
-     */
-    public MemoryRecordsBuilder(ByteBuffer buffer,
-                                byte magic,
-                                CompressionType compressionType,
-                                TimestampType timestampType,
-                                long baseOffset,
-                                long logAppendTime,
-                                int writeLimit) {
-        this(new ByteBufferOutputStream(buffer), magic, compressionType, timestampType, baseOffset, logAppendTime,
                 writeLimit);
     }
 
@@ -818,85 +721,15 @@ public class MemoryRecordsBuilder {
     public boolean isFull() {
         // note that the write limit is respected only after the first record is added which ensures we can always
         // create non-empty batches (this is used to disable batching when the producer's batch size is set to 0).
-<<<<<<< HEAD
         return appendStreamIsClosed || (this.numRecords > 0 && this.writeLimit <= estimatedBytesWritten());
-=======
-        return isClosed() || (this.numRecords > 0 && this.writeLimit <= estimatedBytesWritten());
->>>>>>> origin/0.10.2
     }
 
     public int sizeInBytes() {
         return builtRecords != null ? builtRecords.sizeInBytes() : estimatedBytesWritten();
     }
 
-<<<<<<< HEAD
     public byte magic() {
         return magic;
-=======
-    protected static DataOutputStream wrapForOutput(ByteBufferOutputStream buffer, CompressionType type, byte messageVersion, int bufferSize) {
-        try {
-            switch (type) {
-                case NONE:
-                    return new DataOutputStream(buffer);
-                case GZIP:
-                    return new DataOutputStream(new GZIPOutputStream(buffer, bufferSize));
-                case SNAPPY:
-                    try {
-                        OutputStream stream = (OutputStream) snappyOutputStreamSupplier.get().newInstance(buffer, bufferSize);
-                        return new DataOutputStream(stream);
-                    } catch (Exception e) {
-                        throw new KafkaException(e);
-                    }
-                case LZ4:
-                    try {
-                        OutputStream stream = (OutputStream) lz4OutputStreamSupplier.get().newInstance(buffer,
-                                messageVersion == Record.MAGIC_VALUE_V0);
-                        return new DataOutputStream(stream);
-                    } catch (Exception e) {
-                        throw new KafkaException(e);
-                    }
-                default:
-                    throw new IllegalArgumentException("Unknown compression type: " + type);
-            }
-        } catch (IOException e) {
-            throw new KafkaException(e);
-        }
-    }
-
-    public static InputStream wrapForInput(ByteBuffer buffer, CompressionType type, byte messageVersion, BufferSupplier bufferSupplier) {
-        try {
-            switch (type) {
-                case NONE:
-                    return new ByteBufferInputStream(buffer);
-                case GZIP:
-                    return new GZIPInputStream(new ByteBufferInputStream(buffer));
-                case SNAPPY:
-                    try {
-                        return (InputStream) snappyInputStreamSupplier.get().newInstance(new ByteBufferInputStream(buffer));
-                    } catch (Exception e) {
-                        throw new KafkaException(e);
-                    }
-                case LZ4:
-                    try {
-                        return (InputStream) lz4InputStreamSupplier.get().newInstance(
-                            buffer,
-                            bufferSupplier,
-                            messageVersion == Record.MAGIC_VALUE_V0
-                        );
-                    } catch (Exception e) {
-                        throw new KafkaException(e);
-                    }
-                default:
-                    throw new IllegalArgumentException("Unknown compression type: " + type);
-            }
-        } catch (IOException e) {
-            throw new KafkaException(e);
-        }
-    }
-
-    private interface ConstructorSupplier {
-        Constructor get() throws ClassNotFoundException, NoSuchMethodException;
->>>>>>> origin/0.10.2
     }
 
     private long nextSequentialOffset() {

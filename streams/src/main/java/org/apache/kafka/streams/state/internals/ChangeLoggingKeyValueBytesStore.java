@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -9,18 +8,6 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
-=======
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
->>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,19 +26,11 @@ import org.apache.kafka.streams.state.KeyValueStore;
 
 import java.util.List;
 
-<<<<<<< HEAD
 public class ChangeLoggingKeyValueBytesStore extends WrappedStateStore.AbstractStateStore implements KeyValueStore<Bytes, byte[]> {
     private final KeyValueStore<Bytes, byte[]> inner;
     private StoreChangeLogger<Bytes, byte[]> changeLogger;
 
     ChangeLoggingKeyValueBytesStore(final KeyValueStore<Bytes, byte[]> inner) {
-=======
-public class ChangeLoggingKeyValueBytesStore extends WrappedStateStore.AbstractWrappedStateStore implements KeyValueStore<Bytes, byte[]> {
-    private final KeyValueStore<Bytes, byte[]> inner;
-    private StoreChangeLogger<Bytes, byte[]> changeLogger;
-
-    public ChangeLoggingKeyValueBytesStore(final KeyValueStore<Bytes, byte[]> inner) {
->>>>>>> origin/0.10.2
         super(inner);
         this.inner = inner;
     }
@@ -68,13 +47,10 @@ public class ChangeLoggingKeyValueBytesStore extends WrappedStateStore.AbstractW
                     inner.name())));
     }
 
-<<<<<<< HEAD
     @Override
     public long approximateNumEntries() {
         return inner.approximateNumEntries();
     }
-=======
->>>>>>> origin/0.10.2
 
     @Override
     public void put(final Bytes key, final byte[] value) {
@@ -120,12 +96,4 @@ public class ChangeLoggingKeyValueBytesStore extends WrappedStateStore.AbstractW
     public KeyValueIterator<Bytes, byte[]> all() {
         return inner.all();
     }
-<<<<<<< HEAD
-=======
-
-    @Override
-    public long approximateNumEntries() {
-        return inner.approximateNumEntries();
-    }
->>>>>>> origin/0.10.2
 }

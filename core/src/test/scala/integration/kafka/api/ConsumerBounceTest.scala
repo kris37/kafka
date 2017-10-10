@@ -23,11 +23,7 @@ import org.apache.kafka.clients.consumer._
 import org.apache.kafka.clients.producer.{ProducerConfig, ProducerRecord}
 import org.apache.kafka.common.TopicPartition
 import org.junit.Assert._
-<<<<<<< HEAD
 import org.junit.{After, Before, Ignore, Test}
-=======
-import org.junit.{After, Before, Test}
->>>>>>> origin/0.10.2
 
 import scala.collection.JavaConverters._
 
@@ -53,11 +49,8 @@ class ConsumerBounceTest extends IntegrationTestHarness with Logging {
   this.serverConfig.setProperty(KafkaConfig.OffsetsTopicReplicationFactorProp, "3") // don't want to lose offset
   this.serverConfig.setProperty(KafkaConfig.OffsetsTopicPartitionsProp, "1")
   this.serverConfig.setProperty(KafkaConfig.GroupMinSessionTimeoutMsProp, "10") // set small enough session timeout
-<<<<<<< HEAD
   this.serverConfig.setProperty(KafkaConfig.GroupInitialRebalanceDelayMsProp, "0")
   this.serverConfig.setProperty(KafkaConfig.UncleanLeaderElectionEnableProp, "true")
-=======
->>>>>>> origin/0.10.2
   this.serverConfig.setProperty(KafkaConfig.AutoCreateTopicsEnableProp, "false")
   this.producerConfig.setProperty(ProducerConfig.ACKS_CONFIG, "all")
   this.consumerConfig.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "my-test")

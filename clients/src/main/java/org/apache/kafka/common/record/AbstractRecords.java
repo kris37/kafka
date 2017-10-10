@@ -30,25 +30,7 @@ public abstract class AbstractRecords implements Records {
     private final Iterable<Record> records = new Iterable<Record>() {
         @Override
         public Iterator<Record> iterator() {
-<<<<<<< HEAD
             return recordsIterator();
-=======
-            return new Iterator<Record>() {
-                private final Iterator<? extends LogEntry> deepEntries = deepEntries(BufferSupplier.NO_CACHING).iterator();
-                @Override
-                public boolean hasNext() {
-                    return deepEntries.hasNext();
-                }
-                @Override
-                public Record next() {
-                    return deepEntries.next().record();
-                }
-                @Override
-                public void remove() {
-                    throw new UnsupportedOperationException("Removal not supported");
-                }
-            };
->>>>>>> origin/0.10.2
         }
     };
 
@@ -77,7 +59,6 @@ public abstract class AbstractRecords implements Records {
      * need to drop records from the batch during the conversion. Some versions of librdkafka rely on this for
      * correctness.
      */
-<<<<<<< HEAD
     protected MemoryRecords downConvert(Iterable<? extends RecordBatch> batches, byte toMagic, long firstOffset) {
         // maintain the batch along with the decompressed records to avoid the need to decompress again
         List<RecordBatchAndRecords> recordBatchAndRecordsList = new ArrayList<>();
@@ -115,31 +96,6 @@ public abstract class AbstractRecords implements Records {
                 recordBatchAndRecords.batch.writeTo(buffer);
             else
                 buffer = convertRecordBatch(toMagic, buffer, recordBatchAndRecords);
-=======
-    @Override
-    public Records toMessageFormat(byte toMagic) {
-        List<LogEntry> converted = new ArrayList<>();
-        for (LogEntry entry : deepEntries(BufferSupplier.NO_CACHING))
-            converted.add(LogEntry.create(entry.offset(), entry.record().convert(toMagic)));
-
-        if (converted.isEmpty()) {
-            // This indicates that the message is too large, which indicates that the buffer is not large
-            // enough to hold a full log entry. We just return all the bytes in the file message set.
-            // Even though the message set does not have the right format version, we expect old clients
-            // to raise an error to the user after reading the message size and seeing that there
-            // are not enough available bytes in the response to read the full message.
-            return this;
-        } else {
-            // We use the first message to determine the compression type for the resulting message set.
-            // This could result in message sets which are either larger or smaller than the original size.
-            // For example, it could end up larger if most messages were previously compressed, but
-            // it just so happens that the first one is not. There is also some risk that this can
-            // cause some timestamp information to be lost (e.g. if the timestamp type was changed) since
-            // we are essentially merging multiple message sets. However, currently this method is only
-            // used for down-conversion, so we've ignored the problem.
-            CompressionType compressionType = shallowEntries().iterator().next().record().compressionType();
-            return MemoryRecords.withLogEntries(compressionType, converted);
->>>>>>> origin/0.10.2
         }
 
         buffer.flip();

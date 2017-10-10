@@ -102,11 +102,7 @@ public class StateDirectory {
      * @return true if successful
      * @throws IOException
      */
-<<<<<<< HEAD
     boolean lock(final TaskId taskId, int retry) throws IOException {
-=======
-    public boolean lock(final TaskId taskId, int retry) throws IOException {
->>>>>>> origin/0.10.2
         final File lockFile;
         // we already have the lock so bail out here
         if (locks.containsKey(taskId)) {

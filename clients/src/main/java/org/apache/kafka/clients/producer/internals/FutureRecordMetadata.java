@@ -31,21 +31,13 @@ public final class FutureRecordMetadata implements Future<RecordMetadata> {
     private final ProduceRequestResult result;
     private final long relativeOffset;
     private final long createTimestamp;
-<<<<<<< HEAD
     private final Long checksum;
-=======
-    private final long checksum;
->>>>>>> origin/0.10.2
     private final int serializedKeySize;
     private final int serializedValueSize;
     private volatile FutureRecordMetadata nextRecordMetadata = null;
 
     public FutureRecordMetadata(ProduceRequestResult result, long relativeOffset, long createTimestamp,
-<<<<<<< HEAD
                                 Long checksum, int serializedKeySize, int serializedValueSize) {
-=======
-                                long checksum, int serializedKeySize, int serializedValueSize) {
->>>>>>> origin/0.10.2
         this.result = result;
         this.relativeOffset = relativeOffset;
         this.createTimestamp = createTimestamp;
@@ -103,7 +95,6 @@ public final class FutureRecordMetadata implements Future<RecordMetadata> {
         else
             return value();
     }
-<<<<<<< HEAD
 
     Long checksumOrNull() {
         return this.checksum;
@@ -116,14 +107,6 @@ public final class FutureRecordMetadata implements Future<RecordMetadata> {
                                   timestamp(), this.checksum, this.serializedKeySize, this.serializedValueSize);
     }
 
-=======
-    
-    RecordMetadata value() {
-        return new RecordMetadata(result.topicPartition(), this.result.baseOffset(), this.relativeOffset,
-                                  timestamp(), this.checksum, this.serializedKeySize, this.serializedValueSize);
-    }
-
->>>>>>> origin/0.10.2
     private long timestamp() {
         return result.hasLogAppendTime() ? result.logAppendTime() : createTimestamp;
     }

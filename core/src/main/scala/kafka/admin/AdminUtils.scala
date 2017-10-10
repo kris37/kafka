@@ -479,7 +479,6 @@ object AdminUtils extends Logging with AdminUtilities {
     if (!update)
       LogConfig.validate(config)
   }
-<<<<<<< HEAD
 
   def createOrUpdateTopicPartitionAssignmentPathInZK(zkUtils: ZkUtils,
                                                      topic: String,
@@ -488,16 +487,6 @@ object AdminUtils extends Logging with AdminUtilities {
                                                      update: Boolean = false) {
     validateCreateOrUpdateTopic(zkUtils, topic, partitionReplicaAssignment, config, update)
 
-=======
-
-  def createOrUpdateTopicPartitionAssignmentPathInZK(zkUtils: ZkUtils,
-                                                     topic: String,
-                                                     partitionReplicaAssignment: Map[Int, Seq[Int]],
-                                                     config: Properties = new Properties,
-                                                     update: Boolean = false) {
-    validateCreateOrUpdateTopic(zkUtils, topic, partitionReplicaAssignment, config, update)
-
->>>>>>> origin/0.10.2
     // Configs only matter if a topic is being created. Changing configs via AlterTopic is not supported
     if (!update) {
       // write out the config if there is any, this isn't transactional with the partition assignments

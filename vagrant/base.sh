@@ -56,7 +56,6 @@ if [ -h /opt/kafka-dev ]; then
     rm /opt/kafka-dev
 fi
 ln -s /vagrant /opt/kafka-dev
-<<<<<<< HEAD
 
 # Verification to catch provisioning errors.
 if [[ ! -x /opt/kafka-dev/bin/kafka-run-class.sh ]]; then
@@ -67,8 +66,6 @@ if [[ ! -x /opt/kafka-dev/bin/kafka-run-class.sh ]]; then
 fi
 
 
-=======
->>>>>>> origin/0.10.2
 
 get_kafka() {
     version=$1
@@ -96,15 +93,10 @@ get_kafka 0.9.0.1 2.11
 chmod a+rw /opt/kafka-0.9.0.1
 get_kafka 0.10.0.1 2.11
 chmod a+rw /opt/kafka-0.10.0.1
-<<<<<<< HEAD
 get_kafka 0.10.1.1 2.11
 chmod a+rw /opt/kafka-0.10.1.1
 get_kafka 0.10.2.1 2.11
 chmod a+rw /opt/kafka-0.10.2.1
-=======
-get_kafka 0.10.1.1
-chmod a+rw /opt/kafka-0.10.1.1
->>>>>>> origin/0.10.2
 
 
 # For EC2 nodes, we want to use /mnt, which should have the local disk. On local

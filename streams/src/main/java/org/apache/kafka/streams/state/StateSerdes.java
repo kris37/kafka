@@ -37,11 +37,7 @@ public final class StateSerdes<K, V> {
      * @param valueClass the class of the value type
      * @param <K>        the key type
      * @param <V>        the value type
-<<<<<<< HEAD
      * @return a new instance of {@link StateSerdes}
-=======
-     * @return           a new instance of {@link StateSerdes}
->>>>>>> origin/0.10.2
      */
     public static <K, V> StateSerdes<K, V> withBuiltinTypes(
         final String topic,
@@ -60,15 +56,9 @@ public final class StateSerdes<K, V> {
      * is provided to bind this serde factory to, so that future calls for serialize / deserialize do not
      * need to provide the topic name any more.
      *
-<<<<<<< HEAD
      * @param topic         the topic name
      * @param keySerde      the serde for keys; cannot be null
      * @param valueSerde    the serde for values; cannot be null
-=======
-     * @param topic      the topic name
-     * @param keySerde   the serde for keys; cannot be null
-     * @param valueSerde the serde for values; cannot be null
->>>>>>> origin/0.10.2
      * @throws IllegalArgumentException if key or value serde is null
      */
     @SuppressWarnings("unchecked")

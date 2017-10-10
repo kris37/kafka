@@ -430,7 +430,6 @@ class GroupCoordinator(val brokerId: Int,
     }
   }
 
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupCoordinator.scala
   def handleTxnCompletion(producerId: Long,
                           offsetsPartitions: Iterable[TopicPartition],
                           transactionResult: TransactionResult) {
@@ -438,14 +437,6 @@ class GroupCoordinator(val brokerId: Int,
     val isCommit = transactionResult == TransactionResult.COMMIT
     groupManager.handleTxnCompletion(producerId, offsetsPartitions.map(_.partition).toSet, isCommit)
   }
-=======
-  private def doCommitOffsets(group: GroupMetadata,
-                      memberId: String,
-                      generationId: Int,
-                      offsetMetadata: immutable.Map[TopicPartition, OffsetAndMetadata],
-                      responseCallback: immutable.Map[TopicPartition, Short] => Unit) {
-    var delayedOffsetStore: Option[DelayedStore] = None
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupCoordinator.scala
 
   private def doCommitOffsets(group: GroupMetadata,
                               memberId: String,
@@ -522,7 +513,6 @@ class GroupCoordinator(val brokerId: Int,
     groupManager.cleanupGroupMetadata(Some(topicPartitions))
   }
 
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupCoordinator.scala
 
   private def validateGroup(groupId: String): Option[Errors] = {
     if (!isActive.get)
@@ -535,8 +525,6 @@ class GroupCoordinator(val brokerId: Int,
       None
   }
 
-=======
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupCoordinator.scala
   private def onGroupUnloaded(group: GroupMetadata) {
     group synchronized {
       info(s"Unloading group metadata for ${group.groupId} with generation ${group.generationId}")
@@ -656,13 +644,10 @@ class GroupCoordinator(val brokerId: Int,
     val member = new MemberMetadata(memberId, group.groupId, clientId, clientHost, rebalanceTimeoutMs,
       sessionTimeoutMs, protocolType, protocols)
     member.awaitingJoinCallback = callback
-<<<<<<< HEAD:core/src/main/scala/kafka/coordinator/group/GroupCoordinator.scala
     // update the newMemberAdded flag to indicate that the join group can be further delayed
     if (group.is(PreparingRebalance) && group.generationId == 0)
       group.newMemberAdded = true
 
-=======
->>>>>>> origin/0.10.2:core/src/main/scala/kafka/coordinator/GroupCoordinator.scala
     group.add(member)
     maybePrepareRebalance(group)
     member

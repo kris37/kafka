@@ -23,11 +23,7 @@ import kafka.utils._
 import kafka.utils.timer.MockTimer
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.protocol.Errors
-<<<<<<< HEAD:core/src/test/scala/unit/kafka/coordinator/group/GroupCoordinatorTest.scala
 import org.apache.kafka.common.record.{MemoryRecords, RecordBatch}
-=======
-import org.apache.kafka.common.requests.{JoinGroupRequest, OffsetCommitRequest, OffsetFetchResponse}
->>>>>>> origin/0.10.2:core/src/test/scala/unit/kafka/coordinator/GroupCoordinatorResponseTest.scala
 import org.apache.kafka.common.requests.ProduceResponse.PartitionResponse
 import org.apache.kafka.common.requests.{JoinGroupRequest, OffsetCommitRequest, OffsetFetchResponse, TransactionResult}
 import org.easymock.{Capture, EasyMock, IAnswer}
@@ -320,13 +316,8 @@ class GroupCoordinatorTest extends JUnitSuite {
     assertEquals(Errors.NONE, syncGroupError)
 
     EasyMock.reset(replicaManager)
-<<<<<<< HEAD:core/src/test/scala/unit/kafka/coordinator/group/GroupCoordinatorTest.scala
     EasyMock.expect(replicaManager.getPartition(new TopicPartition(Topic.GROUP_METADATA_TOPIC_NAME, groupPartitionId))).andReturn(None)
     EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(RecordBatch.MAGIC_VALUE_V1)).anyTimes()
-=======
-    EasyMock.expect(replicaManager.getPartition(new TopicPartition(Topic.GroupMetadataTopicName, groupPartitionId))).andReturn(None)
-    EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(Record.MAGIC_VALUE_V1)).anyTimes()
->>>>>>> origin/0.10.2:core/src/test/scala/unit/kafka/coordinator/GroupCoordinatorResponseTest.scala
     EasyMock.replay(replicaManager)
 
     timer.advanceClock(DefaultSessionTimeout + 100)
@@ -1042,62 +1033,6 @@ class GroupCoordinatorTest extends JUnitSuite {
   }
 
   @Test
-  def testFetchOffsets() {
-    val tp = new TopicPartition("topic", 0)
-    val offset = OffsetAndMetadata(0)
-
-    val commitOffsetResult = commitOffsets(groupId, OffsetCommitRequest.DEFAULT_MEMBER_ID,
-      OffsetCommitRequest.DEFAULT_GENERATION_ID, immutable.Map(tp -> offset))
-    assertEquals(Errors.NONE.code, commitOffsetResult(tp))
-
-    val (error, partitionData) = groupCoordinator.handleFetchOffsets(groupId, Some(Seq(tp)))
-    assertEquals(Errors.NONE, error)
-    assertEquals(Some(0), partitionData.get(tp).map(_.offset))
-  }
-
-  @Test
-  def testFetchOffsetForUnknownPartition(): Unit = {
-    val tp = new TopicPartition("topic", 0)
-    val (error, partitionData) = groupCoordinator.handleFetchOffsets(groupId, Some(Seq(tp)))
-    assertEquals(Errors.NONE, error)
-    assertEquals(Some(OffsetFetchResponse.INVALID_OFFSET), partitionData.get(tp).map(_.offset))
-  }
-
-  @Test
-  def testFetchOffsetNotCoordinatorForGroup(): Unit = {
-    val tp = new TopicPartition("topic", 0)
-    val (error, partitionData) = groupCoordinator.handleFetchOffsets(otherGroupId, Some(Seq(tp)))
-    assertEquals(Errors.NOT_COORDINATOR_FOR_GROUP, error)
-    assertTrue(partitionData.isEmpty)
-  }
-
-  @Test
-  def testFetchAllOffsets() {
-    val tp1 = new TopicPartition("topic", 0)
-    val tp2 = new TopicPartition("topic", 1)
-    val tp3 = new TopicPartition("other-topic", 0)
-    val offset1 = OffsetAndMetadata(15)
-    val offset2 = OffsetAndMetadata(16)
-    val offset3 = OffsetAndMetadata(17)
-
-    assertEquals((Errors.NONE, Map.empty), groupCoordinator.handleFetchOffsets(groupId))
-
-    val commitOffsetResult = commitOffsets(groupId, OffsetCommitRequest.DEFAULT_MEMBER_ID,
-      OffsetCommitRequest.DEFAULT_GENERATION_ID, immutable.Map(tp1 -> offset1, tp2 -> offset2, tp3 -> offset3))
-    assertEquals(Errors.NONE.code, commitOffsetResult(tp1))
-    assertEquals(Errors.NONE.code, commitOffsetResult(tp2))
-    assertEquals(Errors.NONE.code, commitOffsetResult(tp3))
-
-    val (error, partitionData) = groupCoordinator.handleFetchOffsets(groupId)
-    assertEquals(Errors.NONE, error)
-    assertEquals(3, partitionData.size)
-    assertTrue(partitionData.forall(_._2.error == Errors.NONE))
-    assertEquals(Some(offset1.offset), partitionData.get(tp1).map(_.offset))
-    assertEquals(Some(offset2.offset), partitionData.get(tp2).map(_.offset))
-    assertEquals(Some(offset3.offset), partitionData.get(tp3).map(_.offset))
-  }
-
-  @Test
   def testCommitOffsetInAwaitingSync() {
     val memberId = JoinGroupRequest.UNKNOWN_MEMBER_ID
     val tp = new TopicPartition("topic", 0)
@@ -1418,19 +1353,11 @@ class GroupCoordinatorTest extends JUnitSuite {
       EasyMock.capture(capturedArgument),
       EasyMock.anyObject().asInstanceOf[Option[Object]])).andAnswer(new IAnswer[Unit] {
       override def answer = capturedArgument.getValue.apply(
-<<<<<<< HEAD:core/src/test/scala/unit/kafka/coordinator/group/GroupCoordinatorTest.scala
         Map(new TopicPartition(Topic.GROUP_METADATA_TOPIC_NAME, groupPartitionId) ->
           new PartitionResponse(Errors.NONE, 0L, RecordBatch.NO_TIMESTAMP)
         )
       )})
     EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(RecordBatch.MAGIC_VALUE_V1)).anyTimes()
-=======
-        Map(new TopicPartition(Topic.GroupMetadataTopicName, groupPartitionId) ->
-          new PartitionResponse(Errors.NONE, 0L, Record.NO_TIMESTAMP)
-        )
-      )})
-    EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(Record.MAGIC_VALUE_V1)).anyTimes()
->>>>>>> origin/0.10.2:core/src/test/scala/unit/kafka/coordinator/GroupCoordinatorResponseTest.scala
     EasyMock.replay(replicaManager)
 
     groupCoordinator.handleSyncGroup(groupId, generation, leaderId, assignment, responseCallback)
@@ -1510,20 +1437,12 @@ class GroupCoordinatorTest extends JUnitSuite {
       EasyMock.anyObject().asInstanceOf[Option[Object]])
     ).andAnswer(new IAnswer[Unit] {
       override def answer = capturedArgument.getValue.apply(
-<<<<<<< HEAD:core/src/test/scala/unit/kafka/coordinator/group/GroupCoordinatorTest.scala
           Map(new TopicPartition(Topic.GROUP_METADATA_TOPIC_NAME, groupPartitionId) ->
             new PartitionResponse(Errors.NONE, 0L, RecordBatch.NO_TIMESTAMP)
           )
         )
       })
     EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(RecordBatch.MAGIC_VALUE_V1)).anyTimes()
-=======
-        Map(new TopicPartition(Topic.GroupMetadataTopicName, groupPartitionId) ->
-          new PartitionResponse(Errors.NONE, 0L, Record.NO_TIMESTAMP)
-        )
-      )})
-    EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(Record.MAGIC_VALUE_V1)).anyTimes()
->>>>>>> origin/0.10.2:core/src/test/scala/unit/kafka/coordinator/GroupCoordinatorResponseTest.scala
     EasyMock.replay(replicaManager)
 
     groupCoordinator.handleCommitOffsets(groupId, consumerId, generationId, offsets, responseCallback)
@@ -1563,13 +1482,8 @@ class GroupCoordinatorTest extends JUnitSuite {
   private def leaveGroup(groupId: String, consumerId: String): LeaveGroupCallbackParams = {
     val (responseFuture, responseCallback) = setupHeartbeatCallback
 
-<<<<<<< HEAD:core/src/test/scala/unit/kafka/coordinator/group/GroupCoordinatorTest.scala
     EasyMock.expect(replicaManager.getPartition(new TopicPartition(Topic.GROUP_METADATA_TOPIC_NAME, groupPartitionId))).andReturn(None)
     EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(RecordBatch.MAGIC_VALUE_V1)).anyTimes()
-=======
-    EasyMock.expect(replicaManager.getPartition(new TopicPartition(Topic.GroupMetadataTopicName, groupPartitionId))).andReturn(None)
-    EasyMock.expect(replicaManager.getMagic(EasyMock.anyObject())).andReturn(Some(Record.MAGIC_VALUE_V1)).anyTimes()
->>>>>>> origin/0.10.2:core/src/test/scala/unit/kafka/coordinator/GroupCoordinatorResponseTest.scala
     EasyMock.replay(replicaManager)
 
     groupCoordinator.handleLeaveGroup(groupId, consumerId, responseCallback)

@@ -326,7 +326,6 @@ public class NetworkClient implements KafkaClient {
             // the case when sending the initial ApiVersionRequest which fetches the version
             // information itself.  It is also the case when discoverBrokerVersions is set to false.
             if (versionInfo == null) {
-<<<<<<< HEAD
                 version = builder.desiredOrLatestVersion();
                 if (discoverBrokerVersions && log.isTraceEnabled())
                     log.trace("No version information found when sending message of type {} to node {}. " +
@@ -337,18 +336,6 @@ public class NetworkClient implements KafkaClient {
             // The call to build may also throw UnsupportedVersionException, if there are essential
             // fields that cannot be represented in the chosen version.
             doSend(clientRequest, isInternalRequest, now, builder.build(version));
-=======
-                if (discoverBrokerVersions && log.isTraceEnabled())
-                    log.trace("No version information found when sending message of type {} to node {}. " +
-                            "Assuming version {}.", clientRequest.apiKey(), nodeId, builder.version());
-            } else {
-                short version = versionInfo.usableVersion(clientRequest.apiKey());
-                builder.setVersion(version);
-            }
-            // The call to build may also throw UnsupportedVersionException, if there are essential
-            // fields that cannot be represented in the chosen version.
-            request = builder.build();
->>>>>>> origin/0.10.2
         } catch (UnsupportedVersionException e) {
             // If the version is not supported, skip sending the request over the wire.
             // Instead, simply add it to the local queue of aborted requests.
@@ -359,7 +346,6 @@ public class NetworkClient implements KafkaClient {
                     false, e, null);
             abortedSends.add(clientResponse);
         }
-<<<<<<< HEAD
     }
 
     private void doSend(ClientRequest clientRequest, boolean isInternalRequest, long now, AbstractRequest request) {
@@ -372,16 +358,6 @@ public class NetworkClient implements KafkaClient {
             } else {
                 log.debug("Using older server API v{} to send {} {} to node {}.",
                         header.apiVersion(), clientRequest.apiKey(), request, nodeId);
-=======
-        RequestHeader header = clientRequest.makeHeader();
-        if (log.isDebugEnabled()) {
-            int latestClientVersion = ProtoUtils.latestVersion(clientRequest.apiKey().id);
-            if (header.apiVersion() == latestClientVersion) {
-                log.trace("Sending {} to node {}.", request, nodeId);
-            } else {
-                log.debug("Using older server API v{} to send {} to node {}.",
-                    header.apiVersion(), request, nodeId);
->>>>>>> origin/0.10.2
             }
         }
         Send send = request.toSend(nodeId, header);

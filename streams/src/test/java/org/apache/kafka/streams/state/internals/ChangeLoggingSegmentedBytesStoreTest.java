@@ -64,26 +64,6 @@ public class ChangeLoggingSegmentedBytesStoreTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-<<<<<<< HEAD
-=======
-        final NoOpRecordCollector collector = new NoOpRecordCollector() {
-            @Override
-            public <K, V> void send(final String topic,
-                                    K key,
-                                    V value,
-                                    Integer partition,
-                                    Long timestamp,
-                                    Serializer<K> keySerializer,
-                                    Serializer<V> valueSerializer) {
-                sent.put(key, value);
-            }
-        };
-        final MockProcessorContext context = new MockProcessorContext(TestUtils.tempDirectory(),
-                                                                      Serdes.String(),
-                                                                      Serdes.Long(),
-                                                                      collector,
-                                                                      new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())));
->>>>>>> origin/0.10.2
         context.setTime(0);
         store.init(context, store);
     }

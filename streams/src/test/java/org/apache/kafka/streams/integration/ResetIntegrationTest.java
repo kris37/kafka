@@ -22,13 +22,7 @@ import kafka.tools.StreamsResetter;
 import kafka.utils.MockTime;
 import kafka.utils.ZkUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-<<<<<<< HEAD
 import org.apache.kafka.common.errors.TimeoutException;
-=======
-import org.apache.kafka.common.errors.GroupCoordinatorNotAvailableException;
-import org.apache.kafka.common.errors.TimeoutException;
-import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.security.JaasUtils;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
@@ -125,13 +119,6 @@ public class ResetIntegrationTest {
             try {
                 TestUtils.waitForCondition(consumerGroupInactive, TIMEOUT_MULTIPLIER * CLEANUP_CONSUMER_TIMEOUT,
                         "Test consumer group active even after waiting " + (TIMEOUT_MULTIPLIER * CLEANUP_CONSUMER_TIMEOUT) + " ms.");
-<<<<<<< HEAD
-=======
-            } catch (final GroupCoordinatorNotAvailableException e) {
-                continue;
-            } catch (final IllegalArgumentException e) {
-                continue;
->>>>>>> origin/0.10.2
             } catch (final TimeoutException e) {
                 continue;
             }
@@ -275,37 +262,7 @@ public class ResetIntegrationTest {
     }
 
     private void prepareInputData() throws Exception {
-<<<<<<< HEAD
         CLUSTER.deleteAndRecreateTopics(INPUT_TOPIC, OUTPUT_TOPIC, OUTPUT_TOPIC_2, OUTPUT_TOPIC_2_RERUN);
-=======
-        try {
-            CLUSTER.deleteTopic(INPUT_TOPIC);
-        } catch (final UnknownTopicOrPartitionException e) {
-            // ignore
-        }
-        try {
-            CLUSTER.deleteTopic(OUTPUT_TOPIC);
-        } catch (final UnknownTopicOrPartitionException e) {
-            // ignore
-        }
-        try {
-            CLUSTER.deleteTopic(OUTPUT_TOPIC_2);
-        } catch (final UnknownTopicOrPartitionException e) {
-            // ignore
-        }
-        try {
-            CLUSTER.deleteTopic(OUTPUT_TOPIC_2_RERUN);
-        } catch (final UnknownTopicOrPartitionException e) {
-            // ignore
-        }
-
-        waitUntilUserTopicsAreDeleted();
-
-        CLUSTER.createTopic(INPUT_TOPIC);
-        CLUSTER.createTopic(OUTPUT_TOPIC);
-        CLUSTER.createTopic(OUTPUT_TOPIC_2);
-        CLUSTER.createTopic(OUTPUT_TOPIC_2_RERUN);
->>>>>>> origin/0.10.2
 
         final Properties producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), LongSerializer.class, StringSerializer.class);
 
@@ -402,34 +359,6 @@ public class ResetIntegrationTest {
 
         final int exitCode = new StreamsResetter().run(parameters, cleanUpConfig);
         Assert.assertEquals(0, exitCode);
-    }
-
-    private void waitUntilUserTopicsAreDeleted() {
-        ZkUtils zkUtils = null;
-        try {
-            zkUtils = ZkUtils.apply(CLUSTER.zKConnectString(),
-                30000,
-                30000,
-                JaasUtils.isZkSecurityEnabled());
-
-            while (userTopicExists(new HashSet<>(scala.collection.JavaConversions.seqAsJavaList(zkUtils.getAllTopics())))) {
-                Utils.sleep(100);
-            }
-        } finally {
-            if (zkUtils != null) {
-                zkUtils.close();
-            }
-        }
-    }
-
-    private boolean userTopicExists(final Set<String> allTopics) {
-        final Set<String> expectedMissingTopics = new HashSet<>();
-        expectedMissingTopics.add(INPUT_TOPIC);
-        expectedMissingTopics.add(OUTPUT_TOPIC);
-        expectedMissingTopics.add(OUTPUT_TOPIC_2);
-        expectedMissingTopics.add(OUTPUT_TOPIC_2_RERUN);
-
-        return expectedMissingTopics.removeAll(allTopics);
     }
 
     private void assertInternalTopicsGotDeleted(final String intermediateUserTopic) {

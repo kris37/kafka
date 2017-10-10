@@ -17,14 +17,7 @@
 
 package kafka.message
 
-<<<<<<< HEAD
-=======
-import org.apache.kafka.common.record._
-import java.io.ByteArrayInputStream
->>>>>>> origin/0.10.2
 import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-
 import scala.collection._
 import org.scalatest.junit.JUnitSuite
 import org.junit._
@@ -33,27 +26,6 @@ import org.junit.Assert._
 class MessageCompressionTest extends JUnitSuite {
 
   @Test
-<<<<<<< HEAD
-=======
-  def testLZ4FramingV0() {
-    val output = CompressionFactory(LZ4CompressionCodec, Message.MagicValue_V0, new ByteArrayOutputStream())
-    assertTrue(output.asInstanceOf[KafkaLZ4BlockOutputStream].useBrokenFlagDescriptorChecksum())
-
-    val input = CompressionFactory(LZ4CompressionCodec, Message.MagicValue_V0, ByteBuffer.wrap(Array[Byte](0x04, 0x22, 0x4D, 0x18, 0x60, 0x40, 0x1A)))
-    assertTrue(input.asInstanceOf[KafkaLZ4BlockInputStream].ignoreFlagDescriptorChecksum())
-  }
-
-  @Test
-  def testLZ4FramingV1() {
-    val output = CompressionFactory(LZ4CompressionCodec, Message.MagicValue_V1, new ByteArrayOutputStream())
-    assertFalse(output.asInstanceOf[KafkaLZ4BlockOutputStream].useBrokenFlagDescriptorChecksum())
-
-    val input = CompressionFactory(LZ4CompressionCodec, Message.MagicValue_V1, ByteBuffer.wrap(Array[Byte](0x04, 0x22, 0x4D, 0x18, 0x60, 0x40, -126)))
-    assertFalse(input.asInstanceOf[KafkaLZ4BlockInputStream].ignoreFlagDescriptorChecksum())
-  }
-
-  @Test
->>>>>>> origin/0.10.2
   def testSimpleCompressDecompress() {
     val codecs = mutable.ArrayBuffer[CompressionCodec](GZIPCompressionCodec)
     if (isSnappyAvailable)

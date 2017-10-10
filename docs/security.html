@@ -238,13 +238,8 @@
             nodes which locks these nodes down so that only the brokers can
             modify it. It is necessary to have the same principal name across all
             brokers. If you want to use a section name other than Client, set the
-<<<<<<< HEAD
             system property <tt>zookeeper.sasl.clientconfig</tt> to the appropriate
             name (<i>e.g.</i>, <tt>-Dzookeeper.sasl.clientconfig=ZkClient</tt>).</p>
-=======
-            system property <tt>zookeeper.sasl.client</tt> to the appropriate
-            name (<i>e.g.</i>, <tt>-Dzookeeper.sasl.client=ZkClient</tt>).</p>
->>>>>>> origin/0.10.2
 
             <p>ZooKeeper uses "zookeeper" as the service name by default. If you
             want to change this, set the system property
@@ -913,11 +908,7 @@
     </ol>
     Here is an example of how to run the migration tool:
     <pre>
-<<<<<<< HEAD
     ./bin/zookeeper-security-migration.sh --zookeeper.acl=secure --zookeeper.connect=localhost:2181
-=======
-    ./bin/zookeeper-security-migration --zookeeper.acl=secure --zookeeper.connect=localhost:2181
->>>>>>> origin/0.10.2
     </pre>
     <p>Run this to see the full list of parameters:</p>
     <pre>

@@ -47,13 +47,10 @@ import org.apache.kafka.common.metrics.stats.Rate;
 import org.apache.kafka.common.protocol.ApiKeys;
 import org.apache.kafka.common.protocol.Errors;
 import org.apache.kafka.common.record.MemoryRecords;
-<<<<<<< HEAD
 import org.apache.kafka.common.record.RecordBatch;
 import org.apache.kafka.common.requests.AbstractRequest;
 import org.apache.kafka.common.requests.InitProducerIdRequest;
 import org.apache.kafka.common.requests.InitProducerIdResponse;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.requests.ProduceRequest;
 import org.apache.kafka.common.requests.ProduceResponse;
 import org.apache.kafka.common.requests.RequestHeader;
@@ -451,23 +448,14 @@ public class Sender implements Runnable {
         RequestHeader requestHeader = response.requestHeader();
         int correlationId = requestHeader.correlationId();
         if (response.wasDisconnected()) {
-<<<<<<< HEAD
             ApiKeys api = ApiKeys.forId(requestHeader.apiKey());
             log.trace("Cancelled {} request {} with correlation id {}  due to node {} being disconnected", api, requestHeader, correlationId, response.destination());
             for (ProducerBatch batch : batches.values())
-=======
-            log.trace("Cancelled request {} due to node {} being disconnected", response, response.destination());
-            for (RecordBatch batch : batches.values())
->>>>>>> origin/0.10.2
                 completeBatch(batch, new ProduceResponse.PartitionResponse(Errors.NETWORK_EXCEPTION), correlationId, now);
         } else if (response.versionMismatch() != null) {
             log.warn("Cancelled request {} due to a version mismatch with node {}",
                     response, response.destination(), response.versionMismatch());
-<<<<<<< HEAD
             for (ProducerBatch batch : batches.values())
-=======
-            for (RecordBatch batch : batches.values())
->>>>>>> origin/0.10.2
                 completeBatch(batch, new ProduceResponse.PartitionResponse(Errors.INVALID_REQUEST), correlationId, now);
         } else {
             log.trace("Received produce response from node {} with correlation id {}", response.destination(), correlationId);
@@ -477,21 +465,13 @@ public class Sender implements Runnable {
                 for (Map.Entry<TopicPartition, ProduceResponse.PartitionResponse> entry : produceResponse.responses().entrySet()) {
                     TopicPartition tp = entry.getKey();
                     ProduceResponse.PartitionResponse partResp = entry.getValue();
-<<<<<<< HEAD
                     ProducerBatch batch = batches.get(tp);
-=======
-                    RecordBatch batch = batches.get(tp);
->>>>>>> origin/0.10.2
                     completeBatch(batch, partResp, correlationId, now);
                 }
                 this.sensors.recordLatency(response.destination(), response.requestLatencyMs());
             } else {
                 // this is the acks = 0 case, just complete all requests
-<<<<<<< HEAD
                 for (ProducerBatch batch : batches.values()) {
-=======
-                for (RecordBatch batch : batches.values()) {
->>>>>>> origin/0.10.2
                     completeBatch(batch, new ProduceResponse.PartitionResponse(Errors.NONE), correlationId, now);
                 }
             }
@@ -506,7 +486,6 @@ public class Sender implements Runnable {
      * @param correlationId The correlation id for the request
      * @param now The current POSIX timestamp in milliseconds
      */
-<<<<<<< HEAD
     private void completeBatch(ProducerBatch batch, ProduceResponse.PartitionResponse response, long correlationId,
                                long now) {
         Errors error = response.error;
@@ -515,32 +494,11 @@ public class Sender implements Runnable {
             // If the batch is too large, we split the batch and send the split batches again. We do not decrement
             // the retry attempts in this case.
             log.warn("Got error produce response in correlation id {} on topic-partition {}, spitting and retrying ({} attempts left). Error: {}",
-=======
-    private void completeBatch(RecordBatch batch, ProduceResponse.PartitionResponse response, long correlationId,
-                               long now) {
-        Errors error = response.error;
-        if (error != Errors.NONE && canRetry(batch, error)) {
-            // retry
-            log.warn("Got error produce response with correlation id {} on topic-partition {}, retrying ({} attempts left). Error: {}",
->>>>>>> origin/0.10.2
                      correlationId,
                      batch.topicPartition,
                      this.retries - batch.attempts(),
                      error);
-<<<<<<< HEAD
             this.accumulator.splitAndReenqueue(batch);
-=======
-            this.accumulator.reenqueue(batch, now);
-            this.sensors.recordRetries(batch.topicPartition.topic(), batch.recordCount);
-        } else {
-            RuntimeException exception;
-            if (error == Errors.TOPIC_AUTHORIZATION_FAILED)
-                exception = new TopicAuthorizationException(batch.topicPartition.topic());
-            else
-                exception = error.exception();
-            // tell the user the result of their request
-            batch.done(response.baseOffset, response.logAppendTime, exception);
->>>>>>> origin/0.10.2
             this.accumulator.deallocate(batch);
             this.sensors.recordBatchSplit();
         } else if (error != Errors.NONE) {

@@ -28,12 +28,6 @@ import java.util.List;
 
 
 class SessionKeySchema implements SegmentedBytesStore.KeySchema {
-    private String topic;
-
-    @Override
-    public void init(final String topic) {
-        this.topic = topic;
-    }
 
     private static final int SUFFIX_SIZE = 2 * WindowStoreUtils.TIMESTAMP_SIZE;
     private static final byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
@@ -55,7 +49,6 @@ class SessionKeySchema implements SegmentedBytesStore.KeySchema {
     public Bytes lowerRangeFixedSize(final Bytes key, final long from) {
         final Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.max(0, from)));
         return SessionKeySerde.toBinary(sessionKey, Serdes.Bytes().serializer(), topic);
-<<<<<<< HEAD
     }
 
     @Override
@@ -71,8 +64,6 @@ class SessionKeySchema implements SegmentedBytesStore.KeySchema {
     @Override
     public Bytes lowerRange(Bytes key, long from) {
         return OrderedBytes.lowerRange(key, MIN_SUFFIX);
-=======
->>>>>>> origin/0.10.2
     }
 
     @Override
@@ -88,16 +79,10 @@ class SessionKeySchema implements SegmentedBytesStore.KeySchema {
                 while (iterator.hasNext()) {
                     final Bytes bytes = iterator.peekNextKey();
                     final Windowed<Bytes> windowedKey = SessionKeySerde.fromBytes(bytes);
-<<<<<<< HEAD
                     if (windowedKey.key().compareTo(binaryKeyFrom) >= 0
                         && windowedKey.key().compareTo(binaryKeyTo) <= 0
                         && windowedKey.window().end() >= from
                         && windowedKey.window().start() <= to) {
-=======
-                    if (windowedKey.key().equals(binaryKey)
-                            && windowedKey.window().end() >= from
-                            && windowedKey.window().start() <= to) {
->>>>>>> origin/0.10.2
                         return true;
                     }
                     iterator.next();

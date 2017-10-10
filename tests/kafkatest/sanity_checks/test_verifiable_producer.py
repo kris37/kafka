@@ -66,7 +66,6 @@ class TestVerifiableProducer(Test):
         # that this check works with DEV_BRANCH
         # When running VerifiableProducer 0.8.X, both the current branch version and 0.8.X should show up because of the
         # way verifiable producer pulls in some development directories into its classpath
-<<<<<<< HEAD
         #
         # If the test fails here because 'ps .. | grep' couldn't find the process it means
         # the login and grep that is_version() performs is slower than
@@ -75,10 +74,6 @@ class TestVerifiableProducer(Test):
         # not terminate until explicitly killed in this case.
         if node.version <= LATEST_0_8_2:
             assert is_version(node, [node.version.vstring, DEV_BRANCH.vstring], logger=self.logger)
-=======
-        if node.version <= LATEST_0_8_2:
-            assert is_version(node, [node.version.vstring, DEV_BRANCH.vstring])
->>>>>>> origin/0.10.2
         else:
             assert is_version(node, [node.version.vstring], logger=self.logger)
 

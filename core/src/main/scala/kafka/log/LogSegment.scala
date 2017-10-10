@@ -68,7 +68,6 @@ class LogSegment(val log: FileRecords,
   private var rollingBasedTimestamp: Option[Long] = None
 
   /* The maximum timestamp we see so far */
-<<<<<<< HEAD
   @volatile private var maxTimestampSoFar: Long = timeIndex.lastEntry.timestamp
   @volatile private var offsetOfMaxTimestamp: Long = timeIndex.lastEntry.offset
 
@@ -78,15 +77,6 @@ class LogSegment(val log: FileRecords,
          new OffsetIndex(Log.offsetIndexFile(dir, startOffset), baseOffset = startOffset, maxIndexSize = maxIndexSize),
          new TimeIndex(Log.timeIndexFile(dir, startOffset), baseOffset = startOffset, maxIndexSize = maxIndexSize),
          new TransactionIndex(startOffset, Log.transactionIndexFile(dir, startOffset)),
-=======
-  @volatile private var maxTimestampSoFar = timeIndex.lastEntry.timestamp
-  @volatile private var offsetOfMaxTimestamp = timeIndex.lastEntry.offset
-
-  def this(dir: File, startOffset: Long, indexIntervalBytes: Int, maxIndexSize: Int, rollJitterMs: Long, time: Time, fileAlreadyExists: Boolean = false, initFileSize: Int = 0, preallocate: Boolean = false) =
-    this(FileRecords.open(Log.logFile(dir, startOffset), fileAlreadyExists, initFileSize, preallocate),
-         new OffsetIndex(Log.indexFilename(dir, startOffset), baseOffset = startOffset, maxIndexSize = maxIndexSize),
-         new TimeIndex(Log.timeIndexFilename(dir, startOffset), baseOffset = startOffset, maxIndexSize = maxIndexSize),
->>>>>>> origin/0.10.2
          startOffset,
          indexIntervalBytes,
          rollJitterMs,

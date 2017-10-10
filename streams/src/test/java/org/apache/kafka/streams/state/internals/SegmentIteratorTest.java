@@ -47,19 +47,12 @@ public class SegmentIteratorTest {
         }
     };
 
-<<<<<<< HEAD
     private MockProcessorContext context;
-=======
->>>>>>> origin/0.10.2
     private SegmentIterator iterator = null;
 
     @Before
     public void before() {
-<<<<<<< HEAD
         context = new MockProcessorContext(
-=======
-        final MockProcessorContext context = new MockProcessorContext(
->>>>>>> origin/0.10.2
                 TestUtils.tempDirectory(),
                 Serdes.String(),
                 Serdes.String(),
@@ -87,13 +80,7 @@ public class SegmentIteratorTest {
 
     @Test
     public void shouldIterateOverAllSegments() throws Exception {
-<<<<<<< HEAD
         iterator = new SegmentIterator(Arrays.asList(segmentOne, segmentTwo).iterator(),
-=======
-        iterator = new SegmentIterator(
-                Arrays.asList(segmentOne,
-                              segmentTwo).iterator(),
->>>>>>> origin/0.10.2
                 hasNextCondition,
                 Bytes.wrap("a".getBytes()),
                 Bytes.wrap("z".getBytes()));
@@ -119,13 +106,7 @@ public class SegmentIteratorTest {
 
     @Test
     public void shouldOnlyIterateOverSegmentsInRange() throws Exception {
-<<<<<<< HEAD
         iterator = new SegmentIterator(Arrays.asList(segmentOne, segmentTwo).iterator(),
-=======
-        iterator = new SegmentIterator(
-                Arrays.asList(segmentOne,
-                              segmentTwo).iterator(),
->>>>>>> origin/0.10.2
                 hasNextCondition,
                 Bytes.wrap("a".getBytes()),
                 Bytes.wrap("b".getBytes()));
@@ -143,13 +124,7 @@ public class SegmentIteratorTest {
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementOnPeekNextKeyIfNoNext() throws Exception {
-<<<<<<< HEAD
         iterator = new SegmentIterator(Arrays.asList(segmentOne, segmentTwo).iterator(),
-=======
-        iterator = new SegmentIterator(
-                Arrays.asList(segmentOne,
-                              segmentTwo).iterator(),
->>>>>>> origin/0.10.2
                 hasNextCondition,
                 Bytes.wrap("f".getBytes()),
                 Bytes.wrap("h".getBytes()));
@@ -159,13 +134,7 @@ public class SegmentIteratorTest {
 
     @Test(expected = NoSuchElementException.class)
     public void shouldThrowNoSuchElementOnNextIfNoNext() throws Exception {
-<<<<<<< HEAD
         iterator = new SegmentIterator(Arrays.asList(segmentOne, segmentTwo).iterator(),
-=======
-        iterator = new SegmentIterator(
-                Arrays.asList(segmentOne,
-                              segmentTwo).iterator(),
->>>>>>> origin/0.10.2
                 hasNextCondition,
                 Bytes.wrap("f".getBytes()),
                 Bytes.wrap("h".getBytes()));

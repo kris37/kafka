@@ -330,31 +330,4 @@ class OffsetCommitTest extends ZooKeeperTestHarness {
     assertEquals(OffsetMetadataAndError.NoOffset, offsetMetadataAndError)
   }
 
-<<<<<<< HEAD
-=======
-  @Test
-  def testOffsetsDeleteAfterTopicDeletion() {
-    // set up topic partition
-    val topic = "topic"
-    val topicPartition = TopicAndPartition(topic, 0)
-    createTopic(zkUtils, topic, servers = Seq(server), numPartitions = 1)
-
-    val commitRequest = OffsetCommitRequest(group, immutable.Map(topicPartition -> OffsetAndMetadata(offset = 42L)))
-    val commitResponse = simpleConsumer.commitOffsets(commitRequest)
-
-    assertEquals(Errors.NONE.code, commitResponse.commitStatus.get(topicPartition).get)
-
-    // start topic deletion
-    AdminUtils.deleteTopic(zkUtils, topic)
-    TestUtils.verifyTopicDeletion(zkUtils, topic, 1, Seq(server))
-    Thread.sleep(retentionCheckInterval * 2)
-
-    // check if offsets deleted
-    val fetchRequest = OffsetFetchRequest(group, Seq(TopicAndPartition(topic, 0)))
-    val offsetMetadataAndErrorMap = simpleConsumer.fetchOffsets(fetchRequest)
-    val offsetMetadataAndError = offsetMetadataAndErrorMap.requestInfo(topicPartition)
-    assertEquals(OffsetMetadataAndError.NoOffset, offsetMetadataAndError)
-  }
-
->>>>>>> origin/0.10.2
 }

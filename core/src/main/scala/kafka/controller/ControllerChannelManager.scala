@@ -174,10 +174,7 @@ class ControllerChannelManager(controllerContext: ControllerContext, config: Kaf
       brokerState.requestSendThread.shutdown()
       brokerState.networkClient.close()
       brokerState.messageQueue.clear()
-<<<<<<< HEAD
       removeMetric(QueueSizeMetricName, queueSizeTags(brokerState.brokerNode.id))
-=======
->>>>>>> origin/0.10.2
       brokerStateInfo.remove(brokerState.brokerNode.id)
     } catch {
       case e: Throwable => error("Error while removing broker by the controller", e)

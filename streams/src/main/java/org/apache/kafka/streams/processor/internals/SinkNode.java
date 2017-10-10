@@ -31,15 +31,11 @@ public class SinkNode<K, V> extends ProcessorNode<K, V> {
 
     private ProcessorContext context;
 
-<<<<<<< HEAD
     public SinkNode(final String name,
                     final String topic,
                     final Serializer<K> keySerializer,
                     final Serializer<V> valSerializer,
                     final StreamPartitioner<? super K, ? super V> partitioner) {
-=======
-    public SinkNode(String name, String topic, Serializer<K> keySerializer, Serializer<V> valSerializer, StreamPartitioner<? super K, ? super V> partitioner) {
->>>>>>> origin/0.10.2
         super(name);
 
         this.topic = topic;
@@ -88,15 +84,10 @@ public class SinkNode<K, V> extends ProcessorNode<K, V> {
         }
 
         try {
-<<<<<<< HEAD
             collector.send(topic, key, value, timestamp, keySerializer, valSerializer, partitioner);
         } catch (final ClassCastException e) {
             final String keyClass = key == null ? "unknown because key is null" : key.getClass().getName();
             final String valueClass = value == null ? "unknown because value is null" : value.getClass().getName();
-=======
-            collector.send(topic, key, value, null, timestamp, keySerializer, valSerializer, partitioner);
-        } catch (ClassCastException e) {
->>>>>>> origin/0.10.2
             throw new StreamsException(
                     String.format("A serializer (key: %s / value: %s) is not compatible to the actual key or value type " +
                                     "(key type: %s / value type: %s). Change the default Serdes in StreamConfig or " +

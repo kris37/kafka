@@ -60,52 +60,27 @@ class RocksDBWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
         return new RocksDBWindowBytesStore(inner, retainDuplicates, windowSize);
     }
 
-<<<<<<< HEAD
-=======
-    private final SegmentedBytesStore bytesStore;
-    private final boolean retainDuplicates;
->>>>>>> origin/0.10.2
     private final Serde<K> keySerde;
     private final Serde<V> valueSerde;
     private final boolean retainDuplicates;
     protected final long windowSize;
     protected final SegmentedBytesStore bytesStore;
 
-<<<<<<< HEAD
     private ProcessorContext context;
     protected StateSerdes<K, V> serdes;
     protected int seqnum = 0;
-=======
-    static RocksDBWindowStore<Bytes, byte[]> bytesStore(final SegmentedBytesStore inner, final boolean retainDuplicates) {
-        return new RocksDBWindowStore<>(inner, Serdes.Bytes(), Serdes.ByteArray(), retainDuplicates);
-    }
-
->>>>>>> origin/0.10.2
 
     RocksDBWindowStore(final SegmentedBytesStore bytesStore,
                        final Serde<K> keySerde,
                        final Serde<V> valueSerde,
-<<<<<<< HEAD
                        final boolean retainDuplicates,
                        final long windowSize) {
         super(bytesStore);
-=======
-                       final boolean retainDuplicates) {
->>>>>>> origin/0.10.2
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
         this.bytesStore = bytesStore;
-<<<<<<< HEAD
         this.retainDuplicates = retainDuplicates;
         this.windowSize = windowSize;
-=======
-    }
-
-
-    @Override
-    public String name() {
-        return bytesStore.name();
->>>>>>> origin/0.10.2
     }
 
     @Override
@@ -113,15 +88,9 @@ class RocksDBWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
     public void init(final ProcessorContext context, final StateStore root) {
         this.context = context;
         // construct the serde
-<<<<<<< HEAD
         serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), bytesStore.name()),
                                    keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
                                    valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
-=======
-        this.serdes = new StateSerdes<>(ProcessorStateManager.storeChangelogTopic(context.applicationId(), bytesStore.name()),
-                                        keySerde == null ? (Serde<K>) context.keySerde() : keySerde,
-                                        valueSerde == null ? (Serde<V>) context.valueSerde() : valueSerde);
->>>>>>> origin/0.10.2
 
         bytesStore.init(context, root);
     }
@@ -153,14 +122,6 @@ class RocksDBWindowStore<K, V> extends WrappedStateStore.AbstractStateStore impl
     void maybeUpdateSeqnumForDups() {
         if (retainDuplicates) {
             seqnum = (seqnum + 1) & 0x7FFFFFFF;
-        }
-
-        @Override
-        public Long peekNextKey() {
-            if (!actual.hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return WindowStoreUtils.timestampFromBinaryKey(actual.peekNextKey().get());
         }
     }
 }

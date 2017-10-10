@@ -405,7 +405,6 @@ public class GlobalStateManagerImplTest {
     }
 
     @Test
-<<<<<<< HEAD
     public void shouldSkipNullKeysWhenRestoring() throws Exception {
         final HashMap<TopicPartition, Long> startOffsets = new HashMap<>();
         startOffsets.put(t1, 1L);
@@ -428,8 +427,6 @@ public class GlobalStateManagerImplTest {
     }
 
     @Test
-=======
->>>>>>> origin/0.10.2
     public void shouldCheckpointRestoredOffsetsToFile() throws IOException {
         stateManager.initialize(context);
         final TheStateRestoreCallback stateRestoreCallback = new TheStateRestoreCallback();
@@ -448,7 +445,6 @@ public class GlobalStateManagerImplTest {
         return offsetCheckpoint.read();
     }
 
-<<<<<<< HEAD
     @Test
     public void shouldThrowLockExceptionIfIOExceptionCaughtWhenTryingToLockStateDir() throws Exception {
         stateManager = new GlobalStateManagerImpl(topology, consumer, new StateDirectory("appId", stateDirPath, time) {
@@ -473,8 +469,6 @@ public class GlobalStateManagerImplTest {
         }
     }
 
-=======
->>>>>>> origin/0.10.2
     private void initializeConsumer(final long numRecords, final long startOffset, final TopicPartition topicPartition) {
         final HashMap<TopicPartition, Long> startOffsets = new HashMap<>();
         startOffsets.put(topicPartition, 1L);

@@ -28,11 +28,7 @@ import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.network.ListenerName
 import org.apache.kafka.common.protocol.types.Type
 import org.apache.kafka.common.protocol.{ApiKeys, Errors, SecurityProtocol}
-<<<<<<< HEAD
 import org.apache.kafka.common.record.{CompressionType, SimpleRecord, RecordBatch, MemoryRecords}
-=======
-import org.apache.kafka.common.record.MemoryRecords
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.requests.{ProduceRequest, ProduceResponse, ResponseHeader}
 import org.junit.Assert._
 import org.junit.Test

@@ -54,10 +54,5 @@ class KafkaVersionTest(Test):
         self.kafka.nodes[1].config[config_property.INTER_BROKER_PROTOCOL_VERSION] = "0.8.2.X"
         self.kafka.start()
 
-<<<<<<< HEAD
         assert is_version(self.kafka.nodes[0], [DEV_BRANCH.vstring], logger=self.logger)
         assert is_version(self.kafka.nodes[1], [LATEST_0_8_2], logger=self.logger)
-=======
-        assert is_version(self.kafka.nodes[0], [DEV_BRANCH.vstring])
-        assert is_version(self.kafka.nodes[1], [LATEST_0_8_2])
->>>>>>> origin/0.10.2

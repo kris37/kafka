@@ -26,11 +26,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.processor.StateStore;
 import org.apache.kafka.streams.state.KeyValueIterator;
 
-<<<<<<< HEAD
 class MeteredSegmentedBytesStore extends WrappedStateStore.AbstractStateStore implements SegmentedBytesStore {
-=======
-class MeteredSegmentedBytesStore extends WrappedStateStore.AbstractWrappedStateStore implements SegmentedBytesStore {
->>>>>>> origin/0.10.2
 
     private final SegmentedBytesStore inner;
     private final String metricScope;

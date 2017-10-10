@@ -61,15 +61,11 @@ public class CachingSessionStoreTest {
 
     @Before
     public void setUp() throws Exception {
-<<<<<<< HEAD
         final SessionKeySchema schema = new SessionKeySchema();
         schema.init("topic");
         final int retention = 60000;
         final int numSegments = 3;
         underlying = new RocksDBSegmentedBytesStore("test", retention, numSegments, schema);
-=======
-        underlying = new RocksDBSegmentedBytesStore("test", 60000, 3, new SessionKeySchema());
->>>>>>> origin/0.10.2
         final RocksDBSessionStore<Bytes, byte[]> sessionStore = new RocksDBSessionStore<>(underlying, Serdes.Bytes(), Serdes.ByteArray());
         cachingStore = new CachingSessionStore<>(sessionStore,
                                                  Serdes.String(),
@@ -77,21 +73,14 @@ public class CachingSessionStoreTest {
                                                  Segments.segmentInterval(retention, numSegments)
                                                  );
         cache = new ThreadCache("testCache", MAX_CACHE_SIZE_BYTES, new MockStreamsMetrics(new Metrics()));
-<<<<<<< HEAD
         context = new MockProcessorContext(TestUtils.tempDirectory(), null, null, (RecordCollector) null, cache);
-=======
-        final MockProcessorContext context = new MockProcessorContext(TestUtils.tempDirectory(), null, null, (RecordCollector) null, cache);
->>>>>>> origin/0.10.2
         context.setRecordContext(new ProcessorRecordContext(DEFAULT_TIMESTAMP, 0, 0, "topic"));
         cachingStore.init(context, cachingStore);
     }
 
     @After
     public void close() {
-<<<<<<< HEAD
         context.close();
-=======
->>>>>>> origin/0.10.2
         cachingStore.close();
     }
 
@@ -167,11 +156,7 @@ public class CachingSessionStoreTest {
         assertEquals(added.size() - 1, cache.size());
         final KeyValueIterator<Bytes, byte[]> iterator = underlying.fetch(Bytes.wrap(added.get(0).key.key().getBytes()), 0, 0);
         final KeyValue<Bytes, byte[]> next = iterator.next();
-<<<<<<< HEAD
         assertEquals(added.get(0).key, SessionKeySerde.from(next.key.get(), Serdes.String().deserializer(), "dummy"));
-=======
-        assertEquals(added.get(0).key, SessionKeySerde.from(next.key.get(), Serdes.String().deserializer(), "topic"));
->>>>>>> origin/0.10.2
         assertArrayEquals(serdes.rawValue(added.get(0).value), next.value);
     }
 

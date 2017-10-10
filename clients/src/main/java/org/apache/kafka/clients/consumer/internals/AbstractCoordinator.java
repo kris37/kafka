@@ -323,7 +323,6 @@ public abstract class AbstractCoordinator implements Closeable {
     }
 
     private void closeHeartbeatThread() {
-<<<<<<< HEAD
         HeartbeatThread thread = null;
         synchronized (this) {
             if (heartbeatThread == null)
@@ -337,17 +336,6 @@ public abstract class AbstractCoordinator implements Closeable {
         } catch (InterruptedException e) {
             log.warn("Interrupted while waiting for consumer heartbeat thread to close");
             throw new InterruptException(e);
-=======
-        if (heartbeatThread != null) {
-            heartbeatThread.close();
-
-            try {
-                heartbeatThread.join();
-            } catch (InterruptedException e) {
-                log.warn("Interrupted while waiting for consumer heartbeat thread to close");
-                throw new InterruptException(e);
-            }
->>>>>>> origin/0.10.2
         }
     }
 
@@ -582,13 +570,8 @@ public abstract class AbstractCoordinator implements Closeable {
     private RequestFuture<Void> sendGroupCoordinatorRequest(Node node) {
         // initiate the group metadata request
         log.debug("Sending GroupCoordinator request for group {} to broker {}", groupId, node);
-<<<<<<< HEAD
         FindCoordinatorRequest.Builder requestBuilder =
                 new FindCoordinatorRequest.Builder(FindCoordinatorRequest.CoordinatorType.GROUP, this.groupId);
-=======
-        GroupCoordinatorRequest.Builder requestBuilder =
-                new GroupCoordinatorRequest.Builder(this.groupId);
->>>>>>> origin/0.10.2
         return client.send(node, requestBuilder)
                      .compose(new GroupCoordinatorResponseHandler());
     }
@@ -766,13 +749,8 @@ public abstract class AbstractCoordinator implements Closeable {
             if (error == Errors.NONE) {
                 log.debug("Received successful Heartbeat response for group {}", groupId);
                 future.complete(null);
-<<<<<<< HEAD
             } else if (error == Errors.COORDINATOR_NOT_AVAILABLE
                     || error == Errors.NOT_COORDINATOR) {
-=======
-            } else if (error == Errors.GROUP_COORDINATOR_NOT_AVAILABLE
-                    || error == Errors.NOT_COORDINATOR_FOR_GROUP) {
->>>>>>> origin/0.10.2
                 log.debug("Attempt to heartbeat failed for group {} since coordinator {} is either not started or not valid.",
                         groupId, coordinator());
                 coordinatorDead();

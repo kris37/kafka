@@ -205,12 +205,9 @@ class KafkaServer(val config: KafkaConfig, time: Time = Time.SYSTEM, threadNameP
         val metricConfig = KafkaServer.metricConfig(config)
         metrics = new Metrics(metricConfig, reporters, time, true)
 
-<<<<<<< HEAD
         /* register broker metrics */
         _brokerTopicStats = new BrokerTopicStats
 
-=======
->>>>>>> origin/0.10.2
         quotaManagers = QuotaFactory.instantiate(config, metrics, time)
         notifyClusterListeners(kafkaMetricsReporters ++ reporters.asScala)
 

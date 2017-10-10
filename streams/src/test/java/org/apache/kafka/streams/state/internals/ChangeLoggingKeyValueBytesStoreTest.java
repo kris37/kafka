@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -9,18 +8,6 @@
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
-=======
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
->>>>>>> origin/0.10.2
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,17 +22,10 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.processor.internals.MockStreamsMetrics;
-<<<<<<< HEAD
 import org.apache.kafka.test.MockProcessorContext;
 import org.apache.kafka.test.NoOpRecordCollector;
 import org.apache.kafka.test.TestUtils;
 import org.junit.After;
-=======
-import org.apache.kafka.test.InMemoryKeyValueStore;
-import org.apache.kafka.test.MockProcessorContext;
-import org.apache.kafka.test.NoOpRecordCollector;
-import org.apache.kafka.test.TestUtils;
->>>>>>> origin/0.10.2
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,12 +40,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ChangeLoggingKeyValueBytesStoreTest {
 
-<<<<<<< HEAD
     private MockProcessorContext context;
     private final InMemoryKeyValueStore<Bytes, byte[]> inner = new InMemoryKeyValueStore<>("kv", Serdes.Bytes(), Serdes.ByteArray());
-=======
-    private final InMemoryKeyValueStore<Bytes, byte[]> inner = new InMemoryKeyValueStore<>("kv");
->>>>>>> origin/0.10.2
     private final ChangeLoggingKeyValueBytesStore store = new ChangeLoggingKeyValueBytesStore(inner);
     private final Map sent = new HashMap<>();
     private final Bytes hi = Bytes.wrap("hi".getBytes());
@@ -87,33 +63,22 @@ public class ChangeLoggingKeyValueBytesStoreTest {
                 sent.put(key, value);
             }
         };
-<<<<<<< HEAD
         context = new MockProcessorContext(
             TestUtils.tempDirectory(),
             Serdes.String(),
             Serdes.Long(),
             collector,
             new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())));
-=======
-        final MockProcessorContext context = new MockProcessorContext(TestUtils.tempDirectory(),
-                                                                      Serdes.String(),
-                                                                      Serdes.Long(),
-                                                                      collector,
-                                                                      new ThreadCache("testCache", 0, new MockStreamsMetrics(new Metrics())));
->>>>>>> origin/0.10.2
         context.setTime(0);
         store.init(context, store);
     }
 
-<<<<<<< HEAD
     @After
     public void after() {
         context.close();
         store.close();
     }
 
-=======
->>>>>>> origin/0.10.2
     @Test
     public void shouldWriteKeyValueBytesToInnerStoreOnPut() throws Exception {
         store.put(hi, there);

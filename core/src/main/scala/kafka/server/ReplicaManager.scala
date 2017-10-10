@@ -54,7 +54,6 @@ case class LogAppendResult(info: LogAppendInfo, exception: Option[Throwable] = N
   def error: Errors = exception match {
     case None => Errors.NONE
     case Some(e) => Errors.forException(e)
-<<<<<<< HEAD
   }
 }
 
@@ -62,8 +61,6 @@ case class LogDeleteRecordsResult(requestedOffset: Long, lowWatermark: Long, exc
   def error: Errors = exception match {
     case None => Errors.NONE
     case Some(e) => Errors.forException(e)
-=======
->>>>>>> origin/0.10.2
   }
 }
 
@@ -91,7 +88,6 @@ case class LogReadResult(info: FetchDataInfo,
   }
 
   override def toString =
-<<<<<<< HEAD
     s"Fetch Data: [$info], HW: [$hw], leaderLogStartOffset: [$leaderLogStartOffset], leaderLogEndOffset: [$leaderLogEndOffset], " +
     s"followerLogStartOffset: [$followerLogStartOffset], fetchTimeMs: [$fetchTimeMs], readSize: [$readSize], error: [$error]"
 
@@ -99,13 +95,6 @@ case class LogReadResult(info: FetchDataInfo,
 
 case class FetchPartitionData(error: Errors = Errors.NONE, hw: Long = -1L, logStartOffset: Long, records: Records,
                               abortedTransactions: Option[List[AbortedTransaction]] = None)
-=======
-    s"Fetch Data: [$info], HW: [$hw], leaderLogEndOffset: [$leaderLogEndOffset], readSize: [$readSize], error: [$error]"
-
-}
-
-case class FetchPartitionData(error: Errors = Errors.NONE, hw: Long = -1L, records: Records)
->>>>>>> origin/0.10.2
 
 object LogReadResult {
   val UnknownLogReadResult = LogReadResult(info = FetchDataInfo(LogOffsetMetadata.UnknownOffsetMetadata, MemoryRecords.EMPTY),
@@ -387,11 +376,7 @@ class ReplicaManager(val config: KafkaConfig,
       // Just return an error and don't handle the request at all
       val responseStatus = entriesPerPartition.map { case (topicPartition, _) =>
         topicPartition -> new PartitionResponse(Errors.INVALID_REQUIRED_ACKS,
-<<<<<<< HEAD
           LogAppendInfo.UnknownLogAppendInfo.firstOffset, RecordBatch.NO_TIMESTAMP)
-=======
-          LogAppendInfo.UnknownLogAppendInfo.firstOffset, Record.NO_TIMESTAMP)
->>>>>>> origin/0.10.2
       }
       responseCallback(responseStatus)
     }
@@ -620,12 +605,8 @@ class ReplicaManager(val config: KafkaConfig,
     //                        4) some error happens while reading data
     if (timeout <= 0 || fetchInfos.isEmpty || bytesReadable >= fetchMinBytes || errorReadingData) {
       val fetchPartitionData = logReadResults.map { case (tp, result) =>
-<<<<<<< HEAD
         tp -> FetchPartitionData(result.error, result.hw, result.leaderLogStartOffset, result.info.records,
           result.info.abortedTransactions)
-=======
-        tp -> FetchPartitionData(result.error, result.hw, result.info.records)
->>>>>>> origin/0.10.2
       }
       responseCallback(fetchPartitionData)
     } else {
@@ -787,11 +768,7 @@ class ReplicaManager(val config: KafkaConfig,
   def getMagic(topicPartition: TopicPartition): Option[Byte] =
     getReplica(topicPartition).flatMap(_.log.map(_.config.messageFormatVersion.messageFormatVersion))
 
-<<<<<<< HEAD
   def maybeUpdateMetadataCache(correlationId: Int, updateMetadataRequest: UpdateMetadataRequest) : Seq[TopicPartition] =  {
-=======
-  def maybeUpdateMetadataCache(correlationId: Int, updateMetadataRequest: UpdateMetadataRequest, metadataCache: MetadataCache) : Seq[TopicPartition] =  {
->>>>>>> origin/0.10.2
     replicaStateChangeLock synchronized {
       if(updateMetadataRequest.controllerEpoch < controllerEpoch) {
         val stateControllerEpochErrorMessage = ("Broker %d received update metadata request with correlation id %d from an " +
@@ -1088,22 +1065,12 @@ class ReplicaManager(val config: KafkaConfig,
     }
   }
 
-<<<<<<< HEAD
   private def getLeaderPartitions: List[Partition] =
-=======
-  private def getLeaderPartitions(): List[Partition] = {
->>>>>>> origin/0.10.2
     allPartitions.values.filter(_.leaderReplicaIfLocal.isDefined).toList
 
   def getLogEndOffset(topicPartition: TopicPartition): Option[Long] = {
     getPartition(topicPartition).flatMap{ partition =>
       partition.leaderReplicaIfLocal.map(_.logEndOffset.messageOffset)
-    }
-  }
-
-  def getHighWatermark(topicPartition: TopicPartition): Option[Long] = {
-    getPartition(topicPartition).flatMap { partition =>
-      partition.leaderReplicaIfLocal.map(_.highWatermark.messageOffset)
     }
   }
 

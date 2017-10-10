@@ -24,15 +24,10 @@ import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
-<<<<<<< HEAD
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.NotCoordinatorException;
 import org.apache.kafka.common.errors.NotEnoughReplicasException;
 import org.apache.kafka.common.errors.SecurityDisabledException;
-=======
-import org.apache.kafka.common.errors.NotCoordinatorForGroupException;
-import org.apache.kafka.common.errors.NotEnoughReplicasException;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.errors.UnknownServerException;
 import org.apache.kafka.common.errors.UnsupportedVersionException;
 import org.apache.kafka.common.network.ListenerName;
@@ -72,10 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-<<<<<<< HEAD
 import static java.util.Arrays.asList;
-=======
->>>>>>> origin/0.10.2
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -86,7 +78,6 @@ public class RequestResponseTest {
 
     @Test
     public void testSerialization() throws Exception {
-<<<<<<< HEAD
         checkRequest(createFindCoordinatorRequest(0));
         checkRequest(createFindCoordinatorRequest(1));
         checkErrorResponse(createFindCoordinatorRequest(0), new UnknownServerException());
@@ -191,81 +182,6 @@ public class RequestResponseTest {
         checkResponse(createTxnOffsetCommitResponse(), 0);
         checkErrorResponse(createTxnOffsetCommitRequest(), new UnknownServerException());
 
-=======
-        checkSerialization(createRequestHeader(), null);
-        checkSerialization(createResponseHeader(), null);
-        checkSerialization(createGroupCoordinatorRequest());
-        checkSerialization(createGroupCoordinatorRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createGroupCoordinatorResponse(), null);
-        checkSerialization(createControlledShutdownRequest());
-        checkSerialization(createControlledShutdownResponse(), null);
-        checkSerialization(createControlledShutdownRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createFetchRequest(3), 3);
-        checkSerialization(createFetchRequest(3).getErrorResponse(new UnknownServerException()), 3);
-        checkSerialization(createFetchResponse(), null);
-        checkSerialization(createHeartBeatRequest());
-        checkSerialization(createHeartBeatRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createHeartBeatResponse(), null);
-        checkSerialization(createJoinGroupRequest(1), 1);
-        checkSerialization(createJoinGroupRequest(0).getErrorResponse(new UnknownServerException()), 0);
-        checkSerialization(createJoinGroupRequest(1).getErrorResponse(new UnknownServerException()), 1);
-        checkSerialization(createJoinGroupResponse(), null);
-        checkSerialization(createLeaveGroupRequest());
-        checkSerialization(createLeaveGroupRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createLeaveGroupResponse(), null);
-        checkSerialization(createListGroupsRequest());
-        checkSerialization(createListGroupsRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createListGroupsResponse(), null);
-        checkSerialization(createDescribeGroupRequest());
-        checkSerialization(createDescribeGroupRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createDescribeGroupResponse(), null);
-        checkSerialization(createListOffsetRequest(1), 1);
-        checkSerialization(createListOffsetRequest(1).getErrorResponse(new UnknownServerException()), 1);
-        checkSerialization(createListOffsetResponse(1), 1);
-        checkSerialization(MetadataRequest.allTopics((short) 2), 2);
-        checkSerialization(createMetadataRequest(1, Arrays.asList("topic1")), 1);
-        checkSerialization(createMetadataRequest(1, Arrays.asList("topic1")).getErrorResponse(new UnknownServerException()), 1);
-        checkSerialization(createMetadataResponse(2), 2);
-        checkSerialization(createMetadataRequest(2, Arrays.asList("topic1")).getErrorResponse(new UnknownServerException()), 2);
-        checkSerialization(createOffsetCommitRequest(2), 2);
-        checkSerialization(createOffsetCommitRequest(2).getErrorResponse(new UnknownServerException()), 2);
-        checkSerialization(createOffsetCommitResponse(), null);
-        checkSerialization(OffsetFetchRequest.forAllPartitions("group1"));
-        checkSerialization(OffsetFetchRequest.forAllPartitions("group1").getErrorResponse(new NotCoordinatorForGroupException()), 2);
-        checkSerialization(createOffsetFetchRequest(0));
-        checkSerialization(createOffsetFetchRequest(1));
-        checkSerialization(createOffsetFetchRequest(2));
-        checkSerialization(OffsetFetchRequest.forAllPartitions("group1"));
-        checkSerialization(createOffsetFetchRequest(0).getErrorResponse(new UnknownServerException()), 0);
-        checkSerialization(createOffsetFetchRequest(1).getErrorResponse(new UnknownServerException()), 1);
-        checkSerialization(createOffsetFetchRequest(2).getErrorResponse(new UnknownServerException()), 2);
-        checkSerialization(createOffsetFetchResponse(), null);
-        checkSerialization(createProduceRequest());
-        checkSerialization(createProduceRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createProduceResponse(), null);
-        checkSerialization(createStopReplicaRequest(true));
-        checkSerialization(createStopReplicaRequest(false));
-        checkSerialization(createStopReplicaRequest(true).getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createStopReplicaResponse(), null);
-        checkSerialization(createLeaderAndIsrRequest());
-        checkSerialization(createLeaderAndIsrRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createLeaderAndIsrResponse(), null);
-        checkSerialization(createSaslHandshakeRequest());
-        checkSerialization(createSaslHandshakeRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createSaslHandshakeResponse(), null);
-        checkSerialization(createApiVersionRequest());
-        checkSerialization(createApiVersionRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createApiVersionResponse(), null);
-        checkSerialization(createCreateTopicRequest(0), 0);
-        checkSerialization(createCreateTopicRequest(0).getErrorResponse(new UnknownServerException()), 0);
-        checkSerialization(createCreateTopicResponse(0), 0);
-        checkSerialization(createCreateTopicRequest(1), 1);
-        checkSerialization(createCreateTopicRequest(1).getErrorResponse(new UnknownServerException()), 1);
-        checkSerialization(createCreateTopicResponse(1), 1);
-        checkSerialization(createDeleteTopicsRequest());
-        checkSerialization(createDeleteTopicsRequest().getErrorResponse(new UnknownServerException()), null);
-        checkSerialization(createDeleteTopicsResponse(), null);
->>>>>>> origin/0.10.2
         checkOlderFetchVersions();
         checkResponse(createMetadataResponse(), 0);
         checkResponse(createMetadataResponse(), 1);
@@ -441,55 +357,10 @@ public class RequestResponseTest {
     }
 
     @Test
-    public void produceRequestToStringTest() {
-        ProduceRequest request = createProduceRequest();
-        assertEquals(1, request.partitionRecordsOrFail().size());
-        assertTrue(request.toString().contains("partitionSizes"));
-
-        request.clearPartitionRecords();
-        try {
-            request.partitionRecordsOrFail();
-            fail("partitionRecordsOrFail should fail after clearPartitionRecords()");
-        } catch (IllegalStateException e) {
-            // OK
-        }
-
-        // `toString` should behave the same after `clearPartitionRecords`
-        assertTrue(request.toString().contains("partitionSizes"));
-    }
-
-    @Test
-    public void produceRequestGetErrorResponseTest() {
-        ProduceRequest request = createProduceRequest();
-        Set<TopicPartition> partitions = new HashSet<>(request.partitionRecordsOrFail().keySet());
-
-        ProduceResponse errorResponse = (ProduceResponse) request.getErrorResponse(new NotEnoughReplicasException());
-        assertEquals(partitions, errorResponse.responses().keySet());
-        ProduceResponse.PartitionResponse partitionResponse = errorResponse.responses().values().iterator().next();
-        assertEquals(Errors.NOT_ENOUGH_REPLICAS, partitionResponse.error);
-        assertEquals(ProduceResponse.INVALID_OFFSET, partitionResponse.baseOffset);
-        assertEquals(Record.NO_TIMESTAMP, partitionResponse.logAppendTime);
-
-        request.clearPartitionRecords();
-
-        // `getErrorResponse` should behave the same after `clearPartitionRecords`
-        errorResponse = (ProduceResponse) request.getErrorResponse(new NotEnoughReplicasException());
-        assertEquals(partitions, errorResponse.responses().keySet());
-        partitionResponse = errorResponse.responses().values().iterator().next();
-        assertEquals(Errors.NOT_ENOUGH_REPLICAS, partitionResponse.error);
-        assertEquals(ProduceResponse.INVALID_OFFSET, partitionResponse.baseOffset);
-        assertEquals(Record.NO_TIMESTAMP, partitionResponse.logAppendTime);
-    }
-
-    @Test
     public void produceResponseVersionTest() {
         Map<TopicPartition, ProduceResponse.PartitionResponse> responseData = new HashMap<>();
         responseData.put(new TopicPartition("test", 0), new ProduceResponse.PartitionResponse(Errors.NONE,
-<<<<<<< HEAD
                 10000, RecordBatch.NO_TIMESTAMP));
-=======
-                10000, Record.NO_TIMESTAMP));
->>>>>>> origin/0.10.2
         ProduceResponse v0Response = new ProduceResponse(responseData);
         ProduceResponse v1Response = new ProduceResponse(responseData, 10);
         ProduceResponse v2Response = new ProduceResponse(responseData, 10);
@@ -872,12 +743,7 @@ public class RequestResponseTest {
 
     private OffsetFetchRequest createOffsetFetchRequest(int version) {
         return new OffsetFetchRequest.Builder("group1", singletonList(new TopicPartition("test11", 1)))
-<<<<<<< HEAD
                 .build((short) version);
-=======
-                .setVersion((short) version)
-                .build();
->>>>>>> origin/0.10.2
     }
 
     private OffsetFetchResponse createOffsetFetchResponse() {
@@ -900,11 +766,7 @@ public class RequestResponseTest {
     private ProduceResponse createProduceResponse() {
         Map<TopicPartition, ProduceResponse.PartitionResponse> responseData = new HashMap<>();
         responseData.put(new TopicPartition("test", 0), new ProduceResponse.PartitionResponse(Errors.NONE,
-<<<<<<< HEAD
                 10000, RecordBatch.NO_TIMESTAMP));
-=======
-                10000, Record.NO_TIMESTAMP));
->>>>>>> origin/0.10.2
         return new ProduceResponse(responseData, 0);
     }
 
@@ -1000,11 +862,7 @@ public class RequestResponseTest {
     }
 
     private SaslHandshakeResponse createSaslHandshakeResponse() {
-<<<<<<< HEAD
         return new SaslHandshakeResponse(Errors.NONE, singletonList("GSSAPI"));
-=======
-        return new SaslHandshakeResponse(Errors.NONE.code(), singletonList("GSSAPI"));
->>>>>>> origin/0.10.2
     }
 
     private ApiVersionsRequest createApiVersionRequest() {

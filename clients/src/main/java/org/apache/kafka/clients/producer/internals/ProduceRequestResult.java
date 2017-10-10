@@ -23,13 +23,6 @@ import org.apache.kafka.common.record.RecordBatch;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-<<<<<<< HEAD
-=======
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.record.Record;
-
->>>>>>> origin/0.10.2
 
 /**
  * A class that models the future completion of a produce request for a single partition. There is one of these per
@@ -42,11 +35,7 @@ public final class ProduceRequestResult {
     private final TopicPartition topicPartition;
 
     private volatile Long baseOffset = null;
-<<<<<<< HEAD
     private volatile long logAppendTime = RecordBatch.NO_TIMESTAMP;
-=======
-    private volatile long logAppendTime = Record.NO_TIMESTAMP;
->>>>>>> origin/0.10.2
     private volatile RuntimeException error;
 
     /**
@@ -108,11 +97,7 @@ public final class ProduceRequestResult {
      * Return true if log append time is being used for this topic
      */
     public boolean hasLogAppendTime() {
-<<<<<<< HEAD
         return logAppendTime != RecordBatch.NO_TIMESTAMP;
-=======
-        return logAppendTime != Record.NO_TIMESTAMP;
->>>>>>> origin/0.10.2
     }
 
     /**

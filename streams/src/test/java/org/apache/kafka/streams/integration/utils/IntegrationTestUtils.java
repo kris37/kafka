@@ -20,11 +20,8 @@ import kafka.api.PartitionStateInfo;
 import kafka.api.Request;
 import kafka.server.KafkaServer;
 import kafka.server.MetadataCache;
-<<<<<<< HEAD
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-=======
->>>>>>> origin/0.10.2
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -59,71 +56,6 @@ public class IntegrationTestUtils {
 
     public static final long DEFAULT_TIMEOUT = 30 * 1000L;
     public static final String INTERNAL_LEAVE_GROUP_ON_CLOSE = "internal.leave.group.on.close";
-<<<<<<< HEAD
-=======
-
-    /**
-     * Returns up to `maxMessages` message-values from the topic.
-     *
-     * @param topic          Kafka topic to read messages from
-     * @param consumerConfig Kafka consumer configuration
-     * @param maxMessages    Maximum number of messages to read via the consumer.
-     * @return The values retrieved via the consumer.
-     */
-    public static <V> List<V> readValues(final String topic, final Properties consumerConfig, final int maxMessages) {
-        final List<V> returnList = new ArrayList<>();
-        final List<KeyValue<Object, V>> kvs = readKeyValues(topic, consumerConfig, maxMessages);
-        for (final KeyValue<?, V> kv : kvs) {
-            returnList.add(kv.value);
-        }
-        return returnList;
-    }
-
-    /**
-     * Returns as many messages as possible from the topic until a (currently hardcoded) timeout is
-     * reached.
-     *
-     * @param topic          Kafka topic to read messages from
-     * @param consumerConfig Kafka consumer configuration
-     * @return The KeyValue elements retrieved via the consumer.
-     */
-    public static <K, V> List<KeyValue<K, V>> readKeyValues(final String topic, final Properties consumerConfig) {
-        return readKeyValues(topic, consumerConfig, UNLIMITED_MESSAGES);
-    }
-
-    /**
-     * Returns up to `maxMessages` by reading via the provided consumer (the topic(s) to read from
-     * are already configured in the consumer).
-     *
-     * @param topic          Kafka topic to read messages from
-     * @param consumerConfig Kafka consumer configuration
-     * @param maxMessages    Maximum number of messages to read via the consumer
-     * @return The KeyValue elements retrieved via the consumer
-     */
-    public static <K, V> List<KeyValue<K, V>> readKeyValues(final String topic, final Properties consumerConfig, final int maxMessages) {
-        final KafkaConsumer<K, V> consumer = new KafkaConsumer<>(consumerConfig);
-        consumer.subscribe(Collections.singletonList(topic));
-        final int pollIntervalMs = 100;
-        final int maxTotalPollTimeMs = 2000;
-        int totalPollTimeMs = 0;
-        final List<KeyValue<K, V>> consumedValues = new ArrayList<>();
-        while (totalPollTimeMs < maxTotalPollTimeMs && continueConsuming(consumedValues.size(), maxMessages)) {
-            totalPollTimeMs += pollIntervalMs;
-            final ConsumerRecords<K, V> records = consumer.poll(pollIntervalMs);
-            for (final ConsumerRecord<K, V> record : records) {
-                consumedValues.add(new KeyValue<>(record.key(), record.value()));
-            }
-        }
-
-        consumer.close();
-
-        return consumedValues;
-    }
-
-    private static boolean continueConsuming(final int messagesConsumed, final int maxMessages) {
-        return maxMessages <= 0 || messagesConsumed < maxMessages;
-    }
->>>>>>> origin/0.10.2
 
     /**
      * Removes local state stores.  Useful to reset state in-between integration test runs.
@@ -212,7 +144,6 @@ public class IntegrationTestUtils {
                                                                                   final int expectedNumRecords,
                                                                                   final long waitTime) throws InterruptedException {
         final List<KeyValue<K, V>> accumData = new ArrayList<>();
-<<<<<<< HEAD
         try (final Consumer<K, V> consumer = createConsumer(consumerConfig)) {
             final TestCondition valuesRead = new TestCondition() {
                 @Override
@@ -228,22 +159,6 @@ public class IntegrationTestUtils {
                     " while only received " + accumData.size() + ": " + accumData;
             TestUtils.waitForCondition(valuesRead, waitTime, conditionDetails);
         }
-=======
-
-        final TestCondition valuesRead = new TestCondition() {
-            @Override
-            public boolean conditionMet() {
-                final List<KeyValue<K, V>> readData = readKeyValues(topic, consumerConfig);
-                accumData.addAll(readData);
-                return accumData.size() >= expectedNumRecords;
-            }
-        };
-
-        final String conditionDetails = "Expecting " + expectedNumRecords + " records from topic " + topic + " while only received " + accumData.size() + ": " + accumData;
-
-        TestUtils.waitForCondition(valuesRead, waitTime, conditionDetails);
-
->>>>>>> origin/0.10.2
         return accumData;
     }
 
@@ -324,11 +239,7 @@ public class IntegrationTestUtils {
             }
         }, timeout, "metadata for topic=" + topic + " partition=" + partition + " not propagated to all brokers");
 
-<<<<<<< HEAD
     }
-=======
-        final String conditionDetails = "Expecting " + expectedNumRecords + " records from topic " + topic + " while only received " + accumData.size() + ": " + accumData;
->>>>>>> origin/0.10.2
 
     /**
      * Returns up to `maxMessages` message-values from the topic.
@@ -417,7 +328,6 @@ public class IntegrationTestUtils {
         return maxMessages <= 0 || messagesConsumed < maxMessages;
     }
 
-<<<<<<< HEAD
     /**
      * Sets up a {@link KafkaConsumer} from a copy of the given configuration that has
      * {@link ConsumerConfig#AUTO_OFFSET_RESET_CONFIG} set to "earliest" and {@link ConsumerConfig#ENABLE_AUTO_COMMIT_CONFIG}
@@ -431,43 +341,5 @@ public class IntegrationTestUtils {
         filtered.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         filtered.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         return new KafkaConsumer<>(filtered);
-=======
-    public static void waitForTopicPartitions(final List<KafkaServer> servers,
-                                              final List<TopicPartition> partitions,
-                                              final long timeout) throws InterruptedException {
-        final long end = System.currentTimeMillis() + timeout;
-        for (final TopicPartition partition : partitions) {
-            final long remaining = end - System.currentTimeMillis();
-            if (remaining <= 0) {
-                throw new AssertionError("timed out while waiting for partitions to become available. Timeout=" + timeout);
-            }
-            waitUntilMetadataIsPropagated(servers, partition.topic(), partition.partition(), remaining);
-        }
-    }
-
-    public static void waitUntilMetadataIsPropagated(final List<KafkaServer> servers,
-                                                     final String topic,
-                                                     final int partition,
-                                                     final long timeout) throws InterruptedException {
-        TestUtils.waitForCondition(new TestCondition() {
-            @Override
-            public boolean conditionMet() {
-                for (final KafkaServer server : servers) {
-                    final MetadataCache metadataCache = server.apis().metadataCache();
-                    final Option<PartitionStateInfo> partitionInfo =
-                            metadataCache.getPartitionInfo(topic, partition);
-                    if (partitionInfo.isEmpty()) {
-                        return false;
-                    }
-                    final PartitionStateInfo partitionStateInfo = partitionInfo.get();
-                    if (!Request.isValidBrokerId(partitionStateInfo.leaderIsrAndControllerEpoch().leaderAndIsr().leader())) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }, timeout, "metatadata for topic=" + topic + " partition=" + partition + " not propogated to all brokers");
-
->>>>>>> origin/0.10.2
     }
 }

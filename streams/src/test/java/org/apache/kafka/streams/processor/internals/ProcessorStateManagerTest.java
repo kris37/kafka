@@ -18,15 +18,8 @@ package org.apache.kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
-<<<<<<< HEAD
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.MockTime;
-=======
-import org.apache.kafka.common.record.TimestampType;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serializer;
->>>>>>> origin/0.10.2
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.errors.LockException;
 import org.apache.kafka.streams.errors.ProcessorStateException;
@@ -60,137 +53,6 @@ import static org.junit.Assert.fail;
 
 public class ProcessorStateManagerTest {
 
-<<<<<<< HEAD
-=======
-    public static class MockRestoreConsumer extends MockConsumer<byte[], byte[]> {
-        private final Serializer<Integer> serializer = new IntegerSerializer();
-
-        private TopicPartition assignedPartition = null;
-        private long seekOffset = -1L;
-        private boolean seekToBeginingCalled = false;
-        private boolean seekToEndCalled = false;
-        private long endOffset = 0L;
-        private long currentOffset = 0L;
-
-        private ArrayList<ConsumerRecord<byte[], byte[]>> recordBuffer = new ArrayList<>();
-
-        MockRestoreConsumer() {
-            super(OffsetResetStrategy.EARLIEST);
-
-            reset();
-        }
-
-        // reset this mock restore consumer for a state store registration
-        public void reset() {
-            assignedPartition = null;
-            seekOffset = -1L;
-            seekToBeginingCalled = false;
-            seekToEndCalled = false;
-            endOffset = 0L;
-            recordBuffer.clear();
-        }
-
-        // buffer a record (we cannot use addRecord because we need to add records before assigning a partition)
-        public void bufferRecord(ConsumerRecord<Integer, Integer> record) {
-            recordBuffer.add(
-                new ConsumerRecord<>(record.topic(), record.partition(), record.offset(), 0L,
-                    TimestampType.CREATE_TIME, 0L, 0, 0,
-                    serializer.serialize(record.topic(), record.key()),
-                    serializer.serialize(record.topic(), record.value())));
-            endOffset = record.offset();
-
-            super.updateEndOffsets(Collections.singletonMap(assignedPartition, endOffset));
-        }
-
-        @Override
-        public synchronized void assign(Collection<TopicPartition> partitions) {
-            int numPartitions = partitions.size();
-            if (numPartitions > 1)
-                throw new IllegalArgumentException("RestoreConsumer: more than one partition specified");
-
-            if (numPartitions == 1) {
-                if (assignedPartition != null)
-                    throw new IllegalStateException("RestoreConsumer: partition already assigned");
-                assignedPartition = partitions.iterator().next();
-
-                // set the beginning offset to 0
-                // NOTE: this is users responsible to set the initial lEO.
-                super.updateBeginningOffsets(Collections.singletonMap(assignedPartition, 0L));
-            }
-
-            super.assign(partitions);
-        }
-
-        @Override
-        public ConsumerRecords<byte[], byte[]> poll(long timeout) {
-            // add buffered records to MockConsumer
-            for (ConsumerRecord<byte[], byte[]> record : recordBuffer) {
-                super.addRecord(record);
-            }
-            recordBuffer.clear();
-
-            ConsumerRecords<byte[], byte[]> records = super.poll(timeout);
-
-            // set the current offset
-            Iterable<ConsumerRecord<byte[], byte[]>> partitionRecords = records.records(assignedPartition);
-            for (ConsumerRecord<byte[], byte[]> record : partitionRecords) {
-                currentOffset = record.offset();
-            }
-
-            return records;
-        }
-
-        @Override
-        public synchronized long position(TopicPartition partition) {
-            if (!partition.equals(assignedPartition))
-                throw new IllegalStateException("RestoreConsumer: unassigned partition");
-
-            return currentOffset;
-        }
-
-        @Override
-        public synchronized void seek(TopicPartition partition, long offset) {
-            if (offset < 0)
-                throw new IllegalArgumentException("RestoreConsumer: offset should not be negative");
-
-            if (seekOffset >= 0)
-                throw new IllegalStateException("RestoreConsumer: offset already seeked");
-
-            seekOffset = offset;
-            currentOffset = offset;
-            super.seek(partition, offset);
-        }
-
-        @Override
-        public synchronized void seekToBeginning(Collection<TopicPartition> partitions) {
-            if (partitions.size() != 1)
-                throw new IllegalStateException("RestoreConsumer: other than one partition specified");
-
-            for (TopicPartition partition : partitions) {
-                if (!partition.equals(assignedPartition))
-                    throw new IllegalStateException("RestoreConsumer: seek-to-end not on the assigned partition");
-            }
-
-            seekToBeginingCalled = true;
-            currentOffset = 0L;
-        }
-
-        @Override
-        public synchronized void seekToEnd(Collection<TopicPartition> partitions) {
-            if (partitions.size() != 1)
-                throw new IllegalStateException("RestoreConsumer: other than one partition specified");
-
-            for (TopicPartition partition : partitions) {
-                if (!partition.equals(assignedPartition))
-                    throw new IllegalStateException("RestoreConsumer: seek-to-end not on the assigned partition");
-            }
-
-            seekToEndCalled = true;
-            currentOffset = endOffset;
-        }
-    }
-
->>>>>>> origin/0.10.2
     private final Set<TopicPartition> noPartitions = Collections.emptySet();
     private final String applicationId = "test-application";
     private final String persistentStoreName = "persistentStore";
@@ -204,7 +66,6 @@ public class ProcessorStateManagerTest {
     private final String changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, storeName);
     private final TopicPartition changelogTopicPartition = new TopicPartition(changelogTopic, 0);
     private final TaskId taskId = new TaskId(0, 1);
-<<<<<<< HEAD
     private final MockChangelogReader changelogReader = new MockChangelogReader();
     private final MockStateStoreSupplier.MockStateStore mockStateStore = new MockStateStoreSupplier.MockStateStore(storeName, true);
     private File baseDir;
@@ -212,33 +73,13 @@ public class ProcessorStateManagerTest {
     private OffsetCheckpoint checkpoint;
     private StateDirectory stateDirectory;
 
-=======
-    private final MockRestoreConsumer restoreConsumer = new MockRestoreConsumer();
-    private final MockStateStoreSupplier.MockStateStore mockStateStore = new MockStateStoreSupplier.MockStateStore(storeName, true);
-    private File baseDir;
-    private File checkpointFile;
-    private StateDirectory stateDirectory;
-    private OffsetCheckpoint checkpoint;
->>>>>>> origin/0.10.2
 
     @Before
     public void setup() {
         baseDir = TestUtils.tempDirectory();
-<<<<<<< HEAD
         stateDirectory = new StateDirectory(applicationId, baseDir.getPath(), new MockTime());
         checkpointFile = new File(stateDirectory.directoryForTask(taskId), ProcessorStateManager.CHECKPOINT_FILE_NAME);
         checkpoint = new OffsetCheckpoint(checkpointFile);
-=======
-        stateDirectory = new StateDirectory(applicationId, baseDir.getPath());
-        checkpointFile = new File(stateDirectory.directoryForTask(taskId), ProcessorStateManager.CHECKPOINT_FILE_NAME);
-        checkpoint = new OffsetCheckpoint(checkpointFile);
-        restoreConsumer.updatePartitions(persistentStoreTopicName, Utils.mkList(
-                new PartitionInfo(persistentStoreTopicName, 1, Node.noNode(), new Node[0], new Node[0])
-        ));
-        restoreConsumer.updatePartitions(nonPersistentStoreTopicName, Utils.mkList(
-                new PartitionInfo(nonPersistentStoreTopicName, 1, Node.noNode(), new Node[0], new Node[0])
-        ));
->>>>>>> origin/0.10.2
     }
 
     @After
@@ -246,25 +87,6 @@ public class ProcessorStateManagerTest {
         Utils.delete(baseDir);
     }
 
-<<<<<<< HEAD
-=======
-    @Test(expected = StreamsException.class)
-    public void testNoTopic() throws IOException {
-        MockStateStoreSupplier.MockStateStore mockStateStore = new MockStateStoreSupplier.MockStateStore(nonPersistentStoreName, false);
-
-        ProcessorStateManager stateMgr = new ProcessorStateManager(new TaskId(0, 1), noPartitions, new MockRestoreConsumer(), false, stateDirectory, new HashMap<String, String>() {
-            {
-                put(nonPersistentStoreName, nonPersistentStoreName);
-            }
-        });
-        try {
-            stateMgr.register(mockStateStore, true, mockStateStore.stateRestoreCallback);
-        } finally {
-            stateMgr.close(Collections.<TopicPartition, Long>emptyMap());
-        }
-    }
-
->>>>>>> origin/0.10.2
     @Test
     public void testRegisterPersistentStore() throws IOException {
         final TaskId taskId = new TaskId(0, 2);
@@ -285,27 +107,6 @@ public class ProcessorStateManagerTest {
             changelogReader,
             false);
 
-<<<<<<< HEAD
-=======
-        MockRestoreConsumer restoreConsumer = new MockRestoreConsumer();
-
-        restoreConsumer.updatePartitions(persistentStoreTopicName, Utils.mkList(
-                new PartitionInfo(persistentStoreTopicName, 1, Node.noNode(), new Node[0], new Node[0]),
-                new PartitionInfo(persistentStoreTopicName, 2, Node.noNode(), new Node[0], new Node[0])
-        ));
-
-        TopicPartition partition = new TopicPartition(persistentStoreTopicName, 2);
-        restoreConsumer.updateEndOffsets(Collections.singletonMap(partition, 13L));
-
-        MockStateStoreSupplier.MockStateStore persistentStore = new MockStateStoreSupplier.MockStateStore("persistentStore", true); // persistent store
-
-        ProcessorStateManager stateMgr = new ProcessorStateManager(taskId, noPartitions, restoreConsumer, false, stateDirectory, new HashMap<String, String>() {
-            {
-                put(persistentStoreName, persistentStoreTopicName);
-                put(nonPersistentStoreName, nonPersistentStoreName);
-            }
-        });
->>>>>>> origin/0.10.2
         try {
             stateMgr.register(persistentStore, true, persistentStore.stateRestoreCallback);
             assertTrue(changelogReader.wasRegistered(new TopicPartition(persistentStoreTopicName, 2)));
@@ -316,7 +117,6 @@ public class ProcessorStateManagerTest {
 
     @Test
     public void testRegisterNonPersistentStore() throws IOException {
-<<<<<<< HEAD
         final MockStateStoreSupplier.MockStateStore nonPersistentStore
             = new MockStateStoreSupplier.MockStateStore(nonPersistentStoreName, false); // non persistent store
         final ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -334,41 +134,6 @@ public class ProcessorStateManagerTest {
             false);
 
         try {
-=======
-        long lastCheckpointedOffset = 10L;
-
-        OffsetCheckpoint checkpoint = new OffsetCheckpoint(new File(baseDir, ProcessorStateManager.CHECKPOINT_FILE_NAME));
-        checkpoint.write(Collections.singletonMap(new TopicPartition(persistentStoreTopicName, 2), lastCheckpointedOffset));
-
-        restoreConsumer.updatePartitions(nonPersistentStoreTopicName, Utils.mkList(
-                new PartitionInfo(nonPersistentStoreTopicName, 1, Node.noNode(), new Node[0], new Node[0]),
-                new PartitionInfo(nonPersistentStoreTopicName, 2, Node.noNode(), new Node[0], new Node[0])
-        ));
-
-        TopicPartition partition = new TopicPartition(persistentStoreTopicName, 2);
-        restoreConsumer.updateEndOffsets(Collections.singletonMap(partition, 13L));
-
-        ProcessorStateManager stateMgr = new ProcessorStateManager(new TaskId(0, 2), noPartitions, restoreConsumer, false, stateDirectory, new HashMap<String, String>() {
-            {
-                put(persistentStoreName, persistentStoreTopicName);
-                put(nonPersistentStoreName, nonPersistentStoreTopicName);
-            }
-        });
-        try {
-            restoreConsumer.reset();
-
-            ArrayList<Integer> expectedKeys = new ArrayList<>();
-            long offset;
-            for (int i = 1; i <= 3; i++) {
-                offset = (long) (i + 100);
-                int key = i;
-                expectedKeys.add(i);
-                restoreConsumer.bufferRecord(
-                        new ConsumerRecord<>(nonPersistentStoreTopicName, 2, 0L, offset, TimestampType.CREATE_TIME, 0L, 0, 0, key, 0)
-                );
-            }
-
->>>>>>> origin/0.10.2
             stateMgr.register(nonPersistentStore, true, nonPersistentStore.stateRestoreCallback);
             assertTrue(changelogReader.wasRegistered(new TopicPartition(nonPersistentStoreTopicName, 2)));
         } finally {
@@ -379,19 +144,10 @@ public class ProcessorStateManagerTest {
     @Test
     public void testChangeLogOffsets() throws IOException {
         final TaskId taskId = new TaskId(0, 0);
-<<<<<<< HEAD
         final long lastCheckpointedOffset = 10L;
         final String storeName1 = "store1";
         final String storeName2 = "store2";
         final String storeName3 = "store3";
-=======
-        final OffsetCheckpoint offsetCheckpoint = new OffsetCheckpoint(
-                new File(stateDirectory.directoryForTask(taskId), ProcessorStateManager.CHECKPOINT_FILE_NAME));
-        long lastCheckpointedOffset = 10L;
-        String storeName1 = "store1";
-        String storeName2 = "store2";
-        String storeName3 = "store3";
->>>>>>> origin/0.10.2
 
         final String storeTopicName1 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName1);
         final String storeTopicName2 = ProcessorStateManager.storeChangelogTopic(applicationId, storeName2);
@@ -402,31 +158,12 @@ public class ProcessorStateManagerTest {
         storeToChangelogTopic.put(storeName2, storeTopicName2);
         storeToChangelogTopic.put(storeName3, storeTopicName3);
 
-<<<<<<< HEAD
         final OffsetCheckpoint checkpoint = new OffsetCheckpoint(new File(stateDirectory.directoryForTask(taskId), ProcessorStateManager.CHECKPOINT_FILE_NAME));
         checkpoint.write(Collections.singletonMap(new TopicPartition(storeTopicName1, 0), lastCheckpointedOffset));
 
         final TopicPartition partition1 = new TopicPartition(storeTopicName1, 0);
         final TopicPartition partition2 = new TopicPartition(storeTopicName2, 0);
         final TopicPartition partition3 = new TopicPartition(storeTopicName3, 1);
-=======
-        offsetCheckpoint.write(Collections.singletonMap(new TopicPartition(storeTopicName1, 0), lastCheckpointedOffset));
-
-        restoreConsumer.updatePartitions(storeTopicName1, Utils.mkList(
-                new PartitionInfo(storeTopicName1, 0, Node.noNode(), new Node[0], new Node[0])
-        ));
-        restoreConsumer.updatePartitions(storeTopicName2, Utils.mkList(
-                new PartitionInfo(storeTopicName2, 0, Node.noNode(), new Node[0], new Node[0])
-        ));
-        restoreConsumer.updatePartitions(storeTopicName3, Utils.mkList(
-                new PartitionInfo(storeTopicName3, 0, Node.noNode(), new Node[0], new Node[0]),
-                new PartitionInfo(storeTopicName3, 1, Node.noNode(), new Node[0], new Node[0])
-        ));
-
-        TopicPartition partition1 = new TopicPartition(storeTopicName1, 0);
-        TopicPartition partition2 = new TopicPartition(storeTopicName2, 0);
-        TopicPartition partition3 = new TopicPartition(storeTopicName3, 1);
->>>>>>> origin/0.10.2
 
         final MockStateStoreSupplier.MockStateStore store1 = new MockStateStoreSupplier.MockStateStore(storeName1, true);
         final MockStateStoreSupplier.MockStateStore store2 = new MockStateStoreSupplier.MockStateStore(storeName2, true);
@@ -444,20 +181,12 @@ public class ProcessorStateManagerTest {
             changelogReader,
             false);
 
-<<<<<<< HEAD
-=======
-        ProcessorStateManager stateMgr = new ProcessorStateManager(taskId, sourcePartitions, restoreConsumer, true, stateDirectory, storeToChangelogTopic); // standby
->>>>>>> origin/0.10.2
         try {
             stateMgr.register(store1, true, store1.stateRestoreCallback);
             stateMgr.register(store2, true, store2.stateRestoreCallback);
             stateMgr.register(store3, true, store3.stateRestoreCallback);
 
-<<<<<<< HEAD
             final Map<TopicPartition, Long> changeLogOffsets = stateMgr.checkpointed();
-=======
-            Map<TopicPartition, Long> changeLogOffsets = stateMgr.checkpointed();
->>>>>>> origin/0.10.2
 
             assertEquals(3, changeLogOffsets.size());
             assertTrue(changeLogOffsets.containsKey(partition1));
@@ -474,7 +203,6 @@ public class ProcessorStateManagerTest {
 
     @Test
     public void testGetStore() throws IOException {
-<<<<<<< HEAD
         final MockStateStoreSupplier.MockStateStore mockStateStore = new MockStateStoreSupplier.MockStateStore(nonPersistentStoreName, false);
         final ProcessorStateManager stateMgr = new ProcessorStateManager(
             new TaskId(0, 1),
@@ -484,14 +212,11 @@ public class ProcessorStateManagerTest {
             Collections.<String, String>emptyMap(),
             changelogReader,
             false);
-=======
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(new TaskId(0, 1), noPartitions, restoreConsumer, false, stateDirectory, Collections.<String, String>emptyMap());
->>>>>>> origin/0.10.2
         try {
-            stateMgr.register(nonPersistentStore, true, nonPersistentStore.stateRestoreCallback);
+            stateMgr.register(mockStateStore, true, mockStateStore.stateRestoreCallback);
 
             assertNull(stateMgr.getStore("noSuchStore"));
-            assertEquals(nonPersistentStore, stateMgr.getStore(nonPersistentStoreName));
+            assertEquals(mockStateStore, stateMgr.getStore(nonPersistentStoreName));
 
         } finally {
             stateMgr.close(Collections.<TopicPartition, Long>emptyMap());
@@ -500,10 +225,6 @@ public class ProcessorStateManagerTest {
 
     @Test
     public void testFlushAndClose() throws IOException {
-<<<<<<< HEAD
-=======
-        // write an empty checkpoint file
->>>>>>> origin/0.10.2
         checkpoint.write(Collections.<TopicPartition, Long>emptyMap());
 
         // set up ack'ed offsets
@@ -512,7 +233,6 @@ public class ProcessorStateManagerTest {
         ackedOffsets.put(new TopicPartition(nonPersistentStoreTopicName, 1), 456L);
         ackedOffsets.put(new TopicPartition(ProcessorStateManager.storeChangelogTopic(applicationId, "otherTopic"), 1), 789L);
 
-<<<<<<< HEAD
         final ProcessorStateManager stateMgr = new ProcessorStateManager(
             taskId,
             noPartitions,
@@ -526,14 +246,6 @@ public class ProcessorStateManagerTest {
             },
             changelogReader,
             false);
-=======
-        ProcessorStateManager stateMgr = new ProcessorStateManager(taskId, noPartitions, restoreConsumer, false, stateDirectory, new HashMap<String, String>() {
-            {
-                put(persistentStoreName, persistentStoreTopicName);
-                put(nonPersistentStoreName, nonPersistentStoreTopicName);
-            }
-        });
->>>>>>> origin/0.10.2
         try {
             // make sure the checkpoint file isn't deleted
             assertTrue(checkpointFile.exists());
@@ -560,7 +272,6 @@ public class ProcessorStateManagerTest {
 
     @Test
     public void shouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic() throws Exception {
-<<<<<<< HEAD
         final ProcessorStateManager stateMgr = new ProcessorStateManager(
             new TaskId(0, 1),
             noPartitions,
@@ -569,19 +280,14 @@ public class ProcessorStateManagerTest {
             Collections.<String, String>emptyMap(),
             changelogReader,
             false);
-=======
-        ProcessorStateManager stateMgr = new ProcessorStateManager(new TaskId(0, 1), noPartitions, new MockRestoreConsumer(), false, stateDirectory, Collections.<String, String>emptyMap());
->>>>>>> origin/0.10.2
         stateMgr.register(nonPersistentStore, false, nonPersistentStore.stateRestoreCallback);
         assertNotNull(stateMgr.getStore(nonPersistentStoreName));
     }
-
 
     @Test
     public void shouldNotChangeOffsetsIfAckedOffsetsIsNull() throws Exception {
         final Map<TopicPartition, Long> offsets = Collections.singletonMap(persistentStorePartition, 99L);
         checkpoint.write(offsets);
-<<<<<<< HEAD
 
         final MockStateStoreSupplier.MockStateStore persistentStore = new MockStateStoreSupplier.MockStateStore(persistentStoreName, true);
         final ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -674,52 +380,8 @@ public class ProcessorStateManagerTest {
             Collections.<String, String>emptyMap(),
             changelogReader,
             false);
-=======
-
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(taskId,
-                                                                         noPartitions,
-                                                                         restoreConsumer,
-                                                                         false,
-                                                                         stateDirectory,
-                                                                         Collections.<String, String>emptyMap());
-
-        restoreConsumer.reset();
-        stateMgr.register(persistentStore, true, persistentStore.stateRestoreCallback);
-        stateMgr.close(null);
-        final Map<TopicPartition, Long> read = checkpoint.read();
-        assertThat(read, equalTo(offsets));
-    }
-
-    @Test
-    public void shouldWriteCheckpointForPersistentLogEnabledStore() throws Exception {
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(taskId,
-                                                                         noPartitions,
-                                                                         restoreConsumer,
-                                                                         false,
-                                                                         stateDirectory,
-                                                                         Collections.singletonMap(persistentStore.name(),
-                                                                                                  persistentStoreTopicName));
-        restoreConsumer.reset();
-        stateMgr.register(persistentStore, true, persistentStore.stateRestoreCallback);
-
-        stateMgr.checkpoint(Collections.singletonMap(persistentStorePartition, 10L));
-        final Map<TopicPartition, Long> read = checkpoint.read();
-        assertThat(read, equalTo(Collections.singletonMap(persistentStorePartition, 11L)));
-    }
-
-    @Test
-    public void shouldWriteCheckpointForStandbyReplica() throws Exception {
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(taskId,
-                                                                         noPartitions,
-                                                                         restoreConsumer,
-                                                                         true,
-                                                                         stateDirectory,
-                                                                         Collections.singletonMap(persistentStore.name(),
-                                                                                                  persistentStoreTopicName));
->>>>>>> origin/0.10.2
 
         stateMgr.register(persistentStore, true, persistentStore.stateRestoreCallback);
-<<<<<<< HEAD
 
         stateMgr.checkpoint(Collections.singletonMap(persistentStorePartition, 987L));
 
@@ -845,63 +507,6 @@ public class ProcessorStateManagerTest {
                 stateManager.close(null);
             }
         }
-=======
-        final byte[] bytes = Serdes.Integer().serializer().serialize("", 10);
-        stateMgr.updateStandbyStates(persistentStorePartition,
-                                     Collections.singletonList(
-                                             new ConsumerRecord<>(persistentStorePartition.topic(),
-                                                                                persistentStorePartition.partition(),
-                                                                                888L,
-                                                                                bytes,
-                                                                                bytes)));
-
-        stateMgr.checkpoint(Collections.<TopicPartition, Long>emptyMap());
-
-        final Map<TopicPartition, Long> read = checkpoint.read();
-        assertThat(read, equalTo(Collections.singletonMap(persistentStorePartition, 889L)));
-
-    }
-
-    @Test
-    public void shouldNotWriteCheckpointForNonPersistent() throws Exception {
-        final TopicPartition topicPartition = new TopicPartition(nonPersistentStoreTopicName, 1);
-
-        restoreConsumer.updatePartitions(nonPersistentStoreTopicName, Utils.mkList(
-                new PartitionInfo(nonPersistentStoreTopicName, 1, Node.noNode(), new Node[0], new Node[0])
-        ));
-
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(taskId,
-                                                                         noPartitions,
-                                                                         restoreConsumer,
-                                                                         true,
-                                                                         stateDirectory,
-                                                                         Collections.singletonMap(nonPersistentStoreName,
-                                                                                                  nonPersistentStoreTopicName));
-
-        restoreConsumer.reset();
-        stateMgr.register(nonPersistentStore, true, nonPersistentStore.stateRestoreCallback);
-        stateMgr.checkpoint(Collections.singletonMap(topicPartition, 876L));
-
-        final Map<TopicPartition, Long> read = checkpoint.read();
-        assertThat(read, equalTo(Collections.<TopicPartition, Long>emptyMap()));
-    }
-
-    @Test
-    public void shouldNotWriteCheckpointForStoresWithoutChangelogTopic() throws Exception {
-        final ProcessorStateManager stateMgr = new ProcessorStateManager(taskId,
-                                                                         noPartitions,
-                                                                         restoreConsumer,
-                                                                         true,
-                                                                         stateDirectory,
-                                                                         Collections.<String, String>emptyMap());
-
-        stateMgr.register(persistentStore, true, persistentStore.stateRestoreCallback);
-
-        stateMgr.checkpoint(Collections.singletonMap(persistentStorePartition, 987L));
-
-        final Map<TopicPartition, Long> read = checkpoint.read();
-        assertThat(read, equalTo(Collections.<TopicPartition, Long>emptyMap()));
->>>>>>> origin/0.10.2
     }
 
 }

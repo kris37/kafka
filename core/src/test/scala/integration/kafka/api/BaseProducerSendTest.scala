@@ -187,7 +187,6 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
     try {
       TestUtils.createTopic(zkUtils, topic, 1, 2, servers)
 
-<<<<<<< HEAD
       val futures = for (i <- 1 to numRecords) yield {
         val record = new ProducerRecord(topic, partition, s"key$i".getBytes(StandardCharsets.UTF_8),
           s"value$i".getBytes(StandardCharsets.UTF_8))
@@ -195,14 +194,6 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
       }
       producer.close(timeoutMs, TimeUnit.MILLISECONDS)
       val lastOffset = futures.foldLeft(0) { (offset, future) =>
-=======
-      val recordAndFutures = for (i <- 1 to numRecords) yield {
-        val record = new ProducerRecord(topic, partition, s"key$i".getBytes, s"value$i".getBytes)
-        (record, producer.send(record))
-      }
-      producer.close(timeoutMs, TimeUnit.MILLISECONDS)
-      val lastOffset = recordAndFutures.foldLeft(0) { case (offset, (record, future)) =>
->>>>>>> origin/0.10.2
         val recordMetadata = future.get
         assertEquals(topic, recordMetadata.topic)
         assertEquals(partition, recordMetadata.partition)
@@ -252,12 +243,8 @@ abstract class BaseProducerSendTest extends KafkaServerTestHarness {
       TestUtils.createTopic(zkUtils, topic, 1, 2, servers, topicProps)
 
       val recordAndFutures = for (i <- 1 to numRecords) yield {
-<<<<<<< HEAD
         val record = new ProducerRecord(topic, partition, baseTimestamp + i, s"key$i".getBytes(StandardCharsets.UTF_8),
           s"value$i".getBytes(StandardCharsets.UTF_8))
-=======
-        val record = new ProducerRecord(topic, partition, baseTimestamp + i, s"key$i".getBytes, s"value$i".getBytes)
->>>>>>> origin/0.10.2
         (record, producer.send(record, callback))
       }
       producer.close(20000L, TimeUnit.MILLISECONDS)
